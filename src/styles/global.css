@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/*
+ * デザイン方針の正典は docs/design.md。
+ * 配色はゲーム本体 (https://github.com/keroway/reflectorbit) の src/constants.zig 由来。
+ * 色を足す・変えるときは constants.zig → docs/design.md → この @theme の順で同期する。
+ */
+@theme {
+  --color-rb-core: #33e6ff; /* CORE_COLOR  シアン / primary */
+  --color-rb-shield: #ff33cc; /* SHIELD_COLOR  マゼンタ / secondary */
+  --color-rb-combo: #ffe61a; /* SHIELD_COLOR_HIGH_COMBO  ゴールド */
+  --color-rb-meteor: #ff801a; /* METEOR_COLOR  オレンジ */
+  --color-rb-danger: #e63333; /* SPAWNER_COLOR  危機・警告 */
+  --color-rb-violet: #9919cc; /* HEAVY_METEOR_COLOR  差し色 */
+  --color-rb-spark: #ffcc4d; /* PARTICLE_BURST_COLOR  火花 */
+  --color-rb-bg: #0a0a0f; /* clear color  ベース背景 */
+  --color-rb-muted: #cccccc; /* UI_COLOR_TEXT_SECONDARY  本文 */
+}
+
+/* ダーク背景にシアン×マゼンタのうっすらしたネオングローを置く (装飾、控えめに) */
+body {
+  background-color: var(--color-rb-bg);
+  background-image:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--color-rb-core) 12%, transparent), transparent 60%),
+    radial-gradient(circle at 85% 85%, color-mix(in srgb, var(--color-rb-shield) 10%, transparent), transparent 55%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  /* 主 CTA = シアン (Core)。象徴色を前面に */
+  .btn-primary {
+    @apply rounded-md bg-rb-core px-6 py-3 font-semibold text-rb-bg transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core;
+  }
+  /* 副 CTA = アウトライン (Shield 寄り) */
+  .btn-ghost {
+    @apply rounded-md border border-rb-shield/60 px-6 py-3 font-semibold text-rb-muted transition hover:border-rb-shield focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-shield;
+  }
+  .eyebrow {
+    @apply font-mono text-sm tracking-[0.3em] text-rb-core uppercase;
+  }
+}
+
+/* アニメーションは控えめに。動きを抑える設定を尊重する。 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

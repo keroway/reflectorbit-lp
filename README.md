@@ -26,48 +26,49 @@
 | Download | ネイティブ版（Linux / macOS / Windows）へのリンク |
 | Footer | 本体リポジトリ・ライセンス・クレジット |
 
-コピー素材は `docs/copy.md` を参照。
+コピー素材は `docs/copy.md`、配色・トーンは `docs/design.md` を参照。
 
-## 技術スタック（推奨・未確定）
+## 技術スタック（確定）
 
-> 言語 / FW は別途検討。以下は推奨案。最終決定したら本セクションを更新する。
+- **フレームワーク: [Astro](https://astro.build/)** (v6) — SSG / Islands Architecture で
+  出力はほぼ素の HTML/CSS。LP のような「ほぼ静的 + 一部だけ動的」に最適で、WASM 版の試遊埋め込みも
+  `<iframe>` / `<canvas>` で容易
+- **スタイリング: [Tailwind CSS](https://tailwindcss.com/)** (v4 / `@tailwindcss/vite`)。
+  デザイントークンは `src/styles/global.css` の `@theme` で定義
+- **Lint / Format: [Biome](https://biomejs.dev/)**
+- **ホスティング: Cloudflare Pages**（ゲーム本体と同じ。GitHub 連携で main push 時に自動デプロイ）
 
-**第一推奨: [Astro](https://astro.build/)**
+> 検討の経緯は当初 Astro / Vite+TS / 素の HTML を比較し、SSG・Cloudflare Pages 親和性・
+> WASM 埋め込みのしやすさから Astro に確定。雛形は同作者の code-tactics-lp に倣う。
 
-- 静的サイト生成（SSG）で出力がほぼ素の HTML/CSS → 高速・高 Lighthouse スコア
-- JS をデフォルトで出力しない（Islands Architecture）ので、LP のように「ほぼ静的 + 一部だけ動的」に最適
-- ゲーム本体と同じく **Cloudflare Pages** に素直にデプロイできる
-- WASM 版の試遊埋め込みも `<iframe>` / `<canvas>` で容易
-
-**代替案**
-
-| 選択肢 | 向いている場合 |
-|---|---|
-| Vite + Vanilla TS/HTML | 依存を最小にしたい・1 ページで十分なとき |
-| Next.js | 将来ブログやニュース等の動的コンテンツを足す予定があるとき |
-| 素の HTML/CSS | ビルドツールすら持ちたくない最小構成 |
-
-ホスティングはゲーム本体に合わせ **Cloudflare Pages** を想定。
-
-## セットアップ（FW 決定後に追記）
+## セットアップ
 
 ```sh
-# 例: Astro を採用する場合
-npm create astro@latest .
 npm install
-npm run dev      # ローカル開発サーバ
-npm run build    # dist/ に静的出力
+npm run dev      # 開発サーバ (http://127.0.0.1:4321)
+npm run build    # 型チェック + dist/ に静的出力
+npm run preview  # ビルド結果のプレビュー
+npm run lint     # Biome で lint
+npm run format   # Biome で format 適用
 ```
 
-## ディレクトリ構成（予定）
+## ディレクトリ構成
 
 ```
 .
+├── CLAUDE.md          # Claude Code 向けのリポジトリガイド
 ├── README.md          # このファイル
+├── astro.config.mjs   # Astro 設定 (site / Tailwind / sitemap)
+├── biome.json         # Lint / Format 設定
 ├── docs/
-│   ├── copy.md        # LP に載せる文言・キャッチコピー集
+│   ├── copy.md        # LP に載せる文言・キャッチコピー集（正典）
+│   ├── design.md      # ブランドカラー・トーン・タイポ
 │   └── assets.md      # 必要なスクショ / ロゴ / OGP 素材リスト
-└── (FW 決定後にソース一式)
+├── public/            # favicon / OGP など静的アセット
+└── src/
+    ├── layouts/       # Layout.astro (head / meta / OGP)
+    ├── pages/         # index.astro (LP 本体・1 ページ)
+    └── styles/        # global.css (@theme デザイントークン)
 ```
 
 ## ライセンス

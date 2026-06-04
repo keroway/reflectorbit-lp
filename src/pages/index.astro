@@ -1,0 +1,141 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// 外部リンク (docs/copy.md の CTA / Download セクションが正典)
+const PLAY_URL = 'https://reflectorbit.pages.dev';
+const DOWNLOAD_URL = 'https://github.com/keroway/reflectorbit/releases/latest';
+const REPO_URL = 'https://github.com/keroway/reflectorbit';
+
+// 操作方法 (docs/copy.md の How to Play より)
+const controls = [
+  { key: 'Space', desc: '軌道半径を縮小（角速度が上がる）' },
+  { key: 'Shift', desc: '軌道半径を拡大（角速度が下がる）' },
+  { key: 'P', desc: 'ポーズ / 再開' },
+  { key: '↑ / ↓', desc: 'タイトルで難易度選択' },
+];
+
+// ダウンロード (docs/copy.md の Download より)
+const downloads = [
+  { os: 'Linux (x86_64)', file: 'reflectorbit-linux-x86_64' },
+  { os: 'macOS (Apple Silicon)', file: 'reflectorbit-macos-aarch64' },
+  { os: 'Windows (x86_64)', file: 'reflectorbit-windows-x86_64.exe' },
+];
+---
+
+<Layout>
+  <main class="mx-auto max-w-5xl px-6">
+    {/* ===== Hero ===== */}
+    <section class="flex min-h-screen flex-col items-center justify-center text-center">
+      <p class="eyebrow">Reflect &times; Orbit</p>
+      <h1 class="mt-4 text-5xl font-bold tracking-[0.15em] text-rb-core sm:text-7xl">
+        REFLECTORBIT
+      </h1>
+      <p class="mt-6 text-2xl font-semibold text-rb-shield sm:text-3xl">
+        弾くな、撃ち返せ。
+      </p>
+      <p class="mt-3 max-w-xl text-lg text-rb-muted">
+        2 キーで操る、軌道反射アクション。Space と Shift。たった 2 つで宇宙を弾く。
+      </p>
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <a class="btn-primary" href={PLAY_URL}>&#9654; ブラウザで今すぐプレイ</a>
+        <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
+      </div>
+      {/* TODO: 反射シーンのループ動画 / スクショを背景に敷く (docs/assets.md) */}
+    </section>
+
+    {/* ===== Concept ===== */}
+    <section class="border-t border-white/5 py-24">
+      <p class="eyebrow">Concept</p>
+      <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">
+        「守る」だけでなく「反射して攻撃する」
+      </h2>
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed">
+        中心の <span class="text-rb-core">Core</span> を周回する
+        <span class="text-rb-shield">Shield</span> を操り、重力に引かれて加速する
+        <span class="text-rb-meteor">Meteor</span> を反射。弾き返したメテオを画面外の
+        <span class="text-rb-danger">Spawner</span> にぶつけて破壊する——軌道アクション。
+      </p>
+      <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+        <li class="rounded-lg border border-white/5 p-5">
+          <span class="font-semibold text-rb-core">2 キー操作</span>で軌道半径を能動的にコントロール
+        </li>
+        <li class="rounded-lg border border-white/5 p-5">
+          「ただ防ぐ」ではなく<span class="font-semibold text-rb-shield">「反射 → 攻撃」</span>という能動的フック
+        </li>
+        <li class="rounded-lg border border-white/5 p-5">
+          連鎖（<span class="font-semibold text-rb-combo">誘爆コンボ</span>）による爽快感
+        </li>
+        <li class="rounded-lg border border-white/5 p-5">
+          可変軌道半径 &times; メテオ重力加速による「タイミングと距離感の二重読み合い」
+        </li>
+      </ul>
+      {/* TODO: コアフックの簡易図解 (Shield が Meteor を Spawner へ弾き返す) */}
+    </section>
+
+    {/* ===== How to Play ===== */}
+    <section class="border-t border-white/5 py-24">
+      <p class="eyebrow">How to Play</p>
+      <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">Space と Shift の 2 キー</h2>
+      <div class="mt-8 overflow-hidden rounded-lg border border-white/10">
+        <table class="w-full text-left">
+          <tbody>
+            {
+              controls.map((c) => (
+                <tr class="border-b border-white/5 last:border-0">
+                  <th class="w-40 bg-white/5 px-5 py-4 font-mono text-rb-core">{c.key}</th>
+                  <td class="px-5 py-4">{c.desc}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm text-rb-muted/70">
+        物理メモ: 軌道は角運動量保存（&omega; = L / r&sup2;）。半径を縮めるほど速く回る。
+        Web 版はタッチ / ポインタ操作にも対応。
+      </p>
+      {/* TODO: Space=縮小 / Shift=拡大 の対比図解 (docs/assets.md) */}
+    </section>
+
+    {/* ===== Playable Demo (将来) ===== */}
+    <section class="border-t border-white/5 py-24">
+      <p class="eyebrow">Playable Demo</p>
+      <h2 class="mt-3 text-3xl font-bold text-rb-muted/60 sm:text-4xl">その場で試遊（準備中）</h2>
+      <div class="mt-8 flex aspect-video w-full items-center justify-center rounded-lg border border-dashed border-white/15 text-rb-muted/50">
+        WASM 版をここに埋め込み予定
+      </div>
+      {/* TODO: WASM 版を <iframe> / <canvas> で埋め込み。reflectorbit.pages.dev のビルドを利用 */}
+    </section>
+
+    {/* ===== Download ===== */}
+    <section class="border-t border-white/5 py-24">
+      <p class="eyebrow">Download</p>
+      <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">ネイティブ版</h2>
+      <ul class="mt-8 grid gap-4 sm:grid-cols-3">
+        {
+          downloads.map((d) => (
+            <li class="rounded-lg border border-white/10 p-5">
+              <p class="font-semibold text-rb-muted">{d.os}</p>
+              <p class="mt-1 font-mono text-sm break-all text-rb-muted/60">{d.file}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="btn-primary mt-8 inline-block" href={DOWNLOAD_URL}>最新リリースを見る</a>
+      <p class="mt-4 text-sm text-rb-muted/70">
+        ※ 配布バイナリは未署名のため初回起動時に OS 警告が出る場合がある（手順は本体 README 参照）。
+      </p>
+    </section>
+
+    {/* ===== Footer ===== */}
+    <footer class="border-t border-white/5 py-12 text-sm text-rb-muted/60">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <p>制作: keroway</p>
+        <nav class="flex gap-6">
+          <a class="hover:text-rb-core" href={REPO_URL}>ゲーム本体リポジトリ</a>
+          <a class="hover:text-rb-core" href={PLAY_URL}>ブラウザで遊ぶ</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+</Layout>

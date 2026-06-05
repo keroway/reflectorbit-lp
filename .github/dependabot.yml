@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - infra
+    commit-message:
+      prefix: chore(deps)
+      include: scope
+    groups:
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+      biome:
+        patterns:
+          - "@biomejs/*"
+    # NOTE: vite は package.json の overrides で ^7.3.5 に固定している
+    # (CLAUDE.md の落とし穴を参照)。dependabot が vite の major 更新 PR を
+    # 出した場合は override 撤去可否を必ず手動で確認すること。
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - infra
+    commit-message:
+      prefix: chore(ci)
+      include: scope

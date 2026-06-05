@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ゲーム本体 (REFLECTORBIT) の Issue
+    url: https://github.com/keroway/reflectorbit/issues
+    about: ゲーム本体の不具合・要望はこちら（LP ではなくゲームのバグ・仕様への意見）

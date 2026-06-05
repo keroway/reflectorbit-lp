@@ -57,6 +57,13 @@ npm run format     # Biome で format 適用
 順で同期させる。`@theme` トークンは `--color-rb-*` 命名で、Tailwind の `bg-rb-bg` /
 `text-rb-core` のように使う。
 
+## OGP 画像の生成
+
+`public/og-default.png` (1200×630) は `public/og-default.svg` から
+`scripts/gen-og.mjs` (sharp) で書き出す。デザインソース更新後は
+`npm run og:gen` を実行して PNG を更新しコミットする。
+CI では再生成しない（`npm run build` は PNG がコミット済み前提）。
+
 ## ビルド時の落とし穴（外さないこと）
 
 - **`package.json` の `overrides.vite` (`^7.3.5`)**: `@tailwindcss/vite@4.3.0` は放っておくと

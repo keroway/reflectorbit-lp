@@ -73,4 +73,4 @@ npm run format   # Biome で format 適用
 
 ## ライセンス
 
-未定（ゲーム本体のライセンス方針に合わせる）。
+[MIT License](./LICENSE)。ゲーム本体 [keroway/reflectorbit](https://github.com/keroway/reflectorbit) と同方針。

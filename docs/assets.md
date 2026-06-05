@@ -11,9 +11,11 @@ LP 制作で用意・収集が必要な素材のチェックリスト。
 
 ## SNS / メタ
 
-- [ ] OGP 画像（1200×630px、`/public/ogp.png`）
-- [ ] favicon（`/public/favicon.svg` または `.ico`）
-- [ ] サイトタイトル / description（OGP・`<meta>` 用）
+- [x] OGP 画像（1200×630px、`public/og-default.png`。デザインソースは `public/og-default.svg`、生成は `npm run og:gen`）
+- [x] favicon（`public/favicon.svg`）
+- [x] サイトタイトル / description（`src/layouts/Layout.astro` の props 既定値）
+- [x] `public/robots.txt`（`sitemap-index.xml` を参照）
+- [x] JSON-LD 構造化データ（`Layout.astro` で `VideoGame`）
 
 ## ブランドカラー（ゲーム本体に合わせる）
 

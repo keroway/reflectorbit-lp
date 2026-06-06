@@ -1,0 +1,30 @@
+---
+import { PLAY_URL } from '../consts';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="404 — 軌道を外れた | REFLECTORBIT"
+  description="お探しのページは軌道の外。トップに戻るか、ブラウザ版をその場でプレイできます。"
+>
+  <main
+    id="main-content"
+    class="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 text-center"
+  >
+    <p class="eyebrow">Error 404 — Off Orbit</p>
+    <p class="mt-4 font-mono text-7xl font-bold tracking-[0.1em] text-rb-core sm:text-8xl">
+      404
+    </p>
+    <h1 class="mt-4 text-3xl font-bold text-rb-shield sm:text-4xl">
+      軌道を外れた
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-rb-muted">
+      お探しのページは重力圏の外へ弾き飛ばされたようだ。
+      リンクが古いか、ページが移動した可能性があります。
+    </p>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <a class="btn-primary" href="/">&#8617; トップに戻る</a>
+      <a class="btn-ghost" href={PLAY_URL}>&#9654; ブラウザで遊ぶ</a>
+    </div>
+  </main>
+</Layout>

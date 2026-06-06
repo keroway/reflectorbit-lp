@@ -1,12 +1,88 @@
 ---
+import { PLAY_URL } from '../consts';
 ---
 
-{/* ===== Playable Demo (将来) ===== */}
+{/* ===== Playable Demo ===== */}
 <section id="demo" class="reveal scroll-mt-20 border-t border-white/5 py-24">
   <p class="eyebrow">Playable Demo</p>
-  <h2 class="mt-3 text-3xl font-bold text-rb-muted/60 sm:text-4xl">その場で試遊（準備中）</h2>
-  <div class="mt-8 flex aspect-video w-full items-center justify-center rounded-lg border border-dashed border-white/15 text-rb-muted/50">
-    WASM 版をここに埋め込み予定
+  <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">その場で試遊</h2>
+  <p class="mt-4 max-w-2xl text-rb-muted/80">
+    ブラウザ版をその場で起動。読み込みは「起動」を押したときだけ走るので、モバイルや低速回線でも軽い。
+  </p>
+
+  {/* aspect-video 枠を常に確保しレイアウトシフトを防ぐ */}
+  <div
+    id="demo-frame"
+    class="relative mt-8 aspect-video w-full overflow-hidden rounded-lg border border-white/15"
+    data-play-url={PLAY_URL}
+  >
+    {/* 起動前ファサード: クリックで初めて iframe を遅延ロードする */}
+    <button
+      type="button"
+      id="demo-launch"
+      class="group absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3 bg-rb-bg/60 text-rb-muted transition hover:bg-rb-bg/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-rb-core"
+    >
+      <span class="font-mono text-5xl text-rb-core transition group-hover:scale-110">&#9654;</span>
+      <span class="text-lg font-semibold">クリックして試遊を起動</span>
+      <span class="text-sm text-rb-muted/60">Space と Shift の 2 キー / Web 版はタッチも対応</span>
+    </button>
+
+    {/* 読み込み中プレースホルダ: 起動後 iframe の load まで表示 */}
+    <div
+      id="demo-loading"
+      hidden
+      class="absolute inset-0 flex items-center justify-center bg-rb-bg/70 text-rb-muted/70"
+    >
+      読み込み中…
+    </div>
   </div>
-  {/* TODO: WASM 版を <iframe> / <canvas> で埋め込み。reflectorbit.pages.dev のビルドを利用 */}
+
+  {/* 常設フォールバック: 埋め込みが動かない環境でもプレイページへ到達できる */}
+  <p class="mt-4 text-sm text-rb-muted/70">
+    うまく動かない場合は
+    <a
+      class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+      href={PLAY_URL}
+      target="_blank"
+      rel="noopener">ブラウザ版を別タブで開く</a>。
+  </p>
 </section>
+
+<script>
+  const frame = document.getElementById('demo-frame');
+  const launch = document.getElementById('demo-launch');
+  const loading = document.getElementById('demo-loading');
+  const playUrl = frame?.dataset.playUrl;
+
+  if (frame && launch && loading && playUrl) {
+    launch.addEventListener('click', () => {
+      launch.hidden = true;
+      loading.hidden = false;
+
+      const iframe = document.createElement('iframe');
+      iframe.src = playUrl;
+      iframe.title = 'REFLECTORBIT ブラウザ版 試遊';
+      iframe.className = 'absolute inset-0 h-full w-full border-0';
+      iframe.allow = 'autoplay; fullscreen; gamepad; accelerometer';
+
+      // load 完了でプレースホルダを消す。応答が遅い場合はフォールバック導線を出す。
+      let settled = false;
+      const fallbackTimer = window.setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        loading.innerHTML =
+          '読み込みに時間がかかっています。<a class="text-rb-core underline" href="' +
+          playUrl +
+          '" target="_blank" rel="noopener">別タブで開く</a>';
+      }, 8000);
+
+      iframe.addEventListener('load', () => {
+        settled = true;
+        window.clearTimeout(fallbackTimer);
+        loading.hidden = true;
+      });
+
+      frame.appendChild(iframe);
+    });
+  }
+</script>

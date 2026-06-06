@@ -6,7 +6,7 @@ LP 制作で用意・収集が必要な素材のチェックリスト。
 
 - [ ] タイトルロゴ（SVG 推奨。ベクター調に合わせる）
 - [ ] Hero 用スクリーンショット or ループ動画（プレイ中の反射シーン）
-- [ ] How to Play 用の操作図解（Space で縮小 / Shift で拡大の概念図）
+- [x] How to Play 用の操作図解（Space で縮小 / Shift で拡大の概念図、`src/pages/index.astro` にインライン SVG で実装）
 - [ ] ギャラリー用スクショ数枚（コンボ・GameOver・難易度選択など）
 
 ## SNS / メタ

@@ -1,0 +1,113 @@
+---
+---
+
+{/* ===== Concept ===== */}
+<section class="border-t border-white/5 py-24">
+  <p class="eyebrow">Concept</p>
+  <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">
+    「守る」だけでなく「反射して攻撃する」
+  </h2>
+  <p class="mt-6 max-w-2xl text-lg leading-relaxed">
+    中心の <span class="text-rb-core">Core</span> を周回する
+    <span class="text-rb-shield">Shield</span> を操り、重力に引かれて加速する
+    <span class="text-rb-meteor">Meteor</span> を反射。弾き返したメテオを画面外の
+    <span class="text-rb-danger">Spawner</span> にぶつけて破壊する——軌道アクション。
+  </p>
+  <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+    <li class="rounded-lg border border-white/5 p-5">
+      <span class="font-semibold text-rb-core">2 キー操作</span>で軌道半径を能動的にコントロール
+    </li>
+    <li class="rounded-lg border border-white/5 p-5">
+      「ただ防ぐ」ではなく<span class="font-semibold text-rb-shield">「反射 → 攻撃」</span>という能動的フック
+    </li>
+    <li class="rounded-lg border border-white/5 p-5">
+      連鎖（<span class="font-semibold text-rb-combo">誘爆コンボ</span>）による爽快感
+    </li>
+    <li class="rounded-lg border border-white/5 p-5">
+      可変軌道半径 &times; メテオ重力加速による「タイミングと距離感の二重読み合い」
+    </li>
+  </ul>
+
+  {/* コアフック図解: Shield が Meteor を Spawner へ反射する */}
+  <figure class="mt-10">
+    <svg
+      viewBox="0 0 400 240"
+      class="mx-auto block h-auto w-full max-w-2xl"
+      role="img"
+      aria-labelledby="concept-diagram-title concept-diagram-desc"
+    >
+      <title id="concept-diagram-title">コアフック図解</title>
+      <desc id="concept-diagram-desc">
+        中心の Core を周回する Shield が、飛来する Meteor を反射して画面外の Spawner にぶつけて破壊する流れ。
+      </desc>
+
+      {/* 軌道 (破線円): 中心 (170, 135) 半径 62 */}
+      <circle
+        cx="170"
+        cy="135"
+        r="62"
+        fill="none"
+        stroke="var(--color-rb-core)"
+        stroke-opacity="0.35"
+        stroke-width="1"
+        stroke-dasharray="3 4"
+      />
+
+      {/* Meteor の入射軌跡 (外から反射点 170,73 へ) */}
+      <path
+        d="M40 40 L170 73"
+        stroke="var(--color-rb-meteor)"
+        stroke-width="1.5"
+        stroke-dasharray="4 4"
+        fill="none"
+      />
+
+      {/* Shield → Spawner への反射軌跡 (170,73 から右上の Spawner へ) */}
+      <path
+        d="M170 73 L340 30"
+        stroke="var(--color-rb-shield)"
+        stroke-width="1.5"
+        stroke-dasharray="4 4"
+        fill="none"
+      />
+
+      {/* Shield 弧 (軌道上のマゼンタの弧、上端 215°→325° を通る) */}
+      <path
+        d="M119.2 99.4 A62 62 0 0 1 220.8 99.4"
+        fill="none"
+        stroke="var(--color-rb-shield)"
+        stroke-width="6"
+        stroke-linecap="round"
+      />
+
+      {/* 反射点で光る火花 (軌道の頂点) */}
+      <circle cx="170" cy="73" r="7" fill="var(--color-rb-spark)" fill-opacity="0.3" />
+      <circle cx="170" cy="73" r="3" fill="var(--color-rb-spark)" />
+
+      {/* Core */}
+      <circle cx="170" cy="135" r="20" fill="var(--color-rb-core)" fill-opacity="0.18" />
+      <circle cx="170" cy="135" r="10" fill="var(--color-rb-core)" />
+
+      {/* Meteor */}
+      <circle cx="40" cy="40" r="8" fill="var(--color-rb-meteor)" />
+
+      {/* Spawner (画面外の発生源) */}
+      <g>
+        <circle cx="345" cy="28" r="13" fill="none" stroke="var(--color-rb-danger)" stroke-width="2" />
+        <circle cx="345" cy="28" r="5" fill="var(--color-rb-danger)" />
+      </g>
+
+      {/* ラベル */}
+      <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">
+        <text x="170" y="225" fill="var(--color-rb-core)" text-anchor="middle">CORE</text>
+        <text x="170" y="55" fill="var(--color-rb-shield)" text-anchor="middle">SHIELD</text>
+        <text x="40" y="22" fill="var(--color-rb-meteor)" text-anchor="middle">METEOR</text>
+        <text x="345" y="60" fill="var(--color-rb-danger)" text-anchor="middle">SPAWNER</text>
+        <text x="260" y="62" fill="var(--color-rb-muted)" fill-opacity="0.7" text-anchor="middle">反射 →</text>
+      </g>
+    </svg>
+    <figcaption class="mt-3 text-center text-sm text-rb-muted/70">
+      Shield で Meteor を弾き、画面外の Spawner にぶつけて破壊する。
+    </figcaption>
+  </figure>
+</section>

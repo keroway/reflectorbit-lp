@@ -1,0 +1,22 @@
+---
+import { DOWNLOAD_URL, PLAY_URL } from '../consts';
+---
+
+{/* ===== Hero ===== */}
+<section class="flex min-h-screen flex-col items-center justify-center text-center">
+  <p class="eyebrow">Reflect &times; Orbit</p>
+  <h1 class="mt-4 text-5xl font-bold tracking-[0.15em] text-rb-core sm:text-7xl">
+    REFLECTORBIT
+  </h1>
+  <p class="mt-6 text-2xl font-semibold text-rb-shield sm:text-3xl">
+    弾くな、撃ち返せ。
+  </p>
+  <p class="mt-3 max-w-xl text-lg text-rb-muted">
+    2 キーで操る、軌道反射アクション。Space と Shift。たった 2 つで宇宙を弾く。
+  </p>
+  <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+    <a class="btn-primary" href={PLAY_URL}>&#9654; ブラウザで今すぐプレイ</a>
+    <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
+  </div>
+  {/* TODO: 反射シーンのループ動画 / スクショを背景に敷く (docs/assets.md) */}
+</section>

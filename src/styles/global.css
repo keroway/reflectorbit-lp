@@ -38,6 +38,13 @@ body {
   .eyebrow {
     @apply font-mono text-sm tracking-[0.3em] text-rb-core uppercase;
   }
+  /* skip-to-content: 通常は視覚的に隠し、キーボードフォーカス時だけ左上に可視化する */
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus {
+    @apply not-sr-only fixed top-4 left-4 z-50 rounded-md bg-rb-core px-4 py-2 font-semibold text-rb-bg outline-2 outline-offset-2 outline-rb-core;
+  }
 }
 
 /* アニメーションは控えめに。動きを抑える設定を尊重する。 */

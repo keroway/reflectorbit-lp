@@ -20,3 +20,29 @@ import Layout from '../layouts/Layout.astro';
     <SiteFooter />
   </main>
 </Layout>
+
+<script>
+  // スクロール連動 fade-in。reduced-motion 時は CSS 側で即表示になるため、ここでは一律に観測する。
+  const targets = document.querySelectorAll('.reveal');
+  if (targets.length > 0 && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12 },
+    );
+    for (const el of targets) {
+      observer.observe(el);
+    }
+  } else {
+    // IntersectionObserver 非対応環境では全件即表示
+    for (const el of targets) {
+      el.classList.add('is-visible');
+    }
+  }
+</script>

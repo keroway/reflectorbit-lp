@@ -3,7 +3,7 @@ import { controls } from '../consts';
 ---
 
 {/* ===== How to Play ===== */}
-<section id="how-to-play" class="scroll-mt-20 border-t border-white/5 py-24">
+<section id="how-to-play" class="reveal scroll-mt-20 border-t border-white/5 py-24">
   <p class="eyebrow">How to Play</p>
   <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">Space と Shift の 2 キー</h2>
   <div class="mt-8 overflow-hidden rounded-lg border border-white/10">
@@ -58,6 +58,7 @@ import { controls } from '../consts';
             stroke-opacity="0.5"
             stroke-width="1"
             stroke-dasharray="3 4"
+            class="animate-orbit-flow"
           />
           {/* 内向き矢印 (半径方向) */}
           <g stroke="var(--color-rb-core)" stroke-width="1.5" fill="none">
@@ -121,6 +122,7 @@ import { controls } from '../consts';
             stroke-opacity="0.5"
             stroke-width="1"
             stroke-dasharray="3 4"
+            class="animate-orbit-flow"
           />
           {/* 外向き矢印 (半径方向) */}
           <g stroke="var(--color-rb-shield)" stroke-width="1.5" fill="none">

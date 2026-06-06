@@ -1,0 +1,33 @@
+---
+// サイト内ナビ。JS なしの CSS アンカー + global.css の scroll-behavior でスムーズ遷移する。
+const links = [
+  { href: '#concept', label: 'Concept' },
+  { href: '#how-to-play', label: 'How to Play' },
+  { href: '#download', label: 'Download' },
+];
+---
+
+<header class="sticky top-0 z-40 border-b border-white/5 bg-rb-bg/80 backdrop-blur">
+  <nav
+    class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3"
+    aria-label="サイト内ナビゲーション"
+  >
+    <a
+      class="rounded-sm font-mono text-sm font-bold tracking-[0.2em] text-rb-core focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+      href="#top">REFLECTORBIT</a>
+    <ul class="flex gap-4 text-sm sm:gap-6">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              class="rounded-sm text-rb-muted/80 transition hover:text-rb-core focus-visible:text-rb-core focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+              href={l.href}
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

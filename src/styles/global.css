@@ -17,6 +17,11 @@
   --color-rb-muted: #cccccc; /* UI_COLOR_TEXT_SECONDARY  本文 */
 }
 
+/* アンカー遷移をスムーズに (reduced-motion 時は下の @media で無効化) */
+html {
+  scroll-behavior: smooth;
+}
+
 /* ダーク背景にシアン×マゼンタのうっすらしたネオングローを置く (装飾、控えめに) */
 body {
   background-color: var(--color-rb-bg);
@@ -49,6 +54,9 @@ body {
 
 /* アニメーションは控えめに。動きを抑える設定を尊重する。 */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;

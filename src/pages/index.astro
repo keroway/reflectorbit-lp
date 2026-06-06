@@ -5,10 +5,12 @@ import Hero from '../components/Hero.astro';
 import HowToPlay from '../components/HowToPlay.astro';
 import PlayableDemo from '../components/PlayableDemo.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import SiteNav from '../components/SiteNav.astro';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
+  <SiteNav />
   <main id="main-content" class="mx-auto max-w-5xl px-6">
     <Hero />
     <Concept />

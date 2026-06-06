@@ -52,6 +52,34 @@ body {
   }
 }
 
+/*
+ * スクロール連動の fade-in。
+ * JS 有効時のみ初期状態を隠す (.js は Layout の head で付与)。
+ * JS 無効時は常に表示されるため content が消えない。
+ * IntersectionObserver が .is-visible を付けて立ち上げる。
+ */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* SVG 軌道の流れ (破線が軌道上を控えめに流れる draw 風モーション) */
+@keyframes rb-orbit-flow {
+  to {
+    stroke-dashoffset: -7;
+  }
+}
+.animate-orbit-flow {
+  animation: rb-orbit-flow 2.5s linear infinite;
+}
+
 /* アニメーションは控えめに。動きを抑える設定を尊重する。 */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -60,5 +88,14 @@ body {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  /* reduced-motion 時は fade-in を無効化し、最初から表示する */
+  .js .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* 軌道の流れアニメも停止 */
+  .animate-orbit-flow {
+    animation: none !important;
   }
 }

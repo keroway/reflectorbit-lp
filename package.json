@@ -3,6 +3,14 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "homepage": "https://reflectorbit.pages.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keroway/reflectorbit-lp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/keroway/reflectorbit-lp/issues"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
@@ -25,6 +33,7 @@
     "typescript": "^6.0.3"
   },
   "overrides": {
-    "vite": "^7.3.5"
+    "vite": "^7.3.5",
+    "yaml": "^2.8.3"
   }
 }

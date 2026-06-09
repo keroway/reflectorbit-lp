@@ -16,7 +16,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 | Combo / Gold | `#FFE61A` | `--color-rb-combo` | `SHIELD_COLOR_HIGH_COMBO` (1.0, 0.9, 0.1) | 高揚・ハイライト・主 CTA 候補 |
 | Meteor / Orange | `#FF801A` | `--color-rb-meteor` | `METEOR_COLOR` (1.0, 0.5, 0.1) | 動き・暖色アクセント |
 | Spawner / Danger | `#E63333` | `--color-rb-danger` | `SPAWNER_COLOR` (0.9, 0.2, 0.2) | 危機・警告 |
-| Heavy / Violet | `#9919CC` | `--color-rb-violet` | `HEAVY_METEOR_COLOR` (0.6, 0.1, 0.8) | 深みの差し色 |
+| Heavy / Violet | `#991ACC` | `--color-rb-violet` | `HEAVY_METEOR_COLOR` (0.6, 0.1, 0.8) | 深みの差し色 |
 | Particle / Spark | `#FFCC4D` | `--color-rb-spark` | `PARTICLE_BURST_COLOR` (1.0, 0.8, 0.3) | 火花・微アクセント |
 | Background | `#0A0A0F` | `--color-rb-bg` | clear color (0.04, 0.04, 0.06) | ほぼ黒。サイトのベース背景 |
 | Text secondary | `#CCCCCC` | `--color-rb-muted` | `UI_COLOR_TEXT_SECONDARY` (0.8, 0.8, 0.8) | 本文・補助テキスト |

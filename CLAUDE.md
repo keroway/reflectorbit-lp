@@ -25,7 +25,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Lint / Format: **Biome**（`biome.json`）。対象は `*.ts` / `*.js` / `*.mjs` / `*.json` / `*.css`。
   `.astro` は Biome の整形対象外（テンプレートは手で整える）
 - ホスティング: **Cloudflare Pages**（ゲーム本体と同じ。GitHub 連携で main push 時に自動デプロイ。
-  Build command = `npm run build`、Build output = `dist/`）
+  Build command = `npm run build`、Build output = `dist/`）。
+  公開先は **LP = `reflectorbit-lp.pages.dev`**、**ゲーム本体 = `reflectorbit.pages.dev`** で別プロジェクト。
+  LP の「ブラウザで今すぐプレイ」リンク（`src/consts.ts` の `PLAY_URL`）はゲーム側 `reflectorbit.pages.dev` を指す。
+  混同しないこと。セットアップ手順は README「デプロイ（Cloudflare Pages）」節を参照
 
 ```sh
 npm run dev        # 開発サーバー (http://127.0.0.1:4321)
@@ -40,7 +43,7 @@ npm run format     # Biome で format 適用
 1 ページ完結。セクション構成は `docs/copy.md` / README に対応:
 **Hero → Concept → How to Play → Playable Demo（将来）→ Download → Footer**。
 
-- `astro.config.mjs` — `site`（`https://reflectorbit.pages.dev`）と Tailwind の Vite プラグイン、
+- `astro.config.mjs` — `site`（`https://reflectorbit-lp.pages.dev`）と Tailwind の Vite プラグイン、
   sitemap。Cloudflare Pages へは静的出力（`output` 既定）でデプロイするため `base` は付けない
   （ゲーム本体 LP の code-tactics-lp は GitHub Pages のサブパス配信で `base` が要るが、
   こちらは独立ドメイン配信なので不要）

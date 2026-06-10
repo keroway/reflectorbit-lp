@@ -5,8 +5,9 @@
 ゲーム本体は Zig + sokol-zig 製のベクター調反射アクションゲーム。
 この LP はゲームの世界観・操作・遊びどころを伝え、**ブラウザ版プレイ**と**ネイティブ版ダウンロード**へ誘導することを目的とする。
 
+- この LP（公開先）: <https://reflectorbit-lp.pages.dev>
 - ゲーム本体リポジトリ: <https://github.com/keroway/reflectorbit>
-- ブラウザで今すぐプレイ: <https://reflectorbit.pages.dev>
+- ブラウザで今すぐプレイ（ゲーム本体）: <https://reflectorbit.pages.dev>
 
 ## このリポジトリのゴール
 
@@ -40,6 +41,26 @@
 
 > 検討の経緯は当初 Astro / Vite+TS / 素の HTML を比較し、SSG・Cloudflare Pages 親和性・
 > WASM 埋め込みのしやすさから Astro に確定。雛形は同作者の code-tactics-lp に倣う。
+
+## デプロイ（Cloudflare Pages）
+
+公開先は **<https://reflectorbit-lp.pages.dev>**（ゲーム本体の `reflectorbit.pages.dev` とは
+別の Pages プロジェクト）。Cloudflare ダッシュボードの **GitHub Git 連携**で配信し、
+`main` への push をトリガーに自動でビルド・デプロイされる（CI 側にデプロイ設定は持たない）。
+
+初回セットアップ（Cloudflare ダッシュボードで一度だけ）:
+
+1. **Workers & Pages → Create → Pages → Connect to Git** を開く
+2. GitHub App に `keroway/reflectorbit-lp`（private）への権限を付与し、リポジトリを選択
+3. ビルド設定:
+   - **Project name**: `reflectorbit-lp`（= `reflectorbit-lp.pages.dev`）
+   - **Production branch**: `main`
+   - **Build command**: `npm run build`
+   - **Build output directory**: `dist`
+4. **Save and Deploy** → 初回ビルド後に公開。以降は `main` への push で自動再デプロイ
+
+> OGP・canonical・sitemap は `astro.config.mjs` の `site`（`https://reflectorbit-lp.pages.dev`）から
+> 生成される。独自ドメインに切り替える場合は `site` も合わせて更新する。
 
 ## セットアップ
 

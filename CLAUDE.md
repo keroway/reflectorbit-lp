@@ -41,16 +41,18 @@ npm run format     # Biome で format 適用
 ## アーキテクチャ
 
 1 ページ完結。セクション構成は `docs/copy.md` / README に対応:
-**Hero → Concept → How to Play → Playable Demo（将来）→ Download → Footer**。
+**Hero → Concept → How to Play → Playable Demo → Download → Footer**。
 
 - `astro.config.mjs` — `site`（`https://reflectorbit-lp.pages.dev`）と Tailwind の Vite プラグイン、
   sitemap。Cloudflare Pages へは静的出力（`output` 既定）でデプロイするため `base` は付けない
   （ゲーム本体 LP の code-tactics-lp は GitHub Pages のサブパス配信で `base` が要るが、
   こちらは独立ドメイン配信なので不要）
 - `src/layouts/Layout.astro` — `<head>` / meta / OGP / favicon
-- `src/pages/index.astro` — LP 本体（1 ページ）。Hero は実装済み、それ以外のセクションは
-  枠 + TODO のスケルトン。将来の WASM 試遊埋め込み（`<iframe>` / `<canvas>`）は
-  Playable Demo 枠が予定地
+- `src/pages/index.astro` — LP 本体（1 ページ）。全セクション
+  （Hero / Concept / HowToPlay / PlayableDemo / Download / SiteFooter）を組み立てる
+- `src/components/PlayableDemo.astro` — WASM 版（`reflectorbit.pages.dev`）を
+  `<iframe>` で埋め込む。クリック起動のファサード方式で初期負荷を抑制し、
+  読み込み遅延時は別タブ導線にフォールバックする
 
 ## デザイントークン（重要な制約）
 

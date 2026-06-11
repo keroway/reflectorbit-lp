@@ -48,7 +48,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 | Hero | 全画面に近いダーク背景＋反射シーンのビジュアル。タイトル（シアン）＋キャッチ＋主 CTA「▶ ブラウザで今すぐプレイ」 |
 | Concept | 「守る」だけでなく「反射→攻撃」のコアフックを 1〜2 文＋簡易図で |
 | How to Play | Space / Shift の 2 キー操作を対の図解で。P / ↑↓ は補足表で |
-| Playable Demo（将来） | WASM 版を `<iframe>` / `<canvas>` 埋め込み。今は枠のみ |
+| Playable Demo | WASM 版を `<iframe>` 埋め込み（`src/components/PlayableDemo.astro`）。クリック起動のファサード方式で初期負荷を抑制 |
 | Download | Linux / macOS / Windows の 3 バイナリへのリンク。未署名警告の注記 |
 | Footer | 本体リポジトリ・ライセンス・クレジット（制作: keroway） |
 

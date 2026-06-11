@@ -14,7 +14,7 @@
 1. ゲームの第一印象（ビジュアル・コンセプト）を 1 スクロールで伝える
 2. 「ブラウザで遊ぶ」「ダウンロード」への明確な CTA
 3. 操作方法・遊び方の最小限の説明
-4. （将来）WASM 版をページ内に埋め込んでその場で試遊できるようにする
+4. WASM 版をページ内に埋め込んでその場で試遊できる（Playable Demo セクションで実装済み）
 
 ## 想定セクション構成（ドラフト）
 
@@ -23,7 +23,7 @@
 | Hero | タイトルロゴ + キャッチコピー + 「今すぐプレイ」CTA |
 | Concept | 「反射して攻撃する」コアフックを 1〜2 文で |
 | How to Play | Space / Shift の 2 キー操作とルールの図解 |
-| Playable Demo（将来） | WASM 版をページ内 `<iframe>` / `<canvas>` で埋め込み |
+| Playable Demo | WASM 版（[reflectorbit.pages.dev](https://reflectorbit.pages.dev)）を `<iframe>` でページ内に遅延埋め込み |
 | Download | ネイティブ版（Linux / macOS / Windows）へのリンク |
 | Footer | 本体リポジトリ・ライセンス・クレジット |
 

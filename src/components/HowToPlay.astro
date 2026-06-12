@@ -35,8 +35,13 @@ import { controls } from '../consts';
           viewBox="0 0 200 160"
           class="mt-3 block h-auto w-full"
           role="img"
-          aria-label="Space キーで軌道半径を縮小すると角速度が上がる図"
+          aria-labelledby="space-diagram-title space-diagram-desc"
         >
+          <title id="space-diagram-title">SPACE キーで軌道半径を縮小する図</title>
+          <desc id="space-diagram-desc">
+            軌道半径 r が小さくなると、角運動量保存則 &#969; = L / r&sup2; により角速度 &#969; が増大し、Shield が速く回転する。
+          </desc>
+
           {/* 外側の元軌道 (薄い破線) */}
           <circle
             cx="100"
@@ -99,8 +104,13 @@ import { controls } from '../consts';
           viewBox="0 0 200 160"
           class="mt-3 block h-auto w-full"
           role="img"
-          aria-label="Shift キーで軌道半径を拡大すると角速度が下がる図"
+          aria-labelledby="shift-diagram-title shift-diagram-desc"
         >
+          <title id="shift-diagram-title">SHIFT キーで軌道半径を拡大する図</title>
+          <desc id="shift-diagram-desc">
+            軌道半径 r が大きくなると、角運動量保存則 &#969; = L / r&sup2; により角速度 &#969; が低下し、Shield がゆっくり回転する。
+          </desc>
+
           {/* 内側の元軌道 (薄い破線) */}
           <circle
             cx="100"

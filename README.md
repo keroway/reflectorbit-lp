@@ -51,7 +51,7 @@
 初回セットアップ（Cloudflare ダッシュボードで一度だけ）:
 
 1. **Workers & Pages → Create → Pages → Connect to Git** を開く
-2. GitHub App に `keroway/reflectorbit-lp`（private）への権限を付与し、リポジトリを選択
+2. GitHub App に `keroway/reflectorbit-lp` リポジトリへの権限を付与し、リポジトリを選択
 3. ビルド設定:
    - **Project name**: `reflectorbit-lp`（= `reflectorbit-lp.pages.dev`）
    - **Production branch**: `main`

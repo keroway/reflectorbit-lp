@@ -98,4 +98,8 @@ body {
   .animate-orbit-flow {
     animation: none !important;
   }
+  /* Hero 背景 SVG アニメーションを停止 */
+  .hero-svg * {
+    animation: none !important;
+  }
 }

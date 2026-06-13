@@ -1,7 +1,14 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": ["**", "!dist", "!.astro", "!**/*.astro", "!**/*.css"]
+    "includes": [
+      "**",
+      "!dist",
+      "!.astro",
+      "!.claude",
+      "!**/*.astro",
+      "!**/*.css"
+    ]
   },
   "formatter": {
     "enabled": true,

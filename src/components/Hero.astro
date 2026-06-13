@@ -2,21 +2,165 @@
 import { DOWNLOAD_URL, PLAY_URL } from '../consts';
 ---
 
-{/* ===== Hero ===== */}
-<section id="top" class="flex min-h-screen flex-col items-center justify-center text-center">
-  <p class="eyebrow">Reflect &times; Orbit</p>
-  <h1 class="mt-4 text-5xl font-bold tracking-[0.15em] text-rb-core sm:text-7xl">
-    REFLECTORBIT
-  </h1>
-  <p class="mt-6 text-2xl font-semibold text-rb-shield sm:text-3xl">
-    弾くな、撃ち返せ。
-  </p>
-  <p class="mt-3 max-w-xl text-lg text-rb-muted">
-    2 キーで操る、軌道反射アクション。Space と Shift。たった 2 つで宇宙を弾く。
-  </p>
-  <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-    <a class="btn-primary" href={PLAY_URL}>&#9654; ブラウザで今すぐプレイ</a>
-    <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
+<section id="top" class="relative flex min-h-screen flex-col items-center justify-center text-center">
+  <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <svg
+      class="hero-svg h-full w-full"
+      viewBox="0 0 800 600"
+      preserveAspectRatio="xMidYMid slice"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <ellipse
+        cx="400"
+        cy="300"
+        rx="180"
+        ry="90"
+        fill="none"
+        stroke="#33e6ff"
+        stroke-width="1"
+        stroke-dasharray="6 3"
+        opacity="0.3"
+      />
+
+      <ellipse
+        cx="400"
+        cy="300"
+        rx="260"
+        ry="130"
+        fill="none"
+        stroke="#33e6ff"
+        stroke-width="0.8"
+        stroke-dasharray="4 5"
+        opacity="0.15"
+      />
+
+      <circle cx="400" cy="300" r="6" fill="#33e6ff" opacity="0.5">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0 400 300"
+          to="360 400 300"
+          dur="8s"
+          repeatCount="indefinite"
+        />
+      </circle>
+
+      <circle cx="400" cy="300" r="2.5" fill="#33e6ff" opacity="0.25">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="180 400 300"
+          to="540 400 300"
+          dur="8s"
+          repeatCount="indefinite"
+        />
+      </circle>
+
+      <circle cx="400" cy="300" r="4" fill="#ff33cc" opacity="0.4">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="90 400 300"
+          to="450 400 300"
+          dur="12s"
+          repeatCount="indefinite"
+        />
+      </circle>
+
+      <line
+        x1="650"
+        y1="80"
+        x2="460"
+        y2="240"
+        stroke="#ff801a"
+        stroke-width="1.5"
+        stroke-dasharray="6 3"
+        opacity="0"
+      >
+        <animate attributeName="opacity" values="0;0.45;0.45;0" keyTimes="0;0.1;0.7;1" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="460;420;420;460" keyTimes="0;0.1;0.7;1" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="240;260;260;240" keyTimes="0;0.1;0.7;1" dur="5s" repeatCount="indefinite" />
+      </line>
+
+      <circle cx="650" cy="80" r="5" fill="#ff801a" opacity="0">
+        <animate attributeName="opacity" values="0;0.5;0.5;0" keyTimes="0;0.05;0.65;0.75" dur="5s" repeatCount="indefinite" />
+        <animateTransform
+          attributeName="transform"
+          type="translate"
+          values="0,0; -190,180; -190,180; -190,180"
+          keyTimes="0;0.1;0.7;1"
+          dur="5s"
+          repeatCount="indefinite"
+        />
+      </circle>
+
+      <line
+        x1="420"
+        y1="260"
+        x2="550"
+        y2="420"
+        stroke="#ff801a"
+        stroke-width="1.2"
+        stroke-dasharray="5 4"
+        opacity="0"
+      >
+        <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.1;0.2;0.75;0.85" dur="5s" repeatCount="indefinite" />
+      </line>
+
+      <circle cx="420" cy="260" r="10" fill="none" stroke="#ff33cc" stroke-width="1.5" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.5;0" keyTimes="0;0.09;0.15;0.3" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="r" values="10;10;18;24" keyTimes="0;0.09;0.15;0.3" dur="5s" repeatCount="indefinite" />
+      </circle>
+
+      <circle cx="455" cy="330" r="2" fill="#ffe61a" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.6;0" keyTimes="0;0.12;0.2;0.35" dur="5s" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,0;-15,20;-25,35" keyTimes="0;0.12;0.2;0.35" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="430" cy="250" r="1.5" fill="#ffe61a" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.5;0" keyTimes="0;0.12;0.22;0.38" dur="5s" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,0;18,-12;30,-22" keyTimes="0;0.12;0.22;0.38" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="415" cy="270" r="1.5" fill="#ffe61a" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.55;0" keyTimes="0;0.13;0.21;0.36" dur="5s" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,0;-20,-8;-32,-14" keyTimes="0;0.13;0.21;0.36" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="440" cy="245" r="1" fill="#ff33cc" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.4;0" keyTimes="0;0.13;0.22;0.37" dur="5s" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,0;10,-18;16,-30" keyTimes="0;0.13;0.22;0.37" dur="5s" repeatCount="indefinite" />
+      </circle>
+
+      <circle cx="120" cy="480" r="1.5" fill="#33e6ff" opacity="0">
+        <animate attributeName="opacity" values="0;0.35;0;0.35;0" dur="4.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="680" cy="150" r="1" fill="#ffe61a" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0.3;0" dur="3.7s" begin="1s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="700" cy="480" r="1.5" fill="#ff33cc" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0.3;0" dur="5.1s" begin="2.3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="100" cy="160" r="1" fill="#33e6ff" opacity="0">
+        <animate attributeName="opacity" values="0;0.25;0;0.25;0" dur="6s" begin="0.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="580" cy="530" r="1.2" fill="#ffe61a" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0.3;0" dur="4.8s" begin="1.6s" repeatCount="indefinite" />
+      </circle>
+    </svg>
   </div>
-  {/* TODO: 反射シーンのループ動画 / スクショを背景に敷く (docs/assets.md) */}
+
+  <div class="relative z-10 flex flex-col items-center text-center">
+    <p class="eyebrow">Reflect &times; Orbit</p>
+    <h1 class="mt-4 text-5xl font-bold tracking-[0.15em] text-rb-core sm:text-7xl">
+      REFLECTORBIT
+    </h1>
+    <p class="mt-6 text-2xl font-semibold text-rb-shield sm:text-3xl">
+      弾くな、撃ち返せ。
+    </p>
+    <p class="mt-3 max-w-xl text-lg text-rb-muted">
+      2 キーで操る、軌道反射アクション。Space と Shift。たった 2 つで宇宙を弾く。
+    </p>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <a class="btn-primary" href={PLAY_URL}>&#9654; ブラウザで今すぐプレイ</a>
+      <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
+    </div>
+  </div>
 </section>

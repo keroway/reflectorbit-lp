@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "packageManager": "npm@11.9.0",
   "homepage": "https://reflectorbit.pages.dev",
   "repository": {
     "type": "git",

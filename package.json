@@ -13,7 +13,8 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro build",
+    "typecheck": "astro check",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "biome check .",

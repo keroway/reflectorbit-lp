@@ -20,7 +20,8 @@
     "astro": "astro",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "og:gen": "node scripts/gen-og.mjs"
+    "og:gen": "node scripts/gen-og.mjs",
+    "smoke": "playwright test"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@biomejs/biome": "^2.5.0",
+    "@playwright/test": "^1.61.0",
     "sharp": "^0.35.1",
     "typescript": "^6.0.3"
   },

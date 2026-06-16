@@ -28,5 +28,9 @@ pnpm-debug.log*
 !.vscode/extensions.json
 *.swp
 
+# Playwright
+test-results/
+playwright-report/
+
 # Claude Code
 .claude/

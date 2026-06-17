@@ -21,7 +21,8 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "og:gen": "node scripts/gen-og.mjs",
-    "smoke": "playwright test"
+    "smoke": "playwright test tests/smoke.test.ts",
+    "smoke:a11y": "playwright test tests/a11y.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@axe-core/playwright": "^4.11.3",
     "@biomejs/biome": "^2.5.0",
     "@playwright/test": "^1.61.0",
     "sharp": "^0.35.1",

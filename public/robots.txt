@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://reflectorbit.pages.dev/sitemap-index.xml
+Sitemap: https://reflectorbit-lp.pages.dev/sitemap-index.xml

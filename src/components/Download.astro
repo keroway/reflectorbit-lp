@@ -1,5 +1,10 @@
 ---
-import { DOWNLOAD_URL, downloads } from '../consts';
+import {
+  DOWNLOAD_URL,
+  PLAY_URL,
+  RELEASE_AVAILABLE,
+  downloads,
+} from '../consts';
 ---
 
 {/* ===== Download ===== */}
@@ -16,8 +21,28 @@ import { DOWNLOAD_URL, downloads } from '../consts';
       ))
     }
   </ul>
-  <a class="btn-primary mt-8 inline-block" href={DOWNLOAD_URL}>最新リリースを見る</a>
-  <p class="mt-4 text-sm text-rb-muted/70">
-    ※ 配布バイナリは未署名のため初回起動時に OS 警告が出る場合がある（手順は本体 README 参照）。
-  </p>
+  {
+    RELEASE_AVAILABLE ? (
+      <>
+        <a class="btn-primary mt-8 inline-block" href={DOWNLOAD_URL}>最新リリースを見る</a>
+        <p class="mt-4 text-sm text-rb-muted/70">
+          ※ 配布バイナリは未署名のため初回起動時に OS 警告が出る場合がある（手順は本体 README 参照）。
+        </p>
+      </>
+    ) : (
+      <>
+        <span
+          class="btn-primary mt-8 inline-block cursor-not-allowed opacity-60"
+          aria-disabled="true"
+          title="本体リリース公開後に有効化されます">
+          最新リリースを見る（近日公開）
+        </span>
+        <p class="mt-4 text-sm text-rb-muted/70">
+          ネイティブ版は近日公開予定。今は
+          <a class="underline hover:text-rb-core" href={PLAY_URL}>ブラウザ版</a>
+          で遊べる。
+        </p>
+      </>
+    )
+  }
 </section>

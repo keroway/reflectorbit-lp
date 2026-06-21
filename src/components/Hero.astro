@@ -1,5 +1,5 @@
 ---
-import { DOWNLOAD_URL, PLAY_URL } from '../consts';
+import { DOWNLOAD_URL, PLAY_URL, RELEASE_AVAILABLE } from '../consts';
 ---
 
 <section id="top" class="relative flex min-h-screen flex-col items-center justify-center text-center">
@@ -160,7 +160,18 @@ import { DOWNLOAD_URL, PLAY_URL } from '../consts';
     </p>
     <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
       <a class="btn-primary" href={PLAY_URL}>&#9654; ブラウザで今すぐプレイ</a>
-      <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
+      {
+        RELEASE_AVAILABLE ? (
+          <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
+        ) : (
+          <span
+            class="btn-ghost cursor-not-allowed opacity-60"
+            aria-disabled="true"
+            title="本体リリース公開後に有効化されます">
+            ネイティブ版（近日公開）
+          </span>
+        )
+      }
     </div>
   </div>
 </section>

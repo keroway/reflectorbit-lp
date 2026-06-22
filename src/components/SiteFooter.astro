@@ -1,5 +1,10 @@
 ---
-import { PLAY_URL, REPO_URL } from '../consts';
+import { PLAY_URL, RELEASE_AVAILABLE, REPO_FALLBACK_URL, REPO_URL } from '../consts';
+
+// 本体リポは公開までは到達不能 URL を踏ませない。
+// 公開前は作者アカウント（200 OK）へフォールバックさせる。
+const repoHref = RELEASE_AVAILABLE ? REPO_URL : REPO_FALLBACK_URL;
+const repoLabel = RELEASE_AVAILABLE ? 'ゲーム本体リポジトリ' : '制作者 GitHub';
 ---
 
 {/* ===== Footer ===== */}
@@ -9,7 +14,7 @@ import { PLAY_URL, REPO_URL } from '../consts';
     <nav class="flex gap-6">
       <a
         class="rounded-sm hover:text-rb-core focus-visible:text-rb-core focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
-        href={REPO_URL}>ゲーム本体リポジトリ</a>
+        href={repoHref}>{repoLabel}</a>
       <a
         class="rounded-sm hover:text-rb-core focus-visible:text-rb-core focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
         href={PLAY_URL}>ブラウザで遊ぶ</a>

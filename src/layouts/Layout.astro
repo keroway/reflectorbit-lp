@@ -8,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = 'REFLECTORBIT — 2 キーで操る軌道反射アクション',
-  description = '中心の Core を周回する Shield でメテオを反射し、敵 Spawner を破壊する軌道アクション。Space と Shift の 2 キー操作。ブラウザで今すぐプレイ。',
+  title = 'REFLECTORBIT — 軌道反射アクション',
+  description = '中心の Core を周回する Shield でメテオを反射し、敵 Spawner を破壊する軌道アクション。←/→ で回転、Space/Shift で軌道半径——3 キー操作。ブラウザで今すぐプレイ。',
 } = Astro.props;
 
 // canonical / OGP は site + 現在パスから生成 (site 未設定時は undefined)
@@ -92,7 +92,7 @@ if (RELEASE_AVAILABLE) {
           <meta property="og:image:type" content="image/png" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="REFLECTORBIT — 2 キーで操る軌道反射アクション" />
+          <meta property="og:image:alt" content="REFLECTORBIT — 軌道反射アクション" />
         </>
       )
     }

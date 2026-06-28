@@ -9,6 +9,10 @@ export const REPO_URL = 'https://github.com/keroway/reflectorbit';
 
 // 操作方法 (docs/copy.md の How to Play より)
 export const controls = [
+  {
+    key: '← / →',
+    desc: 'Shield を反時計 / 時計回りに回転（手動回転・離すと停止）',
+  },
   { key: 'Space', desc: '軌道半径を縮小（角速度が上がる）' },
   { key: 'Shift', desc: '軌道半径を拡大（角速度が下がる）' },
   { key: 'P', desc: 'ポーズ / 再開' },

@@ -164,3 +164,31 @@ import { DOWNLOAD_URL, PLAY_URL } from '../consts';
     </div>
   </div>
 </section>
+
+<script>
+  /*
+   * Hero 背景 SVG の SMIL アニメーションを prefers-reduced-motion に応じて制御する。
+   * CSS animation/transition は global.css の @media (prefers-reduced-motion: reduce) で
+   * 場を収めているが、SMIL（<animate> / <animateTransform>）は CSS では制御できないため
+   * JS の pauseAnimations() / unpauseAnimations() で制御する。
+   */
+  const heroSvg = document.querySelector<SVGSVGElement>('.hero-svg');
+
+  if (heroSvg) {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function applyMotionPreference(reduced: boolean) {
+      if (reduced) {
+        heroSvg!.pauseAnimations();
+      } else {
+        heroSvg!.unpauseAnimations();
+      }
+    }
+
+    // 初期状態を即時チェック
+    applyMotionPreference(mq.matches);
+
+    // OS 設定の変更をリアルタイムに規指
+    mq.addEventListener('change', (e) => applyMotionPreference(e.matches));
+  }
+</script>

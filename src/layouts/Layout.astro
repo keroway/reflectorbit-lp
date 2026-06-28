@@ -1,4 +1,5 @@
 ---
+import { PLAY_URL, RELEASE_AVAILABLE, REPO_FALLBACK_URL, REPO_URL } from '../consts';
 import '../styles/global.css';
 
 interface Props {
@@ -22,7 +23,12 @@ const ogImage = Astro.site
 // JSON-LD: ゲーム本体 (Zig 製ネイティブ + WebAssembly ブラウザ版) を VideoGame として記述。
 // ブラウザ版のプレイ URL は playMode → SinglePlayer / gamePlatform で示す。
 // 出所は docs/copy.md と本体リポジトリ (https://github.com/keroway/reflectorbit)。
-const jsonLd = {
+//
+// 本体リポは初回リリース公開まで非公開のため、`sameAs` と `offers` は
+// RELEASE_AVAILABLE フラグに連動させる。
+//   - 非公開時: sameAs は作者アカウント (200 OK) のみ。offers は到達不能 URL を載せないため省略。
+//   - 公開後 (RELEASE_AVAILABLE=true): sameAs に本体リポを含め、offers をブラウザ版プレイ URL で InStock として復活。
+const jsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': 'VideoGame',
   name: 'REFLECTORBIT',
@@ -45,15 +51,18 @@ const jsonLd = {
     name: 'keroway',
     url: 'https://github.com/keroway',
   },
-  sameAs: ['https://github.com/keroway/reflectorbit'],
-  offers: {
+  sameAs: RELEASE_AVAILABLE ? [REPO_URL] : [REPO_FALLBACK_URL],
+};
+
+if (RELEASE_AVAILABLE) {
+  jsonLd.offers = {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'JPY',
     availability: 'https://schema.org/InStock',
-    url: 'https://reflectorbit.pages.dev',
-  },
-};
+    url: PLAY_URL,
+  };
+}
 ---
 
 <!doctype html>

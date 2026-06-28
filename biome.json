@@ -6,6 +6,7 @@
       "!dist",
       "!.astro",
       "!.claude",
+      "!.pi",
       "!**/*.astro",
       "!**/*.css",
       "!test-results"
@@ -20,7 +21,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended"
     }
   },
   "assist": {

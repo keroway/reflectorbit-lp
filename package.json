@@ -27,19 +27,20 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.3.1",
-    "astro": "^6.4.6",
+    "astro": "^6.4.8",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@axe-core/playwright": "^4.11.3",
-    "@biomejs/biome": "^2.5.0",
-    "@playwright/test": "^1.61.0",
-    "sharp": "^0.35.1",
+    "@biomejs/biome": "^2.5.1",
+    "@playwright/test": "^1.61.1",
+    "sharp": "^0.35.2",
     "typescript": "^6.0.3"
   },
   "overrides": {
     "vite": "^7.3.5",
-    "yaml": "^2.8.3"
+    "yaml": "^2.8.3",
+    "esbuild": ">=0.28.1"
   }
 }

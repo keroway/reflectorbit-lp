@@ -10,21 +10,22 @@
   <p class="mt-6 max-w-2xl text-lg leading-relaxed">
     中心の <span class="text-rb-core">Core</span> を周回する
     <span class="text-rb-shield">Shield</span> を操り、重力に引かれて加速する
-    <span class="text-rb-meteor">Meteor</span> を反射。弾き返したメテオを画面外の
-    <span class="text-rb-danger">Spawner</span> にぶつけて破壊する——軌道アクション。
+    <span class="text-rb-meteor">Meteor</span> を反射。弾き返したメテオは
+    <span class="font-semibold text-rb-reflected">緑（味方色）</span>に変わり、画面外の
+    <span class="text-rb-danger">Spawner</span> を攻撃・破壊する——軌道アクション。
   </p>
   <ul class="mt-8 grid gap-4 sm:grid-cols-2">
     <li class="rounded-lg border border-white/5 p-5">
       <span class="font-semibold text-rb-core">←/→ で回転、Space/Shift で半径</span>——3 キーで軌道を能動的にコントロール
     </li>
     <li class="rounded-lg border border-white/5 p-5">
-      「ただ防ぐ」ではなく<span class="font-semibold text-rb-shield">「反射 → 攻撃」</span>という能動的フック
+      反射した弾は<span class="font-semibold text-rb-reflected">味方色（緑）に変色</span>——「防御 → 攻撃」への転換が視覚でわかる
     </li>
     <li class="rounded-lg border border-white/5 p-5">
-      連鎖（<span class="font-semibold text-rb-combo">誘爆コンボ</span>）による爽快感
+      <span class="font-semibold text-rb-combo">内周ほど高スコア</span>（最大 2.2×）。攻めるほど報われるリスクリワード設計
     </li>
     <li class="rounded-lg border border-white/5 p-5">
-      可変軌道半径 &times; メテオ重力加速による「タイミングと距離感の二重読み合い」
+      最適反射で発動する <span class="font-semibold text-rb-perfect">PERFECT REFLECT</span> でボーナス＆連鎖コンボ
     </li>
   </ul>
 
@@ -38,7 +39,7 @@
     >
       <title id="concept-diagram-title">コアフック図解</title>
       <desc id="concept-diagram-desc">
-        中心の Core を周回する Shield が、飛来する Meteor を反射して画面外の Spawner にぶつけて破壊する流れ。
+        中心の Core を周回する Shield が、飛来する Meteor を反射。反射後のメテオは緑（味方色）に変わり、Spawner を攻撃・破壊する流れ。
       </desc>
 
       {/* 軌道 (破線円): 中心 (170, 135) 半径 62。破線が軌道上を控えめに流れる */}
@@ -63,10 +64,10 @@
         fill="none"
       />
 
-      {/* Shield → Spawner への反射軌跡 (170,73 から右上の Spawner へ) */}
+      {/* 反射後の軌跡 (170,73 から右上の Spawner へ)。反射済み緑で味方化を表現 */}
       <path
         d="M170 73 L340 30"
-        stroke="var(--color-rb-shield)"
+        stroke="var(--color-rb-reflected)"
         stroke-width="1.5"
         stroke-dasharray="4 4"
         fill="none"
@@ -104,11 +105,11 @@
         <text x="170" y="55" fill="var(--color-rb-shield)" text-anchor="middle">SHIELD</text>
         <text x="40" y="22" fill="var(--color-rb-meteor)" text-anchor="middle">METEOR</text>
         <text x="345" y="60" fill="var(--color-rb-danger)" text-anchor="middle">SPAWNER</text>
-        <text x="260" y="62" fill="var(--color-rb-muted)" fill-opacity="0.7" text-anchor="middle">反射 →</text>
+        <text x="260" y="62" fill="var(--color-rb-reflected)" fill-opacity="0.85" text-anchor="middle">反射 → 味方化</text>
       </g>
     </svg>
     <figcaption class="mt-3 text-center text-sm text-rb-muted/70">
-      Shield で Meteor を弾き、画面外の Spawner にぶつけて破壊する。
+      Shield で弾き返した Meteor は<span class="text-rb-reflected">味方色（緑）に変色</span>し、Spawner を攻撃・破壊する。
     </figcaption>
   </figure>
 </section>

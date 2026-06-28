@@ -15,6 +15,10 @@
   --color-rb-spark: #ffcc4d; /* PARTICLE_BURST_COLOR  火花 */
   --color-rb-bg: #0a0a0f; /* clear color  ベース背景 */
   --color-rb-muted: #cccccc; /* UI_COLOR_TEXT_SECONDARY  本文 */
+  /* 本体で追加された新エンティティ色（反射・PERFECT・高速）。#60 で同期 */
+  --color-rb-reflected: #80ff4d; /* REFLECTED_METEOR_COLOR (0.5,1.0,0.3)  反射済み: 黄緑（味方化） */
+  --color-rb-perfect: #33ffe6; /* PERFECT_METEOR_COLOR (0.2,1.0,0.9)  PERFECT反射済み: 鮮やかシアン */
+  --color-rb-fast: #4dffff; /* FAST_METEOR_COLOR (0.3,1.0,1.0)  高速メテオ: 水色シアン */
 }
 
 /* アンカー遷移をスムーズに (reduced-motion 時は下の @media で無効化) */

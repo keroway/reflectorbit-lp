@@ -20,6 +20,10 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 | Particle / Spark | `#FFCC4D` | `--color-rb-spark` | `PARTICLE_BURST_COLOR` (1.0, 0.8, 0.3) | 火花・微アクセント |
 | Background | `#0A0A0F` | `--color-rb-bg` | clear color (0.04, 0.04, 0.06) | ほぼ黒。サイトのベース背景 |
 | Text secondary | `#CCCCCC` | `--color-rb-muted` | `UI_COLOR_TEXT_SECONDARY` (0.8, 0.8, 0.8) | 本文・補助テキスト |
+| Reflected / Green | `#80FF4D` | `--color-rb-reflected` | `REFLECTED_METEOR_COLOR` (0.5, 1.0, 0.3) | 反射済み弾の味方化（黄緑）。コアフックの視覚表現 |
+| Perfect / Cyan | `#33FFE6` | `--color-rb-perfect` | `PERFECT_METEOR_COLOR` (0.2, 1.0, 0.9) | PERFECT 反射済み弾（鮮やかシアン）|
+| Fast / Aqua | `#4DFFFF` | `--color-rb-fast` | `FAST_METEOR_COLOR` (0.3, 1.0, 1.0) | 高速メテオ（水色シアン）|
+| Trail Reflected | `#33CCFF` | — | `TRAIL_REFLECTED_COLOR` (0.2, 0.8, 1.0) | 反射後トレイル（水色）。図解参照用。表のみ記載 |
 
 **象徴アイデンティティ**: シアン `#33E6FF` × マゼンタ `#FF33CC` の対比。CTA や見出しはこの 2 色＋
 ゴールド `#FFE61A` を軸にする。Core 被弾時に背景が赤くフラッシュする演出（`#0A0A0F` → 赤寄り）が

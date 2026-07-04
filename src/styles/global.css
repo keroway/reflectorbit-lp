@@ -6,7 +6,8 @@
  * 色を足す・変えるときは constants.zig → docs/design.md → この @theme の順で同期する。
  */
 @theme {
-  --color-rb-core: #33e6ff; /* CORE_COLOR  シアン / primary */
+  /* M17 役割別パレット統一（Issue #414/#415）で Core・Fast・PERFECT が再配色された。#77 で同期 */
+  --color-rb-core: #adbdff; /* CORE_COLOR (0.68,0.74,1.0)  ブルーバイオレット / primary。旧シアンから変更 */
   --color-rb-shield: #ff33cc; /* SHIELD_COLOR  マゼンタ / secondary */
   --color-rb-combo: #ffe61a; /* SHIELD_COLOR_HIGH_COMBO  ゴールド */
   --color-rb-meteor: #ff801a; /* METEOR_COLOR  オレンジ */
@@ -15,10 +16,10 @@
   --color-rb-spark: #ffcc4d; /* PARTICLE_BURST_COLOR  火花 */
   --color-rb-bg: #0a0a0f; /* clear color  ベース背景 */
   --color-rb-muted: #cccccc; /* UI_COLOR_TEXT_SECONDARY  本文 */
-  /* 本体で追加された新エンティティ色（反射・PERFECT・高速）。#60 で同期 */
-  --color-rb-reflected: #80ff4d; /* REFLECTED_METEOR_COLOR (0.5,1.0,0.3)  反射済み: 黄緑（味方化） */
-  --color-rb-perfect: #33ffe6; /* PERFECT_METEOR_COLOR (0.2,1.0,0.9)  PERFECT反射済み: 鮮やかシアン */
-  --color-rb-fast: #4dffff; /* FAST_METEOR_COLOR (0.3,1.0,1.0)  高速メテオ: 水色シアン */
+  --color-rb-reflected: #4dff8c; /* REFLECTED_METEOR_COLOR (0.30,1.0,0.55)  反射済み: エメラルド（味方化）。旧黄緑から変更 */
+  --color-rb-perfect: #9eff29; /* PERFECT_METEOR_COLOR (0.62,1.0,0.16)  PERFECT反射済み: ライム。旧シアンから変更（Core/Fastとの色衝突解消） */
+  --color-rb-fast: #ff2e1f; /* FAST_METEOR_COLOR (1.0,0.18,0.12)  高速メテオ: 警戒の赤橙。旧水色シアンから変更 */
+  --color-rb-arc: #e6e61a; /* ARC_METEOR_COLOR (0.9,0.9,0.1)  Arc（曲がる）メテオ: ゴールド黄。M13 で追加された新メテオ種 */
 }
 
 /* アンカー遷移をスムーズに (reduced-motion 時は下の @media で無効化) */
@@ -26,7 +27,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ダーク背景にシアン×マゼンタのうっすらしたネオングローを置く (装飾、控えめに) */
+/* ダーク背景に Core(ブルーバイオレット)×Shield(マゼンタ)のうっすらしたネオングローを置く (装飾、控えめに) */
 body {
   background-color: var(--color-rb-bg);
   background-image:
@@ -36,7 +37,7 @@ body {
 }
 
 @layer components {
-  /* 主 CTA = シアン (Core)。象徴色を前面に */
+  /* 主 CTA = Core ブルーバイオレット。象徴色を前面に */
   .btn-primary {
     @apply rounded-md bg-rb-core px-6 py-3 font-semibold text-rb-bg transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core;
   }

@@ -1,0 +1,50 @@
+---
+// 本体 assets/press/screenshot-{title,playing,gameover}.png（#411）を
+// public/screenshots/ にコピーして使用。本体で差し替わったら同じ手順で更新する。
+const shots = [
+  {
+    src: '/screenshots/screenshot-title.png',
+    alt: 'タイトル画面。カーソル選択式メニュー（GAME START / MODE & DIFFICULTY / HOW TO PLAY / SETTINGS / CREDITS）とアンビエントな星空背景',
+    caption: 'タイトル画面',
+  },
+  {
+    src: '/screenshots/screenshot-playing.png',
+    alt: 'プレイ中の画面。Core を周回する Shield が Meteor を反射し、HUD に STAGE / LEFT / COMBO / RISK 倍率を表示',
+    caption: 'プレイ中',
+  },
+  {
+    src: '/screenshots/screenshot-gameover.png',
+    alt: 'GAME OVER 画面。スコアとローカルの TOP SCORES ランキングを表示',
+    caption: 'GAME OVER',
+  },
+];
+---
+
+{/* ===== Screenshots ===== */}
+<section id="screenshots" class="reveal scroll-mt-20 border-t border-white/5 py-24">
+  <p class="eyebrow">Screenshots</p>
+  <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">実際の画面</h2>
+  <p class="mt-4 max-w-2xl text-rb-muted/80">
+    ダーク背景×ネオン発光のベクター表現。反射のたびに弾け飛ぶ Meteor と HUD の情報を、実プレイ画面でそのまま確認できる。
+  </p>
+  <div class="mt-8 grid gap-6 sm:grid-cols-3">
+    {
+      shots.map((shot) => (
+        <figure class="overflow-hidden rounded-lg border border-white/10">
+          <img
+            src={shot.src}
+            alt={shot.alt}
+            width="1280"
+            height="720"
+            loading="lazy"
+            decoding="async"
+            class="block h-auto w-full"
+          />
+          <figcaption class="border-t border-white/5 px-3 py-2 text-center text-sm text-rb-muted/70">
+            {shot.caption}
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>

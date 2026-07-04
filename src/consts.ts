@@ -30,7 +30,10 @@ export const controls = [
   { key: 'Space', desc: '軌道半径を縮小（角速度が上がる）' },
   { key: 'Shift', desc: '軌道半径を拡大（角速度が下がる）' },
   { key: 'P', desc: 'ポーズ / 再開' },
-  { key: '↑ / ↓', desc: 'タイトルで難易度選択' },
+  {
+    key: '↑ / ↓',
+    desc: 'タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では ←/→ で Stage/Endless/Daily を切替）',
+  },
 ];
 
 // ダウンロード (docs/copy.md の Download より)

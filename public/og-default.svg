@@ -6,8 +6,8 @@
   -->
   <defs>
     <radialGradient id="bgGlowCore" cx="22%" cy="40%" r="55%">
-      <stop offset="0%" stop-color="#33e6ff" stop-opacity="0.28"/>
-      <stop offset="100%" stop-color="#33e6ff" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#adbdff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#adbdff" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="bgGlowShield" cx="85%" cy="80%" r="50%">
       <stop offset="0%" stop-color="#ff33cc" stop-opacity="0.22"/>
@@ -15,8 +15,8 @@
     </radialGradient>
     <radialGradient id="coreFill" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#e6faff"/>
-      <stop offset="55%" stop-color="#33e6ff"/>
-      <stop offset="100%" stop-color="#33e6ff" stop-opacity="0"/>
+      <stop offset="55%" stop-color="#adbdff"/>
+      <stop offset="100%" stop-color="#adbdff" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
@@ -28,11 +28,11 @@
   <!-- 右側: 反射ビジュアル (Core + 軌道リング + Shield + Meteor) -->
   <g transform="translate(900 315)">
     <!-- 軌道リング (外側) -->
-    <circle r="220" fill="none" stroke="#33e6ff" stroke-opacity="0.18" stroke-width="2"/>
-    <circle r="170" fill="none" stroke="#33e6ff" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="2 8"/>
+    <circle r="220" fill="none" stroke="#adbdff" stroke-opacity="0.18" stroke-width="2"/>
+    <circle r="170" fill="none" stroke="#adbdff" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="2 8"/>
     <!-- Core 本体 -->
     <circle r="60" fill="url(#coreFill)"/>
-    <circle r="36" fill="#33e6ff"/>
+    <circle r="36" fill="#adbdff"/>
     <!-- Shield (マゼンタ円弧) -->
     <path d="M 0 -170 A 170 170 0 0 1 120.21 -120.21" fill="none" stroke="#ff33cc" stroke-width="14" stroke-linecap="round" opacity="0.95"/>
     <!-- Shield グロー -->
@@ -56,9 +56,9 @@
   <!-- 左側: テキスト -->
   <g transform="translate(80 0)">
     <!-- eyebrow -->
-    <text x="0" y="195" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace" font-size="22" letter-spacing="8" fill="#33e6ff" font-weight="600">REFLECT × ORBIT</text>
+    <text x="0" y="195" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace" font-size="22" letter-spacing="8" fill="#adbdff" font-weight="600">REFLECT × ORBIT</text>
     <!-- title -->
-    <text x="0" y="290" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="92" letter-spacing="6" fill="#33e6ff" font-weight="800">REFLECTORBIT</text>
+    <text x="0" y="290" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="92" letter-spacing="6" fill="#adbdff" font-weight="800">REFLECTORBIT</text>
     <!-- catch -->
     <text x="0" y="370" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="48" fill="#ff33cc" font-weight="700">弾くな、撃ち返せ。</text>
     <!-- sub -->
@@ -68,6 +68,6 @@
   </g>
 
   <!-- 上下のネオン罫線 (ごく薄く) -->
-  <rect x="0" y="0" width="1200" height="3" fill="#33e6ff" fill-opacity="0.5"/>
+  <rect x="0" y="0" width="1200" height="3" fill="#adbdff" fill-opacity="0.5"/>
   <rect x="0" y="627" width="1200" height="3" fill="#ff33cc" fill-opacity="0.5"/>
 </svg>

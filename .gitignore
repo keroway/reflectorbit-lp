@@ -32,5 +32,6 @@ pnpm-debug.log*
 test-results/
 playwright-report/
 
-# Claude Code
+# AI agents (Claude Code / pi)
 .claude/
+.pi/

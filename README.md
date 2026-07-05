@@ -19,7 +19,7 @@
 ## 想定セクション構成（ドラフト）
 
 | セクション | 内容 |
-|---|---|
+| --- | --- |
 | Hero | タイトルロゴ + キャッチコピー + 「今すぐプレイ」CTA |
 | Concept | 「反射して攻撃する」コアフックを 1〜2 文で |
 | How to Play | Space / Shift の 2 キー操作とルールの図解 |
@@ -31,7 +31,7 @@
 
 ## 技術スタック（確定）
 
-- **フレームワーク: [Astro](https://astro.build/)** (v6) — SSG / Islands Architecture で
+- **フレームワーク: [Astro](https://astro.build/)** (v7) — SSG / Islands Architecture で
   出力はほぼ素の HTML/CSS。LP のような「ほぼ静的 + 一部だけ動的」に最適で、WASM 版の試遊埋め込みも
   `<iframe>` / `<canvas>` で容易
 - **スタイリング: [Tailwind CSS](https://tailwindcss.com/)** (v4 / `@tailwindcss/vite`)。
@@ -66,16 +66,21 @@
 
 ```sh
 npm install
-npm run dev      # 開発サーバ (http://127.0.0.1:4321)
-npm run build    # 型チェック + dist/ に静的出力
-npm run preview  # ビルド結果のプレビュー
-npm run lint     # Biome で lint
-npm run format   # Biome で format 適用
+npm run dev        # 開発サーバ (http://127.0.0.1:4321)
+npm run build      # dist/ に静的出力 (astro build)
+npm run typecheck  # 型チェック (astro check)
+npm run preview    # ビルド結果のプレビュー
+npm run lint       # Biome で lint
+npm run format     # Biome で format 適用
+npm run smoke      # Playwright スモークテスト
+npm run smoke:a11y # Playwright アクセシビリティテスト (axe-core)
 ```
+
+> lint / typecheck / build / e2e は CI（`.github/workflows/ci.yml`）でも実行される。
 
 ## ディレクトリ構成
 
-```
+```text
 .
 ├── CLAUDE.md          # Claude Code 向けのリポジトリガイド
 ├── README.md          # このファイル
@@ -86,7 +91,12 @@ npm run format   # Biome で format 適用
 │   ├── design.md      # ブランドカラー・トーン・タイポ
 │   └── assets.md      # 必要なスクショ / ロゴ / OGP 素材リスト
 ├── public/            # favicon / OGP など静的アセット
+├── scripts/
+│   └── gen-og.mjs     # OGP 画像 (og-default.png) の生成スクリプト
+├── tests/             # Playwright テスト (smoke / a11y)
 └── src/
+    ├── components/    # 各セクション (Hero / Concept / HowToPlay / Demo など)
+    ├── consts.ts      # サイト定数 (PLAY_URL など)
     ├── layouts/       # Layout.astro (head / meta / OGP)
     ├── pages/         # index.astro (LP 本体・1 ページ)
     └── styles/        # global.css (@theme デザイントークン)
@@ -94,4 +104,5 @@ npm run format   # Biome で format 適用
 
 ## ライセンス
 
-[MIT License](./LICENSE)。ゲーム本体 [keroway/reflectorbit](https://github.com/keroway/reflectorbit) と同方針。
+[MIT License](./LICENSE)。ゲーム本体
+[keroway/reflectorbit](https://github.com/keroway/reflectorbit) と同方針。

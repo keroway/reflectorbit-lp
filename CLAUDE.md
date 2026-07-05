@@ -32,7 +32,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```sh
 npm run dev        # 開発サーバー (http://127.0.0.1:4321)
-npm run build      # 型チェック + 静的出力 → dist/  (astro check && astro build)
+npm run build      # 静的出力 → dist/  (astro build。型チェックは含まない)
+npm run typecheck  # 型チェック (astro check。CI では build と別ジョブ)
 npm run preview    # ビルド結果のプレビュー
 npm run lint       # Biome で lint (CI と同じ)
 npm run format     # Biome で format 適用

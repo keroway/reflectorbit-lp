@@ -1,108 +1,67 @@
 # reflectorbit-lp
 
-[REFLECTORBIT](https://github.com/keroway/reflectorbit) の紹介用ランディングページ（LP）。
+[![Astro](https://img.shields.io/badge/Astro-7-FF5D01?logo=astro&logoColor=white)](https://astro.build/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Biome](https://img.shields.io/badge/Biome-2-60A5FA?logo=biome&logoColor=white)](https://biomejs.dev/)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
 
-ゲーム本体は Zig + sokol-zig 製のベクター調反射アクションゲーム。
-この LP はゲームの世界観・操作・遊びどころを伝え、**ブラウザ版プレイ**と**ネイティブ版ダウンロード**へ誘導することを目的とする。
+[REFLECTORBIT](https://github.com/keroway/reflectorbit) の紹介用ランディングページです。  
+ゲーム本体は Zig + sokol-zig 製のベクター調・軌道反射アクションゲームで、このサイトはその世界観・遊び方・導線を 1 ページで伝えるために作られています。
 
-- この LP（公開先）: <https://reflectorbit-lp.pages.dev>
-- ゲーム本体リポジトリ: <https://github.com/keroway/reflectorbit>
-- ブラウザで今すぐプレイ（ゲーム本体）: <https://reflectorbit.pages.dev>
+- Live: <https://reflectorbit-lp.pages.dev>
+- Play in browser: <https://reflectorbit.pages.dev>
+- Game repository: <https://github.com/keroway/reflectorbit>
 
-## このリポジトリのゴール
+## このサイトについて
 
-1. ゲームの第一印象（ビジュアル・コンセプト）を 1 スクロールで伝える
-2. 「ブラウザで遊ぶ」「ダウンロード」への明確な CTA
-3. 操作方法・遊び方の最小限の説明
-4. WASM 版をページ内に埋め込んでその場で試遊できる（Playable Demo セクションで実装済み）
+この LP の役割はシンプルです。
 
-## 想定セクション構成（ドラフト）
+- ゲームの第一印象を伝える
+- 「反射して攻撃する」コアフックを短く説明する
+- ブラウザ版プレイとネイティブ版ダウンロードへつなぐ
 
-| セクション | 内容 |
-| --- | --- |
-| Hero | タイトルロゴ + キャッチコピー + 「今すぐプレイ」CTA |
-| Concept | 「反射して攻撃する」コアフックを 1〜2 文で |
-| How to Play | Space / Shift の 2 キー操作とルールの図解 |
-| Playable Demo | WASM 版（[reflectorbit.pages.dev](https://reflectorbit.pages.dev)）を `<iframe>` でページ内に遅延埋め込み |
-| Download | ネイティブ版（Linux / macOS / Windows）へのリンク |
-| Footer | 本体リポジトリ・ライセンス・クレジット |
+## ページ構成
 
-コピー素材は `docs/copy.md`、配色・トーンは `docs/design.md` を参照。
+- **Hero** — タイトル、キャッチ、メイン CTA
+- **Concept** — ゲームのコアアイデア
+- **Screenshots** — タイトル / プレイ中 / GAME OVER
+- **How to Play** — 操作方法とルールの要点
+- **Playable Demo** — ブラウザ版への試遊導線
+- **Download** — GitHub Releases への導線
+- **Footer** — リポジトリ / クレジット
 
-## 技術スタック（確定）
+## 技術スタック
 
-- **フレームワーク: [Astro](https://astro.build/)** (v7) — SSG / Islands Architecture で
-  出力はほぼ素の HTML/CSS。LP のような「ほぼ静的 + 一部だけ動的」に最適で、WASM 版の試遊埋め込みも
-  `<iframe>` / `<canvas>` で容易
-- **スタイリング: [Tailwind CSS](https://tailwindcss.com/)** (v4 / `@tailwindcss/vite`)。
-  デザイントークンは `src/styles/global.css` の `@theme` で定義
-- **Lint / Format: [Biome](https://biomejs.dev/)**
-- **ホスティング: Cloudflare Pages**（ゲーム本体と同じ。GitHub 連携で main push 時に自動デプロイ）
+- **Astro 7** — 静的サイト生成
+- **Tailwind CSS 4** — `@theme` ベースのデザイントークン運用
+- **Biome** — lint / format
+- **Playwright** — smoke / a11y チェック
+- **Cloudflare Pages** — ホスティング
 
-> 検討の経緯は当初 Astro / Vite+TS / 素の HTML を比較し、SSG・Cloudflare Pages 親和性・
-> WASM 埋め込みのしやすさから Astro に確定。雛形は同作者の code-tactics-lp に倣う。
+## 技術的な工夫
 
-## デプロイ（Cloudflare Pages）
+- **1 ページ完結の静的構成**で、LP として軽く配信
+- **ゲーム本体由来のカラートークン**を流用し、サイトとゲームの見た目を同期
+- **Playable Demo は遅延起動寄りの導線**にして、初期表示の負荷を抑制
+- **OGP 画像を SVG ソースから生成**し、共有用ビジュアルを管理
+- **Playwright で最低限の表示・アクセシビリティ確認**を自動化
 
-公開先は **<https://reflectorbit-lp.pages.dev>**（ゲーム本体の `reflectorbit.pages.dev` とは
-別の Pages プロジェクト）。Cloudflare ダッシュボードの **GitHub Git 連携**で配信し、
-`main` への push をトリガーに自動でビルド・デプロイされる（CI 側にデプロイ設定は持たない）。
-
-初回セットアップ（Cloudflare ダッシュボードで一度だけ）:
-
-1. **Workers & Pages → Create → Pages → Connect to Git** を開く
-2. GitHub App に `keroway/reflectorbit-lp` リポジトリへの権限を付与し、リポジトリを選択
-3. ビルド設定:
-   - **Project name**: `reflectorbit-lp`（= `reflectorbit-lp.pages.dev`）
-   - **Production branch**: `main`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-4. **Save and Deploy** → 初回ビルド後に公開。以降は `main` への push で自動再デプロイ
-
-> OGP・canonical・sitemap は `astro.config.mjs` の `site`（`https://reflectorbit-lp.pages.dev`）から
-> 生成される。独自ドメインに切り替える場合は `site` も合わせて更新する。
-
-## セットアップ
+## ローカル開発
 
 ```sh
 npm install
-npm run dev        # 開発サーバ (http://127.0.0.1:4321)
-npm run build      # dist/ に静的出力 (astro build)
-npm run typecheck  # 型チェック (astro check)
-npm run preview    # ビルド結果のプレビュー
-npm run lint       # Biome で lint
-npm run format     # Biome で format 適用
-npm run smoke      # Playwright スモークテスト
-npm run smoke:a11y # Playwright アクセシビリティテスト (axe-core)
+npm run dev
 ```
 
-> lint / typecheck / build / e2e は CI（`.github/workflows/ci.yml`）でも実行される。
+主なコマンドや運用メモは [`docs/development.md`](./docs/development.md) にまとめています。
 
-## ディレクトリ構成
+## ドキュメント
 
-```text
-.
-├── CLAUDE.md          # Claude Code 向けのリポジトリガイド
-├── README.md          # このファイル
-├── astro.config.mjs   # Astro 設定 (site / Tailwind / sitemap)
-├── biome.json         # Lint / Format 設定
-├── docs/
-│   ├── copy.md        # LP に載せる文言・キャッチコピー集（正典）
-│   ├── design.md      # ブランドカラー・トーン・タイポ
-│   └── assets.md      # 必要なスクショ / ロゴ / OGP 素材リスト
-├── public/            # favicon / OGP など静的アセット
-├── scripts/
-│   └── gen-og.mjs     # OGP 画像 (og-default.png) の生成スクリプト
-├── tests/             # Playwright テスト (smoke / a11y)
-└── src/
-    ├── components/    # 各セクション (Hero / Concept / HowToPlay / Demo など)
-    ├── consts.ts      # サイト定数 (PLAY_URL など)
-    ├── layouts/       # Layout.astro (head / meta / OGP)
-    ├── pages/         # index.astro (LP 本体・1 ページ)
-    └── styles/        # global.css (@theme デザイントークン)
-```
+- [`docs/copy.md`](./docs/copy.md) — 掲載文言の正典
+- [`docs/design.md`](./docs/design.md) — 配色・トーン・デザイントークン
+- [`docs/assets.md`](./docs/assets.md) — アセット管理メモ
+- [`docs/development.md`](./docs/development.md) — 開発・ビルド・デプロイ情報
 
-## ライセンス
+## License
 
-[MIT License](./LICENSE)。ゲーム本体
-[keroway/reflectorbit](https://github.com/keroway/reflectorbit) と同方針。
+[MIT](./LICENSE)

@@ -22,7 +22,8 @@
     "format": "biome format --write .",
     "og:gen": "node scripts/gen-og.mjs",
     "smoke": "playwright test tests/smoke.test.ts",
-    "smoke:a11y": "playwright test tests/a11y.test.ts"
+    "smoke:a11y": "playwright test tests/a11y.test.ts",
+    "postinstall": "lefthook install"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -35,6 +36,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@biomejs/biome": "^2.5.1",
     "@playwright/test": "^1.61.1",
+    "lefthook": "^2.1.10",
     "sharp": "^0.35.2",
     "typescript": "^6.0.3"
   },

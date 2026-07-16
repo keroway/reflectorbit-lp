@@ -126,10 +126,11 @@ Cloudflare Pages の `npm run build` では再生成しない）に揃える。
 - HyperFrames CLI（`npx hyperframes`）の実行には **Chrome（Playwright 経由 or システム Chrome）と
   FFmpeg** が必要。ローカル開発機 or CI のジョブランナーで実行可能か、着手前に確認すること。
   このリポジトリの Cloudflare Pages ビルド環境では実行しない（後述のとおりローカル生成 → コミット運用）。
-- HyperFrames の出力形式（`--output` 拡張子で `webm` も直接出せるか、`mp4` のみか）は
-  ドキュメント参照時点で未確認。**着手前に `hyperframes --help` / 公式ドキュメントで確認し、
-  `webm` が直接出せない場合は生成した `mp4` を ffmpeg で `webm` に変換する**（Track A の
-  ffmpeg コマンド例を流用可）。
+- `npx hyperframes render` はプロジェクトディレクトリ（例: `video/how-to-play/`）を位置引数として受け取り、
+  `--format mp4` / `--format webm` で出力形式を指定、`-o` で出力パスを指定する（`--input`/`--output`
+  フラグはない）。`webm` は HyperFrames が `--format webm` で直接書き出せるため、ffmpeg での
+  mp4 → webm 変換フォールバックは不要（ffmpeg は先頭フレームの poster 抽出のみに使う）。
+  実装は `scripts/gen-how-to-play-video.mjs` 参照。
 
 ### コンポジション設計（たたき台）
 
@@ -157,10 +158,15 @@ Cloudflare Pages の `npm run build` では再生成しない）に揃える。
 
 - `scripts/gen-how-to-play-video.mjs` を新設し、`npm run video:howtoplay:gen` から実行する。
   `scripts/gen-og.mjs` と同じトーン（Node スクリプト、コメントで運用ポリシーを明記）で:
-  1. `npx hyperframes render --input video/how-to-play/index.html --output public/videos/how-to-play.mp4`
-     相当のコマンドを `child_process` で実行（正確なフラグは CLI の `--help` で要確認）。
-  2. `webm` が直接出力できなければ ffmpeg で変換。
-  3. 先頭フレームを `public/videos/how-to-play-poster.jpg` として書き出し。
+  1. `npx --no-install hyperframes render video/how-to-play --format mp4 -o public/videos/how-to-play.mp4`
+     を `child_process`（`execFileSync`）で実行。プロジェクトディレクトリを位置引数として渡し、`--input`/`--output`
+     フラグは使わない。`hyperframes` は `package.json` の `devDependencies` に固定バージョンで
+     入れ、`--no-install` でローカル依存のみを使う（生成物をコミットするため、毎回最新版を取得して
+     再現性が崩れないようにする）。
+  2. 同様に `--format webm -o public/videos/how-to-play.webm` で webm を直接出力（HyperFrames が
+     webm をサポートするため ffmpeg での mp4 → webm 変換は不要）。
+  3. 先頭フレームを ffmpeg で `public/videos/how-to-play-poster.jpg` として書き出し（ffmpeg の利用は
+     poster 抽出のみ）。
 - **CI では実行しない**。ローカルで `npm run video:howtoplay:gen` を実行し、
   生成物（`public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg`）を通常のアセットとして
   コミットする（`og:gen` と同じ運用方針、README の理由付けもそれに揃える）。
@@ -179,13 +185,22 @@ Cloudflare Pages の `npm run build` では再生成しない）に揃える。
   - キーボード操作の表（`consts.ts` の `controls` 配列 / 既存の表組み）はそのまま残し、
     動画は「視覚的な補助」の位置づけとする（表がある以上、動画がロードされなくても情報は欠落しない）。
 
-### 受け入れ条件（この Track 全体の完了条件）
+### 受け入れ条件
 
-- [ ] HyperFrames CLI 実行環境（Chrome + FFmpeg）が使えることを確認済み
-- [ ] `video/how-to-play/` にコンポジション（HTML/CSS）が実装されている
-- [ ] `scripts/gen-how-to-play-video.mjs` と `npm run video:howtoplay:gen` が追加されている
-- [ ] `public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg` がコミットされている
-- [ ] How to Play セクションに動画が統合され、既存の操作表と併存している
+この Track の完了条件は、(a) 動画生成基盤の完了条件と (b) How to Play セクションへの統合の
+完了条件に分けて管理する。(a) が本 PR（Issue #87）のスコープ、(b) は**別 Issue（#88）で扱う**。
+
+#### (a) 動画生成基盤の完了条件（Issue #87 のスコープ）
+
+- [x] HyperFrames CLI 実行環境（Chrome + FFmpeg）が使えることを確認済み
+- [x] `video/how-to-play/` にコンポジション（HTML/CSS）が実装されている
+- [x] `scripts/gen-how-to-play-video.mjs` と `npm run video:howtoplay:gen` が追加されている
+- [x] `public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg` がコミットされている
+
+#### (b) How to Play セクションへの統合の完了条件（別 Issue #88 のスコープ）
+
+- [ ] 既存のインライン SVG 図解を置換（または併設）し、How to Play セクションに動画が統合され、
+      既存の操作表と併存している
 - [ ] `prefers-reduced-motion: reduce` で自動再生・ループが止まり、静止表示になることを確認
 - [ ] `docs/copy.md` / `docs/design.md` / `docs/assets.md` / `README.md` を更新
 - [ ] Playwright smoke / a11y テストを更新（動画要素の存在確認、reduced-motion 分岐があれば axe 実行時に影響ないか確認）

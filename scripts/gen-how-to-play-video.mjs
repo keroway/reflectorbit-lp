@@ -7,6 +7,9 @@
 // （`npx hyperframes doctor` で確認できる）。webm は HyperFrames が `--format webm` で
 // 直接書き出せるため、ffmpeg でのフォーマット変換は行わない（先頭フレームの poster 抽出にのみ
 // ffmpeg を使う）。
+// バージョンは package.json の devDependencies に固定した hyperframes を使う
+// （`npx --no-install` でローカル依存のみ解決し、都度最新版を取得しないことで再生成結果の
+// 再現性を担保する）。
 import { execFileSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +28,7 @@ function run(command, args) {
 }
 
 run('npx', [
+  '--no-install',
   'hyperframes',
   'render',
   compositionDir,
@@ -35,6 +39,7 @@ run('npx', [
 ]);
 
 run('npx', [
+  '--no-install',
   'hyperframes',
   'render',
   compositionDir,

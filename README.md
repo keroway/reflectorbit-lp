@@ -60,6 +60,7 @@ npm run dev
 - [`docs/copy.md`](./docs/copy.md) — 掲載文言の正典
 - [`docs/design.md`](./docs/design.md) — 配色・トーン・デザイントークン
 - [`docs/assets.md`](./docs/assets.md) — アセット管理メモ
+- [`docs/video.md`](./docs/video.md) — 動画演出（Trailer / How to Play 動画化）の設計メモ
 - [`docs/development.md`](./docs/development.md) — 開発・ビルド・デプロイ情報
 
 ## License

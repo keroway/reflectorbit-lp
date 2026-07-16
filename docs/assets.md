@@ -9,6 +9,11 @@ LP 制作で用意・収集が必要な素材のチェックリスト。
 - [x] How to Play 用の操作図解（Space で縮小 / Shift で拡大の概念図、`src/pages/index.astro` にインライン SVG で実装）
 - [x] ギャラリー用スクショ数枚 — 本体 `assets/press/screenshot-{title,playing,gameover}.png`（#411）を `public/screenshots/` にコピーし、`src/components/Screenshots.astro` のギャラリーで使用中。コンボ・難易度選択画面のカットは本体に未収録
 
+## 動画（新規 — 詳細仕様は `docs/video.md`）
+
+- [ ] トレーラー動画（実写プレイ映像。`public/videos/trailer.mp4` / `.webm` / `-poster.jpg`）
+- [ ] How to Play 動画（HyperFrames 生成。`public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg`）
+
 ## SNS / メタ
 
 - [x] OGP 画像（1200×630px、`public/og-default.png`。デザインソースは `public/og-default.svg`、生成は `npm run og:gen`）

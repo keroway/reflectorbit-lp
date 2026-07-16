@@ -24,6 +24,7 @@
 
 - **Hero** — タイトル、キャッチ、メイン CTA
 - **Concept** — ゲームのコアアイデア
+- **Trailer** — 実プレイ映像のトレーラー動画（詳細は `docs/video.md` Track A）
 - **Screenshots** — タイトル / プレイ中 / GAME OVER
 - **How to Play** — 操作方法とルールの要点
 - **Playable Demo** — ブラウザ版への試遊導線
@@ -60,6 +61,7 @@ npm run dev
 - [`docs/copy.md`](./docs/copy.md) — 掲載文言の正典
 - [`docs/design.md`](./docs/design.md) — 配色・トーン・デザイントークン
 - [`docs/assets.md`](./docs/assets.md) — アセット管理メモ
+- [`docs/video.md`](./docs/video.md) — 動画演出（Trailer / How to Play 動画化）の設計メモ
 - [`docs/development.md`](./docs/development.md) — 開発・ビルド・デプロイ情報
 
 ## License

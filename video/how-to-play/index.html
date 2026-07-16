@@ -1,0 +1,53 @@
+<!doctype html>
+<!--
+  HyperFrames composition: How to Play (Space/Shift 対比)
+  Astro の src/ とは独立したプレーン HTML。ビルドパイプラインには乗せない。
+  生成は scripts/gen-how-to-play-video.mjs (`npm run video:howtoplay:gen`) から行う。
+  仕様は docs/video.md の「Track B: HyperFrames による How to Play 動画」を参照。
+-->
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="root"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+      data-no-timeline
+    >
+      <div class="stage">
+        <div class="panel panel--space">
+          <div class="panel__ring"></div>
+          <div class="panel__core"></div>
+          <div class="panel__orbit">
+            <div class="panel__shield"></div>
+          </div>
+        </div>
+        <div class="panel panel--shift">
+          <div class="panel__ring"></div>
+          <div class="panel__core"></div>
+          <div class="panel__orbit">
+            <div class="panel__shield"></div>
+          </div>
+        </div>
+
+        <div class="labels">
+          <div class="labels__line">
+            <span class="key--space">Space</span><span class="labels__arrow">→</span
+            ><span class="labels__desc">半径縮小・高速</span>
+          </div>
+          <div class="labels__line">
+            <span class="key--shift">Shift</span><span class="labels__arrow">→</span
+            ><span class="labels__desc">半径拡大・低速</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

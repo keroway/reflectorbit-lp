@@ -21,6 +21,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "og:gen": "node scripts/gen-og.mjs",
+    "video:howtoplay:gen": "node scripts/gen-how-to-play-video.mjs",
     "smoke": "playwright test tests/smoke.test.ts",
     "smoke:a11y": "playwright test tests/a11y.test.ts",
     "postinstall": "lefthook install"
@@ -36,6 +37,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@biomejs/biome": "^2.5.3",
     "@playwright/test": "^1.61.1",
+    "hyperframes": "0.7.60",
     "lefthook": "^2.1.10",
     "sharp": "^0.35.2",
     "typescript": "^6.0.3"

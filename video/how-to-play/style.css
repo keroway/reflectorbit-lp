@@ -1,0 +1,170 @@
+/*
+ * How to Play 動画コンポジション用スタイル。
+ * 色は docs/design.md のブランドカラー表をそのまま参照する（LP 独自色は発明しない）。
+ *   Core: #ADBDFF / Shield: #FF33CC / Meteor: #FF801A / Reflected: #4DFF8C / Background: #0A0A0F
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #0a0a0f;
+}
+
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #cccccc;
+}
+
+.stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  background: #0a0a0f;
+}
+
+/* 左右を分ける中央の縦線（控えめ） */
+.stage::after {
+  content: "";
+  position: absolute;
+  top: 120px;
+  bottom: 220px;
+  left: 960px;
+  width: 1px;
+  background: rgba(173, 189, 255, 0.25);
+}
+
+.panel {
+  position: absolute;
+  top: 0;
+  width: 960px;
+  height: 860px;
+}
+
+.panel--space {
+  left: 0;
+}
+
+.panel--shift {
+  left: 960px;
+}
+
+.panel__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  background: #adbdff;
+  box-shadow: 0 0 32px 8px rgba(173, 189, 255, 0.55);
+}
+
+.panel__orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.panel--space .panel__orbit {
+  animation: spin 1s linear infinite;
+}
+
+.panel--shift .panel__orbit {
+  animation: spin 5s linear infinite;
+}
+
+.panel__shield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ff33cc;
+  box-shadow: 0 0 24px 6px rgba(255, 51, 204, 0.6);
+}
+
+.panel--space .panel__shield {
+  transform: translate(calc(var(--radius) - 20px), -20px);
+}
+
+.panel--shift .panel__shield {
+  transform: translate(calc(var(--radius) - 20px), -20px);
+}
+
+.panel--space {
+  --radius: 140px;
+}
+
+.panel--shift {
+  --radius: 320px;
+}
+
+/* 半径を示す薄い軌道リング */
+.panel__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--radius) * 2);
+  height: calc(var(--radius) * 2);
+  margin-left: calc(var(--radius) * -1);
+  margin-top: calc(var(--radius) * -1);
+  border-radius: 50%;
+  border: 1px solid rgba(173, 189, 255, 0.18);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.labels {
+  position: absolute;
+  bottom: 96px;
+  left: 0;
+  width: 1920px;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.labels__line {
+  line-height: 1.6;
+}
+
+.labels__line + .labels__line {
+  margin-top: 8px;
+}
+
+.key--space {
+  color: #ff33cc;
+}
+
+.key--shift {
+  color: #adbdff;
+}
+
+.labels__arrow {
+  color: #cccccc;
+  margin: 0 12px;
+}
+
+.labels__desc {
+  color: #cccccc;
+}

@@ -12,7 +12,7 @@ LP 制作で用意・収集が必要な素材のチェックリスト。
 ## 動画（新規 — 詳細仕様は `docs/video.md`）
 
 - [ ] トレーラー動画（実写プレイ映像。`public/videos/trailer.mp4` / `.webm` / `-poster.jpg`）
-- [ ] How to Play 動画（HyperFrames 生成。`public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg`）
+- [x] How to Play 動画（HyperFrames 生成。`public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg`。コンポジションは `video/how-to-play/`、生成は `npm run video:howtoplay:gen`）
 
 ## SNS / メタ
 

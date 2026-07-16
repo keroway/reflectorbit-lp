@@ -21,6 +21,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "og:gen": "node scripts/gen-og.mjs",
+    "video:howtoplay:gen": "node scripts/gen-how-to-play-video.mjs",
     "smoke": "playwright test tests/smoke.test.ts",
     "smoke:a11y": "playwright test tests/a11y.test.ts",
     "postinstall": "lefthook install"

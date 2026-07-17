@@ -39,7 +39,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 - コピー: 短く・断定的・テックでクール。例「弾くな、撃ち返せ。」「2 キーで操る、軌道反射アクション。」
   （正典は `docs/copy.md`）
 - 物理の読み合い（角運動量保存 ω = L / r²、可変軌道半径 × メテオ重力加速）が売りなので、
-  How to Play では「Space=縮小／Shift=拡大」の対比を図解で見せる
+  How to Play では「Space=縮小／Shift=拡大」の対比を動画（HyperFrames 生成ループ）で見せる
 
 ## タイポグラフィ方針
 
@@ -50,16 +50,16 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 
 ## セクション別の意図（`docs/copy.md` と対応）
 
-| セクション    | デザイン意図                                                                                                                                             |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Hero          | 全画面に近いダーク背景＋反射シーンのビジュアル。タイトル（Core ブルーバイオレット）＋キャッチ＋主 CTA「▶ ブラウザで今すぐプレイ」                        |
-| Concept       | 「守る」だけでなく「反射→攻撃」のコアフックを 1〜2 文＋簡易図で。メテオ変化4種・3モード（Stage/Endless/Daily）・コスメティックアンロックも箇条書きで追記 |
-| Trailer       | Concept 直後・Screenshots 直前。実プレイ映像で世界観を掴ませるファサード起動の動画枠（`src/components/Trailer.astro`、詳細は `docs/video.md` Track A）   |
-| Screenshots   | 本体 `assets/press/` の実スクリーンショット（タイトル・プレイ中・GAME OVER）を3枚ギャラリー表示（`src/components/Screenshots.astro`）                    |
-| How to Play   | Space / Shift の 2 キー操作を対の図解で。P / ↑↓・MODE & DIFFICULTY サブメニュー（Stage/Endless/Daily・難易度）は補足表で                                 |
-| Playable Demo | WASM 版を `<iframe>` 埋め込み（`src/components/PlayableDemo.astro`）。クリック起動のファサード方式で初期負荷を抑制                                       |
-| Download      | Linux / macOS / Windows の 3 バイナリへのリンク。未署名警告の注記                                                                                        |
-| Footer        | 本体リポジトリ・ライセンス・クレジット（制作: keroway）                                                                                                  |
+| セクション    | デザイン意図                                                                                                                                                            |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hero          | 全画面に近いダーク背景＋反射シーンのビジュアル。タイトル（Core ブルーバイオレット）＋キャッチ＋主 CTA「▶ ブラウザで今すぐプレイ」                                       |
+| Concept       | 「守る」だけでなく「反射→攻撃」のコアフックを 1〜2 文＋簡易図で。メテオ変化4種・3モード（Stage/Endless/Daily）・コスメティックアンロックも箇条書きで追記                |
+| Trailer       | Concept 直後・Screenshots 直前。実プレイ映像で世界観を掴ませるファサード起動の動画枠（`src/components/Trailer.astro`、詳細は `docs/video.md` Track A）                  |
+| Screenshots   | 本体 `assets/press/` の実スクリーンショット（タイトル・プレイ中・GAME OVER）を3枚ギャラリー表示（`src/components/Screenshots.astro`）                                   |
+| How to Play   | Space / Shift の 2 キー操作を対の図解動画（`public/videos/how-to-play.mp4`/`.webm`）で。P / ↑↓・MODE & DIFFICULTY サブメニュー（Stage/Endless/Daily・難易度）は補足表で |
+| Playable Demo | WASM 版を `<iframe>` 埋め込み（`src/components/PlayableDemo.astro`）。クリック起動のファサード方式で初期負荷を抑制                                                      |
+| Download      | Linux / macOS / Windows の 3 バイナリへのリンク。未署名警告の注記                                                                                                       |
+| Footer        | 本体リポジトリ・ライセンス・クレジット（制作: keroway）                                                                                                                 |
 
 ## 動画演出
 

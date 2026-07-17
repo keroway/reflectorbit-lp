@@ -199,11 +199,11 @@ Cloudflare Pages の `npm run build` では再生成しない）に揃える。
 
 #### (b) How to Play セクションへの統合の完了条件（別 Issue #88 のスコープ）
 
-- [ ] 既存のインライン SVG 図解を置換（または併設）し、How to Play セクションに動画が統合され、
+- [x] 既存のインライン SVG 図解を置換（または併設）し、How to Play セクションに動画が統合され、
       既存の操作表と併存している
-- [ ] `prefers-reduced-motion: reduce` で自動再生・ループが止まり、静止表示になることを確認
-- [ ] `docs/copy.md` / `docs/design.md` / `docs/assets.md` / `README.md` を更新
-- [ ] Playwright smoke / a11y テストを更新（動画要素の存在確認、reduced-motion 分岐があれば axe 実行時に影響ないか確認）
+- [x] `prefers-reduced-motion: reduce` で自動再生・ループが止まり、静止表示になることを確認
+- [x] `docs/copy.md` / `docs/design.md` / `docs/assets.md` / `README.md` を更新
+- [x] Playwright smoke / a11y テストを更新（動画要素の存在確認、reduced-motion 分岐があれば axe 実行時に影響ないか確認）
 
 ---
 

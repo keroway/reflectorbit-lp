@@ -35,3 +35,4 @@ playwright-report/
 # AI agents (Claude Code / pi)
 .claude/
 .pi/
+.pi-subagents/

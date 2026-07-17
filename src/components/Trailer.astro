@@ -1,0 +1,85 @@
+---
+// Trailer セクション。docs/video.md「Track A: 実写トレーラー動画」の実装。
+// PlayableDemo.astro と同じファサード方式: クリックするまで <video> を生成せず、
+// 初期表示は poster 画像 + 再生ボタンのみ（帯域節約 + 自動再生なしなので
+// prefers-reduced-motion でも勝手に動かない）。
+// 素材は public/videos/trailer.{mp4,webm} / trailer-poster.jpg 固定パス参照（docs/video.md 参照）。
+---
+
+{/* ===== Trailer ===== */}
+<section id="trailer" class="reveal scroll-mt-20 border-t border-white/5 py-24">
+  <p class="eyebrow">Trailer</p>
+  <h2 class="mt-3 text-3xl font-bold text-rb-muted sm:text-4xl">トレーラー</h2>
+  <p class="mt-4 max-w-2xl text-rb-muted/80">反射して攻撃する軌道アクションを、実際のプレイ映像で。</p>
+
+  {/* aspect-video 枠を常に確保しレイアウトシフトを防ぐ */}
+  <div id="trailer-frame" class="relative mt-8 aspect-video w-full overflow-hidden rounded-lg border border-white/15">
+    {/* 起動前ファサード: poster + 再生ボタンのみ。クリックで初めて <video> を生成する */}
+    <img
+      src="/videos/trailer-poster.jpg"
+      alt="REFLECTORBIT のプレイ映像より: Shield で Meteor を反射する場面"
+      class="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+      width="1280"
+      height="720"
+    />
+    <button
+      type="button"
+      id="trailer-play"
+      class="group absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-3 bg-rb-bg/60 text-rb-muted transition hover:bg-rb-bg/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-rb-core"
+    >
+      <span class="font-mono text-5xl text-rb-core transition group-hover:scale-110">&#9654;</span>
+      <span class="text-lg font-semibold">クリックしてトレーラーを再生</span>
+      <span class="text-sm text-rb-muted/60">※ 音声なし・ループ再生</span>
+    </button>
+  </div>
+
+  {/* ロード失敗時は poster のまま留まるため、Screenshots への導線を一言添える（docs/video.md） */}
+  <p class="mt-4 text-sm text-rb-muted/70">
+    読み込みに失敗した場合は
+    <a
+      class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+      href="#screenshots">スクリーンショット</a
+    >をご覧ください。
+  </p>
+</section>
+
+<script>
+  const frame = document.getElementById('trailer-frame');
+  const play = document.getElementById('trailer-play');
+
+  if (frame && play) {
+    play.addEventListener(
+      'click',
+      () => {
+        play.hidden = true;
+
+        const video = document.createElement('video');
+        video.className = 'absolute inset-0 h-full w-full object-cover';
+        video.poster = '/videos/trailer-poster.jpg';
+        video.muted = true;
+        video.loop = true;
+        video.controls = true;
+        video.playsInline = true;
+        // iOS Safari 向けに属性としても明示する
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+
+        const mp4 = document.createElement('source');
+        mp4.src = '/videos/trailer.mp4';
+        mp4.type = 'video/mp4';
+        const webm = document.createElement('source');
+        webm.src = '/videos/trailer.webm';
+        webm.type = 'video/webm';
+        video.append(webm, mp4);
+
+        frame.appendChild(video);
+        // ユーザー操作起点 + muted なので再生ポリシーでブロックされない想定。
+        // 失敗時（省電力モード等）は controls から手動再生できる。
+        video.play().catch(() => {});
+      },
+      { once: true },
+    );
+  }
+</script>

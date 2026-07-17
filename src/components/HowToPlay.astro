@@ -61,11 +61,13 @@ import { controls } from '../consts';
     function applyMotionPreference(reduced: boolean) {
       if (reduced) {
         howToPlayVideo!.removeAttribute('autoplay');
+        howToPlayVideo!.removeAttribute('loop');
         howToPlayVideo!.setAttribute('controls', '');
         howToPlayVideo!.pause();
       } else {
         howToPlayVideo!.removeAttribute('controls');
         howToPlayVideo!.setAttribute('autoplay', '');
+        howToPlayVideo!.setAttribute('loop', '');
         void howToPlayVideo!.play().catch(() => {});
       }
     }

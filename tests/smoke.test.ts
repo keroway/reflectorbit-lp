@@ -28,3 +28,16 @@ test('How to Play セクションに図解動画が表示される', async ({ pa
     '/videos/how-to-play-poster.jpg'
   );
 });
+
+test('prefers-reduced-motion: reduce では図解動画の自動再生・ループが止まる', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+
+  const video = page.locator('section#how-to-play video.how-to-play-video');
+  await expect(video).toBeVisible();
+  await expect(video).toHaveAttribute('controls', '');
+  await expect(video).not.toHaveAttribute('autoplay', '');
+  await expect(video).not.toHaveAttribute('loop', '');
+});

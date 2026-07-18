@@ -50,8 +50,25 @@ npm run og:gen
 
 デザインを更新したら PNG も再生成してコミットしてください。
 
+## 動画アセット
+
+How to Play セクションの図解動画は HyperFrames（`video/how-to-play/` のコンポジション）から生成します。
+
+```sh
+npm run video:howtoplay:gen
+```
+
+- 出力: `public/videos/how-to-play.mp4` / `.webm` / `how-to-play-poster.jpg`
+- 前提: Chrome（Playwright 経由）+ FFmpeg が必要
+- `og:gen` と同じく **ローカルで生成 → コミット** 運用。CI では再生成しません
+- コンポジション設計・配色などの詳細仕様は [`video.md`](./video.md)（Track B）を参照
+
+> トレーラー動画（`public/videos/trailer.*`）は現状スクリーンショットのスライドショーによる
+> プレースホルダです。実プレイ映像の収録は別 issue（#85）で対応し、同名ファイルの差し替えで反映されます。
+
 ## 関連ドキュメント
 
 - [`copy.md`](./copy.md)
 - [`design.md`](./design.md)
 - [`assets.md`](./assets.md)
+- [`video.md`](./video.md)

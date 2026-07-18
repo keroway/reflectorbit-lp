@@ -70,6 +70,8 @@ if (RELEASE_AVAILABLE) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* モバイルブラウザのクロム色。値は global.css の --color-rb-bg と同期する（トークンを変えたらここも更新） */}
+    <meta name="theme-color" content="#0a0a0f" />
     {/* JS 有効を示すフラグ。fade-in は .js スコープ下でのみ初期非表示にする (no-JS で content が消えない) */}
     <script is:inline>
       document.documentElement.classList.add('js');

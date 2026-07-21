@@ -22,7 +22,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 | Text secondary      | `#CCCCCC` | `--color-rb-muted`     | `UI_COLOR_TEXT_SECONDARY` (0.8, 0.8, 0.8)  | 本文・補助テキスト                                                                                  |
 | Reflected / Emerald | `#4DFF8C` | `--color-rb-reflected` | `REFLECTED_METEOR_COLOR` (0.30, 1.0, 0.55) | 反射済み弾の味方化（エメラルド）。**M17 で旧黄緑 `#80FF4D` から変更**                               |
 | Perfect / Lime      | `#9EFF29` | `--color-rb-perfect`   | `PERFECT_METEOR_COLOR` (0.62, 1.0, 0.16)   | PERFECT 反射済み弾（ライム）。**M17 で旧シアン `#33FFE6` から変更**（Core/Fast との色相衝突を解消） |
-| Fast / Red-orange   | `#FF2E1F` | `--color-rb-fast`      | `FAST_METEOR_COLOR` (1.0, 0.18, 0.12)      | 高速メテオ（警戒の赤橙）。**M17 で旧水色シアン `#4DFFFF` から変更**（危险信号として暖色化）         |
+| Fast / Red-orange   | `#FF2E1F` | `--color-rb-fast`      | `FAST_METEOR_COLOR` (1.0, 0.18, 0.12)      | 高速メテオ（警戒の赤橙）。**M17 で旧水色シアン `#4DFFFF` から変更**（危険信号として暖色化）         |
 | Arc / Gold          | `#E6E61A` | `--color-rb-arc`       | `ARC_METEOR_COLOR` (0.9, 0.9, 0.1)         | 曲がるメテオ（Arc 種）。M13 で追加された新メテオ種                                                  |
 | Trail Reflected     | `#40FF94` | —                      | `TRAIL_REFLECTED_COLOR` (0.25, 1.0, 0.58)  | 反射後トレイル（エメラルド）。図解参照用。表のみ記載                                                |
 
@@ -36,7 +36,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 
 - ビジュアル: **ダーク背景 × ネオン発光**、ベクター（円・線・パーティクル・軌道）調。
   ゲーム画面のスクリーンショット／ループ動画をそのまま主役素材にする
-- コピー: 短く・断定的・テックでクール。例「弾くな、撃ち返せ。」「2 キーで操る、軌道反射アクション。」
+- コピー: 短く・断定的・テックでクール。例「弾くな、撃ち返せ。」「3 キーで操る、軌道反射アクション。」
   （正典は `docs/copy.md`）
 - 物理の読み合い（角運動量保存 ω = L / r²、可変軌道半径 × メテオ重力加速）が売りなので、
   How to Play では「Space=縮小／Shift=拡大」の対比を動画（HyperFrames 生成ループ）で見せる
@@ -44,7 +44,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 ## タイポグラフィ方針
 
 - 見出し・ロゴ: ベクター調に合うジオメトリック／等幅寄りのサンセリフ。タイトル「REFLECTORBIT」は
-  シアンで字間を広めに
+  ブルーバイオレット（Core `#ADBDFF`）で字間を広めに
 - 本文: 可読性重視のサンセリフ、`#CCCCCC` 系。ネオン色は強調箇所に限定して使う（全面発光は避ける）
 - グロー（text-shadow / box-shadow）は控えめに。`prefers-reduced-motion` を尊重しアニメは抑制可能に
 

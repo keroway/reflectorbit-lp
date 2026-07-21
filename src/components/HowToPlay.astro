@@ -50,7 +50,8 @@ import { controls } from '../consts';
 <script>
   /*
    * How to Play の動く図解 (<video>) を prefers-reduced-motion に応じて制御する。
-   * 通常時は autoplay + loop で即時ロード・再生する。
+   * 通常時は autoplay + loop で即時ロード・再生する（controls は常設し、ユーザーがいつでも
+   * 一時停止できるようにする＝WCAG 2.2.2 Pause, Stop, Hide 対応）。
    * reduced-motion 時は autoplay を行わず、controls を出して静止画 (poster) のみ表示し
    * ユーザーが望めば手動再生できるようにする（Hero.astro の pauseAnimations() 分岐と同様の考え方）。
    */
@@ -66,7 +67,6 @@ import { controls } from '../consts';
         howToPlayVideo!.setAttribute('controls', '');
         howToPlayVideo!.pause();
       } else {
-        howToPlayVideo!.removeAttribute('controls');
         howToPlayVideo!.setAttribute('autoplay', '');
         howToPlayVideo!.setAttribute('loop', '');
         void howToPlayVideo!.play().catch(() => {});

@@ -58,8 +58,8 @@ Web 版はタッチ / ポインタ操作にも対応。
 ## スクリーンショット（Screenshots セクション）
 
 - 見出し: **スクリーンショット**
-- 本体 `assets/press/screenshot-{title,playing,gameover}.png`（#411）を `public/screenshots/` に反映し、タイトルメニュー・プレイ中・GAME OVER の 3 枚をギャラリー表示
-- キャプション例: 「タイトルメニュー」/「プレイ中—Meteor を反射して Spawner を狙う」/「GAME OVER—ローカルランキング」
+- 本体 `assets/press/screenshot-{title,playing,gameover}.png`（#411）を `public/screenshots/` に反映し、タイトル画面・プレイ中・GAME OVER の 3 枚をギャラリー表示
+- キャプション例: 「タイトル画面」/「プレイ中—Meteor を反射して Spawner を狙う」/「GAME OVER—ローカルランキング」
 - 本体でスクショが差し替わったら同じ手順で LP 側も更新する
 
 ## 試遊（Playable Demo セクション）

@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: LP の表示崩れ・誤情報・リンク切れなどを報告する
-title: "[bug] "
+title: '[bug] '
 labels: bug
 ---
 

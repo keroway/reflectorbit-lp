@@ -1,7 +1,7 @@
 ---
 name: Feature request / Enhancement
 about: LP に追加・改善したい内容を提案する
-title: "[feat] "
+title: '[feat] '
 labels: enhancement
 ---
 

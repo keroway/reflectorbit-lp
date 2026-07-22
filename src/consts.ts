@@ -27,8 +27,8 @@ export const controls = [
     key: '← / →',
     desc: 'Shield を反時計 / 時計回りに回転（手動回転・離すと停止）',
   },
-  { key: 'Space', desc: '軌道半径を縮小（角速度が上がる）' },
-  { key: 'Shift', desc: '軌道半径を拡大（角速度が下がる）' },
+  { key: 'Space', desc: '軌道半径を縮小（内周へ）' },
+  { key: 'Shift', desc: '軌道半径を拡大（外周へ）' },
   { key: 'P', desc: 'ポーズ / 再開' },
   {
     key: '↑ / ↓',

@@ -77,11 +77,11 @@ body {
 }
 
 .panel--space .panel__orbit {
-  animation: spin 1s linear infinite;
+  animation: spin 2.5s linear infinite;
 }
 
 .panel--shift .panel__orbit {
-  animation: spin 5s linear infinite;
+  animation: spin 2.5s linear infinite;
 }
 
 .panel__shield {

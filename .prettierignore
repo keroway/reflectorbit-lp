@@ -1,0 +1,14 @@
+# Build artifacts / dependencies
+dist
+node_modules
+
+# Tool caches / generated
+.astro
+.claude
+.pi
+.pi-subagents
+test-results
+playwright-report
+
+# Lock files are intentionally excluded from formatting
+package-lock.json

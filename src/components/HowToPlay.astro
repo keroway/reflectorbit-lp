@@ -21,7 +21,8 @@ import { controls } from '../consts';
     </table>
   </div>
   <p class="mt-4 text-sm text-rb-muted/70">
-    物理メモ: 軌道は角運動量保存（&omega; = L / r&sup2;）。半径を縮めるほど速く回る。
+    軌道半径を能動的に変えて、Meteor の落下タイミングと Shield の位置を合わせる。
+    内周に寄るほどリスクが高まる代わりにスコア倍率が上がり、外周は安定してコンボを繋ぎやすい。
     Web 版はタッチ / ポインタ操作にも対応。
   </p>
 
@@ -35,14 +36,14 @@ import { controls } from '../consts';
         playsinline
         controls
         poster="/videos/how-to-play-poster.jpg"
-        aria-label="SPACE キーで軌道半径を縮小して高速回転、SHIFT キーで軌道半径を拡大して低速回転する図解動画"
+        aria-label="SPACE キーで軌道半径を縮小、SHIFT キーで軌道半径を拡大する図解動画"
       >
         <source src="/videos/how-to-play.webm" type="video/webm" />
         <source src="/videos/how-to-play.mp4" type="video/mp4" />
       </video>
     </div>
     <figcaption class="mt-3 text-center text-sm text-rb-muted/70">
-      角運動量保存 &omega; = L / r&sup2; — r を能動的に変えてタイミングを作る。
+      Space / Shift で軌道半径を変え、Meteor のタイミングを合わせる。
     </figcaption>
   </figure>
 </section>

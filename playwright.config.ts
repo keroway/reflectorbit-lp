@@ -18,7 +18,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run preview -- --port 4322',
+    command: 'pnpm run preview -- --port 4322',
     url: 'http://localhost:4322',
     reuseExistingServer: false,
     timeout: 120000,

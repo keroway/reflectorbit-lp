@@ -1,0 +1,11 @@
+# pnpm 11 はデフォルトで依存の build スクリプト実行を遮断する (strictDepBuilds)。
+# lefthook の postinstall は git hooks のインストールのため許可する。
+# それ以外 (esbuild / sharp / hyperframes 経由の onnxruntime-node 等) は
+# prebuilt バイナリで動作するため build スクリプト実行は不要 (明示的に拒否)。
+allowBuilds:
+  lefthook: true
+  esbuild: false
+  sharp: false
+  "@google/genai": false
+  onnxruntime-node: false
+  protobufjs: false

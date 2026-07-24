@@ -4,6 +4,7 @@ node_modules
 
 # Tool caches / generated
 .astro
+plans
 .claude
 .pi
 .pi-subagents
@@ -11,4 +12,4 @@ test-results
 playwright-report
 
 # Lock files are intentionally excluded from formatting
-package-lock.json
+pnpm-lock.yaml

@@ -5,15 +5,15 @@
 ## セットアップ
 
 ```sh
-npm install
-npm run dev        # http://127.0.0.1:4321
-npm run build      # dist/ に静的出力
-npm run typecheck  # astro check
-npm run preview    # ビルド結果の確認
-npm run lint       # Biome
-npm run format     # Biome で整形
-npm run smoke      # Playwright smoke test
-npm run smoke:a11y # Playwright + axe-core
+pnpm install
+pnpm run dev        # http://127.0.0.1:4321
+pnpm run build      # dist/ に静的出力
+pnpm run typecheck  # astro check
+pnpm run preview    # ビルド結果の確認
+pnpm run lint       # Biome
+pnpm run format     # Biome で整形
+pnpm run smoke      # Playwright smoke test
+pnpm run smoke:a11y # Playwright + axe-core
 ```
 
 ## ディレクトリ概要
@@ -35,7 +35,7 @@ npm run smoke:a11y # Playwright + axe-core
 - ホスティング先: **Cloudflare Pages**
 - 公開 URL: <https://reflectorbit-lp.pages.dev>
 - `main` への push で自動デプロイ
-- Build command: `npm run build`
+- Build command: `pnpm run build`
 - Build output directory: `dist`
 
 > ゲーム本体のブラウザ版 `reflectorbit.pages.dev` とは別プロジェクトです。
@@ -45,7 +45,7 @@ npm run smoke:a11y # Playwright + axe-core
 `public/og-default.png` は `public/og-default.svg` を元に生成しています。
 
 ```sh
-npm run og:gen
+pnpm run og:gen
 ```
 
 デザインを更新したら PNG も再生成してコミットしてください。
@@ -55,7 +55,7 @@ npm run og:gen
 How to Play セクションの図解動画は HyperFrames（`video/how-to-play/` のコンポジション）から生成します。
 
 ```sh
-npm run video:howtoplay:gen
+pnpm run video:howtoplay:gen
 ```
 
 - 出力: `public/videos/how-to-play.mp4` / `.webm` / `how-to-play-poster.jpg`

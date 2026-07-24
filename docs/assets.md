@@ -15,11 +15,11 @@ LP 制作で用意・収集が必要な素材のチェックリスト。
       現状はスクリーンショット 3 枚のスライドショーによる**プレースホルダ**をコミット済み。
       セクション実装（`src/components/Trailer.astro`）は完了しており、実プレイ映像の収録（#85）が
       済み次第、同名ファイルの差し替えのみで反映される）
-- [x] How to Play 動画（HyperFrames 生成。`public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg`。コンポジションは `video/how-to-play/`、生成は `npm run video:howtoplay:gen`。How to Play セクションへの統合完了済み（#88）
+- [x] How to Play 動画（HyperFrames 生成。`public/videos/how-to-play.mp4` / `.webm` / `-poster.jpg`。コンポジションは `video/how-to-play/`、生成は `pnpm run video:howtoplay:gen`。How to Play セクションへの統合完了済み（#88）
 
 ## SNS / メタ
 
-- [x] OGP 画像（1200×630px、`public/og-default.png`。デザインソースは `public/og-default.svg`、生成は `npm run og:gen`）
+- [x] OGP 画像（1200×630px、`public/og-default.png`。デザインソースは `public/og-default.svg`、生成は `pnpm run og:gen`）
 - [x] favicon（`public/favicon.svg`）
 - [x] サイトタイトル / description（`src/layouts/Layout.astro` の props 既定値）
 - [x] `public/robots.txt`（`sitemap-index.xml` を参照）

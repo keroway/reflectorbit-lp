@@ -30,7 +30,7 @@ LP のデザイン検討の土台。配色は **ゲーム本体 [REFLECTORBIT](h
 ゴールド `#FFE61A` を軸にする。Core 被弾時に背景が赤くフラッシュする演出（`#0A0A0F` → 赤寄り）が
 本体にあるため、危機表現は `#E63333` を使う。
 
-> **M17 パレット統一（Issue #414）の背景**: 旧パレットでは Core・Fast・PERFECTがすべてシアン系に集中していたため、本体は役割別に色相を分離した（Core=ブルーバイオレットの守る対象、Fast=警戒の暖色、PERFECT=報酬のライム）。LP の主色（CTA・見出し・リンク）もこれに従いシアンからブルーバイオレットへ変更済み。ブランド素材（`public/favicon.svg` / `public/og-default.svg`）も同様に同期し、`npm run og:gen` で PNG を再生成済み。
+> **M17 パレット統一（Issue #414）の背景**: 旧パレットでは Core・Fast・PERFECTがすべてシアン系に集中していたため、本体は役割別に色相を分離した（Core=ブルーバイオレットの守る対象、Fast=警戒の暖色、PERFECT=報酬のライム）。LP の主色（CTA・見出し・リンク）もこれに従いシアンからブルーバイオレットへ変更済み。ブランド素材（`public/favicon.svg` / `public/og-default.svg`）も同様に同期し、`pnpm run og:gen` で PNG を再生成済み。
 
 ## トーン & ボイス
 

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommitTypeAll(chore)"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["before 10am on monday"],
+  "labels": ["infra"],
+  "prConcurrentLimit": 5,
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["astro", "@astrojs/*"],
+      "groupName": "astro",
+      "groupSlug": "astro"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+      "groupName": "tailwind",
+      "groupSlug": "tailwind"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@biomejs/*"],
+      "groupName": "biome",
+      "groupSlug": "biome"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor/patch",
+      "groupSlug": "npm-minor-patch"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "github-actions minor/patch",
+      "groupSlug": "github-actions"
+    }
+  ]
+}

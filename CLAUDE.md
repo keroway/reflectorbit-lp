@@ -22,21 +22,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   グローバル CSS は `src/styles/global.css` の `@import "tailwindcss";` のみ。
   v3 系の `tailwind.config.js` や `@astrojs/tailwind` 統合は使わない。
   デザイントークンは同ファイルの `@theme` ブロックで定義する。
-- Lint / Format: **Biome**（`biome.json`）。対象は `*.ts` / `*.js` / `*.mjs` / `*.json` / `*.css`。
+- パッケージマネージャ: **pnpm 11**（`packageManager` フィールドでピン。
+  Node 24 / pnpm 11 は `mise.toml` でもピン）。依存の build スクリプトは
+  `pnpm-workspace.yaml` の `allowBuilds` で明示許可制（lefthook のみ許可）
+- Lint / Format: **Biome**（`biome.json`、double quote）。対象は `*.ts` / `*.js` / `*.mjs` / `*.json`。
+  `.md` のみ補助 Prettier（`pnpm run lint` / `format` に統合済み）。
   `.astro` は Biome の整形対象外（テンプレートは手で整える）
 - ホスティング: **Cloudflare Pages**（ゲーム本体と同じ。GitHub 連携で main push 時に自動デプロイ。
-  Build command = `npm run build`、Build output = `dist/`）。
+  Build command = `pnpm run build`、Build output = `dist/`）。
   公開先は **LP = `reflectorbit-lp.pages.dev`**、**ゲーム本体 = `reflectorbit.pages.dev`** で別プロジェクト。
   LP の「ブラウザで今すぐプレイ」リンク（`src/consts.ts` の `PLAY_URL`）はゲーム側 `reflectorbit.pages.dev` を指す。
   混同しないこと。セットアップ手順は README「デプロイ（Cloudflare Pages）」節を参照
 
 ```sh
-npm run dev        # 開発サーバー (http://127.0.0.1:4321)
-npm run build      # 静的出力 → dist/  (astro build。型チェックは含まない)
-npm run typecheck  # 型チェック (astro check。CI では build と別ジョブ)
-npm run preview    # ビルド結果のプレビュー
-npm run lint       # Biome で lint (CI と同じ)
-npm run format     # Biome で format 適用
+pnpm run dev        # 開発サーバー (http://127.0.0.1:4321)
+pnpm run build      # 静的出力 → dist/  (astro build。型チェックは含まない)
+pnpm run typecheck  # 型チェック (astro check。CI では build と別ジョブ)
+pnpm run preview    # ビルド結果のプレビュー
+pnpm run lint       # Biome で lint (CI と同じ)
+pnpm run format     # Biome で format 適用
 ```
 
 ## アーキテクチャ
@@ -67,8 +71,8 @@ npm run format     # Biome で format 適用
 
 `public/og-default.png` (1200×630) は `public/og-default.svg` から
 `scripts/gen-og.mjs` (sharp) で書き出す。デザインソース更新後は
-`npm run og:gen` を実行して PNG を更新しコミットする。
-CI では再生成しない（`npm run build` は PNG がコミット済み前提）。
+`pnpm run og:gen` を実行して PNG を更新しコミットする。
+CI では再生成しない（`pnpm run build` は PNG がコミット済み前提）。
 
 ## ビルド時の落とし穴（外さないこと）
 

@@ -13,32 +13,32 @@
 export const RELEASE_AVAILABLE = false;
 
 // 外部リンク (docs/copy.md の CTA / Download セクションが正典)
-export const PLAY_URL = 'https://reflectorbit.pages.dev';
+export const PLAY_URL = "https://reflectorbit.pages.dev";
 export const DOWNLOAD_URL =
-  'https://github.com/keroway/reflectorbit/releases/latest';
-export const REPO_URL = 'https://github.com/keroway/reflectorbit';
+  "https://github.com/keroway/reflectorbit/releases/latest";
+export const REPO_URL = "https://github.com/keroway/reflectorbit";
 
 // 本体リポが非公開の間に使う到達可能なフォールバック先（作者アカウント = 200 OK）。
-export const REPO_FALLBACK_URL = 'https://github.com/keroway';
+export const REPO_FALLBACK_URL = "https://github.com/keroway";
 
 // 操作方法 (docs/copy.md の How to Play より)
 export const controls = [
   {
-    key: '← / →',
-    desc: 'Shield を反時計 / 時計回りに回転（手動回転・離すと停止）',
+    key: "← / →",
+    desc: "Shield を反時計 / 時計回りに回転（手動回転・離すと停止）",
   },
-  { key: 'Space', desc: '軌道半径を縮小（内周へ）' },
-  { key: 'Shift', desc: '軌道半径を拡大（外周へ）' },
-  { key: 'P', desc: 'ポーズ / 再開' },
+  { key: "Space", desc: "軌道半径を縮小（内周へ）" },
+  { key: "Shift", desc: "軌道半径を拡大（外周へ）" },
+  { key: "P", desc: "ポーズ / 再開" },
   {
-    key: '↑ / ↓',
-    desc: 'タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では ←/→ で Stage/Endless/Daily を切替）',
+    key: "↑ / ↓",
+    desc: "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では ←/→ で Stage/Endless/Daily を切替）",
   },
 ];
 
 // ダウンロード (docs/copy.md の Download より)
 export const downloads = [
-  { os: 'Linux (x86_64)', file: 'reflectorbit-linux-x86_64' },
-  { os: 'macOS (Apple Silicon)', file: 'reflectorbit-macos-aarch64' },
-  { os: 'Windows (x86_64)', file: 'reflectorbit-windows-x86_64.exe' },
+  { os: "Linux (x86_64)", file: "reflectorbit-linux-x86_64" },
+  { os: "macOS (Apple Silicon)", file: "reflectorbit-macos-aarch64" },
+  { os: "Windows (x86_64)", file: "reflectorbit-windows-x86_64.exe" },
 ];

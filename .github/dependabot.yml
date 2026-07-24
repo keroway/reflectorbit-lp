@@ -25,9 +25,10 @@ updates:
       biome:
         patterns:
           - '@biomejs/*'
-    # NOTE: vite は package.json の overrides で ^7.3.5 に固定している
-    # (CLAUDE.md の落とし穴を参照)。dependabot が vite の major 更新 PR を
-    # 出した場合は override 撤去可否を必ず手動で確認すること。
+    # NOTE: vite の override (^7.3.5 固定) は Astro 7 移行で撤去済み。
+    # Astro 7 以降は Astro 同梱の Vite v8 をそのまま使う (CLAUDE.md の
+    # 「ビルド時の落とし穴」を参照)。dependabot が vite / astro の major
+    # 更新 PR を出した場合は同節を必ず手動で確認すること。
 
   - package-ecosystem: github-actions
     directory: '/'

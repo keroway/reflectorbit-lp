@@ -50,8 +50,8 @@
 ## ローカル開発
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 主なコマンドや運用メモは [`docs/development.md`](./docs/development.md) にまとめています。

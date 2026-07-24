@@ -1,25 +1,25 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: "./tests",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'list',
+  reporter: "list",
   use: {
-    baseURL: 'http://localhost:4322',
-    trace: 'on-first-retry',
+    baseURL: "http://localhost:4322",
+    trace: "on-first-retry",
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
   webServer: {
-    command: 'npm run preview -- --port 4322',
-    url: 'http://localhost:4322',
+    command: "pnpm run preview --port 4322",
+    url: "http://localhost:4322",
     reuseExistingServer: false,
     timeout: 120000,
   },

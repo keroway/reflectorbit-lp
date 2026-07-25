@@ -5,15 +5,22 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** 検索エンジンに indexed させたくないページ（404 など）で true にする。canonical/JSON-LD も併せて抑制される。 */
+  noindex?: boolean;
+  /** VideoGame JSON-LD を出力するか。noindex ページでは既定で抑制する。 */
+  structuredData?: boolean;
 }
 
 const {
   title = 'REFLECTORBIT — 軌道反射アクション',
   description = '中心の Core を周回する Shield でメテオを反射し、敵 Spawner を破壊する軌道アクション。←/→ で回転、Space/Shift で軌道半径——3 キー操作。ブラウザで今すぐプレイ。',
+  noindex = false,
+  structuredData = !noindex,
 } = Astro.props;
 
-// canonical / OGP は site + 現在パスから生成 (site 未設定時は undefined)
-const canonical = Astro.site
+// canonical / OGP は site + 現在パスから生成 (site 未設定時は undefined)。
+// noindex ページ (404 など) は実際にアクセスされた任意の URL を代表しないため canonical を出さない。
+const canonical = !noindex && Astro.site
   ? new URL(Astro.url.pathname, Astro.site).href
   : undefined;
 const ogImage = Astro.site
@@ -79,6 +86,7 @@ if (RELEASE_AVAILABLE) {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     {canonical && <link rel="canonical" href={canonical} />}
 
     <meta property="og:type" content="website" />
@@ -104,7 +112,11 @@ if (RELEASE_AVAILABLE) {
     {ogImage && <meta name="twitter:image" content={ogImage} />}
     <meta name="generator" content={Astro.generator} />
 
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {
+      structuredData && (
+        <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    }
   </head>
   <body class="min-h-screen bg-rb-bg text-rb-muted antialiased">
     <a class="skip-link" href="#main-content">コンテンツへスキップ</a>

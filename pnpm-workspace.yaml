@@ -21,6 +21,8 @@ allowBuilds:
 #   devDependencies sharp (^0.35.2) と揃えて重複バージョンを解消する
 # - adm-zip: hyperframes / onnxruntime-node が要求する古い版 (GHSA-xcpc-8h2w-3j85)
 # - @hono/node-server: hyperframes が要求する古い版 (Windows 限定の path traversal)
+# - postcss: @tailwindcss/vite / astro / vitefu 経由の vite が要求する古い版
+#   (GHSA-r28c-9q8g-f849: sourceMappingURL 経由の Path Traversal)
 #
 # NOTE: pnpm-workspace.yaml の overrides と package.json の pnpm.overrides は
 # 併用すると後者が無視される (pnpm-workspace.yaml 側が優先されマージされない)。
@@ -33,3 +35,4 @@ overrides:
   adm-zip: ^0.6.0
   "@hono/node-server": ^2.0.11
   yaml: ^2.8.3
+  postcss: ^8.5.18

@@ -80,6 +80,31 @@ test("prefers-reduced-motion: reduce では図解動画の自動再生・ルー�
   await expect(video).not.toHaveAttribute("loop", "");
 });
 
+test("存在しないパスは HTTP 404 を返し、検索エンジン向けメタデータを含まない", async ({
+  page,
+}) => {
+  const response = await page.goto("/__nonexistent_path__/");
+  expect(response?.status()).toBe(404);
+
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    "noindex, nofollow"
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(
+    0
+  );
+});
+
+test("トップページは VideoGame の JSON-LD を保持する", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(
+    1
+  );
+});
+
 test("@mobile 320px 幅でページが横スクロールしない", async ({ page }) => {
   await page.goto("/");
 

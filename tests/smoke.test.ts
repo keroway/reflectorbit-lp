@@ -79,3 +79,21 @@ test("prefers-reduced-motion: reduce では図解動画の自動再生・ルー�
   await expect(video).not.toHaveAttribute("autoplay", "");
   await expect(video).not.toHaveAttribute("loop", "");
 });
+
+test("@mobile 320px 幅でページが横スクロールしない", async ({ page }) => {
+  await page.goto("/");
+
+  const { scrollWidth, clientWidth } = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+  }));
+  expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+
+  // 見出しが見切れずビューポート内に収まっていること
+  const box = await page.locator("section#top h1").boundingBox();
+  if (box === null) {
+    throw new Error("Hero見出しの boundingBox が取得できませんでした");
+  }
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  expect(box.x + box.width).toBeLessThanOrEqual(clientWidth);
+});

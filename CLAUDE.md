@@ -23,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   v3 系の `tailwind.config.js` や `@astrojs/tailwind` 統合は使わない。
   デザイントークンは同ファイルの `@theme` ブロックで定義する。
 - パッケージマネージャ: **pnpm 11**（`packageManager` フィールドでピン。
-  Node 24 / pnpm 11 は `mise.toml` でもピン）。依存の build スクリプトは
+  Node 26 / pnpm 11 は `mise.toml` でもピン）。依存の build スクリプトは
   `pnpm-workspace.yaml` の `allowBuilds` で明示許可制（lefthook のみ許可）
 - Lint / Format: **Biome**（`biome.json`、double quote）。対象は `*.ts` / `*.js` / `*.mjs` / `*.json`。
   `.md` のみ補助 Prettier（`pnpm run lint` / `format` に統合済み）。
@@ -32,7 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   Build command = `pnpm run build`、Build output = `dist/`）。
   公開先は **LP = `reflectorbit-lp.pages.dev`**、**ゲーム本体 = `reflectorbit.pages.dev`** で別プロジェクト。
   LP の「ブラウザで今すぐプレイ」リンク（`src/consts.ts` の `PLAY_URL`）はゲーム側 `reflectorbit.pages.dev` を指す。
-  混同しないこと。セットアップ手順は README「デプロイ（Cloudflare Pages）」節を参照
+  混同しないこと。セットアップ手順は `docs/development.md` を参照
 
 ```sh
 pnpm run dev        # 開発サーバー (http://127.0.0.1:4321)
@@ -46,7 +46,7 @@ pnpm run format     # Biome で format 適用
 ## アーキテクチャ
 
 1 ページ完結。セクション構成は `docs/copy.md` / README に対応:
-**Hero → Concept → How to Play → Playable Demo → Download → Footer**。
+**SiteNav → Hero → Concept → Trailer → Screenshots → How to Play → Playable Demo → Download → Footer**。
 
 - `astro.config.mjs` — `site`（`https://reflectorbit-lp.pages.dev`）と Tailwind の Vite プラグイン、
   sitemap。Cloudflare Pages へは静的出力（`output` 既定）でデプロイするため `base` は付けない
@@ -54,7 +54,7 @@ pnpm run format     # Biome で format 適用
   こちらは独立ドメイン配信なので不要）
 - `src/layouts/Layout.astro` — `<head>` / meta / OGP / favicon
 - `src/pages/index.astro` — LP 本体（1 ページ）。全セクション
-  （Hero / Concept / HowToPlay / PlayableDemo / Download / SiteFooter）を組み立てる
+  （SiteNav / Hero / Concept / Trailer / Screenshots / HowToPlay / PlayableDemo / Download / SiteFooter）を組み立てる
 - `src/components/PlayableDemo.astro` — WASM 版（`reflectorbit.pages.dev`）を
   `<iframe>` で埋め込む。クリック起動のファサード方式で初期負荷を抑制し、
   読み込み遅延時は別タブ導線にフォールバックする
@@ -62,7 +62,7 @@ pnpm run format     # Biome で format 適用
 ## デザイントークン（重要な制約）
 
 ブランドカラーの **正は `docs/design.md`**、その出所は **ゲーム本体 `src/constants.zig`** の
-色定数（シアン Core / マゼンタ Shield など）。LP 側で色を独自に発明しない。
+色定数（ブルーバイオレット Core / マゼンタ Shield など）。LP 側で色を独自に発明しない。
 色を足す・変えるときは「本体 `constants.zig` → `docs/design.md` → `global.css` の `@theme`」の
 順で同期させる。`@theme` トークンは `--color-rb-*` 命名で、Tailwind の `bg-rb-bg` /
 `text-rb-core` のように使う。

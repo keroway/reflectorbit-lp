@@ -79,3 +79,46 @@ test("prefers-reduced-motion: reduce では図解動画の自動再生・ルー�
   await expect(video).not.toHaveAttribute("autoplay", "");
   await expect(video).not.toHaveAttribute("loop", "");
 });
+
+test("存在しないパスは HTTP 404 を返し、検索エンジン向けメタデータを含まない", async ({
+  page,
+}) => {
+  const response = await page.goto("/__nonexistent_path__/");
+  expect(response?.status()).toBe(404);
+
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    "noindex, nofollow"
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(
+    0
+  );
+});
+
+test("トップページは VideoGame の JSON-LD を保持する", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(
+    1
+  );
+});
+
+test("@mobile 320px 幅でページが横スクロールしない", async ({ page }) => {
+  await page.goto("/");
+
+  const { scrollWidth, clientWidth } = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth,
+  }));
+  expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+
+  // 見出しが見切れずビューポート内に収まっていること
+  const box = await page.locator("section#top h1").boundingBox();
+  if (box === null) {
+    throw new Error("Hero見出しの boundingBox が取得できませんでした");
+  }
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  expect(box.x + box.width).toBeLessThanOrEqual(clientWidth);
+});

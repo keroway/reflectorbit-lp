@@ -15,6 +15,13 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      grepInvert: /@mobile/,
+    },
+    {
+      // 320px = 実測でモバイル横スクロール回帰が最も顕著になる幅。
+      name: "mobile-320",
+      use: { ...devices["Pixel 5"], viewport: { width: 320, height: 640 } },
+      grep: /@mobile/,
     },
   ],
   webServer: {

@@ -43,8 +43,8 @@ importers:
         specifier: ^1.61.1
         version: 1.61.1
       hyperframes:
-        specifier: 0.7.68
-        version: 0.7.68(@types/node@24.13.0)
+        specifier: 0.7.70
+        version: 0.7.70(@types/node@24.13.0)
       lefthook:
         specifier: ^2.1.10
         version: 2.1.10
@@ -1680,8 +1680,8 @@ packages:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
     engines: {node: '>= 14'}
 
-  hyperframes@0.7.68:
-    resolution: {integrity: sha512-r62aPZZL3b+Gs4CiFc6bBA7Q7IP0RRwxLcACzwlkvDuN/1FfIiN5DfgfVXUH2LXFii2GDQKLW6+x9l1ree1B7A==}
+  hyperframes@0.7.70:
+    resolution: {integrity: sha512-XRSGC2YuwNVnJuv6nkFhq71/tHOslJvy1AXmwheekVOM+TSkeJlkur573Z9Ll7LmaCFOJlN0MK7NQOX3rYLfVw==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -4110,7 +4110,7 @@ snapshots:
       - supports-color
     optional: true
 
-  hyperframes@0.7.68(@types/node@24.13.0):
+  hyperframes@0.7.70(@types/node@24.13.0):
     dependencies:
       '@hono/node-server': 2.0.11(hono@4.12.30)
       '@puppeteer/browsers': 3.0.6

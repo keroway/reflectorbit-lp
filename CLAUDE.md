@@ -37,7 +37,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```sh
 pnpm run dev        # 開発サーバー (http://127.0.0.1:4321)
 pnpm run build      # 静的出力 → dist/  (astro build。型チェックは含まない)
-pnpm run typecheck  # 型チェック (astro check。CI では build と別ジョブ)
+pnpm run typecheck  # 型チェック (astro check。CI では site.yml の Typecheck ジョブ)
 pnpm run preview    # ビルド結果のプレビュー
 pnpm run lint       # Biome で lint (CI と同じ)
 pnpm run format     # Biome で format 適用
@@ -73,6 +73,35 @@ pnpm run format     # Biome で format 適用
 `scripts/gen-og.mjs` (sharp) で書き出す。デザインソース更新後は
 `pnpm run og:gen` を実行して PNG を更新しコミットする。
 CI では再生成しない（`pnpm run build` は PNG がコミット済み前提）。
+
+## CI
+
+- `.github/workflows/ci.yml`（`CI` / `Lint`）— `pnpm run lint`。paths フィルタなしで**全 PR に必ず起動**する
+  （prettier が `**/*.md` を見るため、docs だけの変更でも必要）
+- `.github/workflows/site.yml`（`Site` / `Typecheck`・`E2E`）— `astro check` とビルド + Playwright（`pnpm test`。
+  `chromium` と `mobile-320` の両 project、smoke/a11y/mobile 回帰を 1 プロセスで実行）。
+  **`src/**` `public/**` `tests/**` や設定ファイルに触った PR だけ起動**し、docs のみの PR ではスキップされる。
+  手動でフル検証したいときは `workflow_dispatch`
+- 依存脆弱性は `osv-scan.yml` が単独で担当（PR は `package.json` / `pnpm-lock.yaml` / `pnpm-workspace.yaml`
+  変更時のみ起動 + 毎週月曜 cron）。**`pnpm audit` は CI から意図的に外してある**
+  （外部 advisory DB の更新タイミングで無関係な PR の Lint が赤くなるのを避けるため）。復活させないこと
+- 秘密情報スキャン (`gitleaks.yml`) だけは PR に加えて `push: main` も維持している。
+  秘密漏洩は取り返しがつかないため、直 push が起きた場合に週次 cron まで検知が遅れるリスクを許容しない
+- ローカルの `just check` は `lint` → `typecheck` → `build` → `pnpm test` を通しで実行する（CI と同じ組み合わせ）
+
+### CI を変更する前に読む不変条件
+
+- main-protection ruleset の required status check は **`CI / Lint` のみ**。
+  `Site` の Typecheck / E2E を required に追加する場合は、workflow-level `paths` のスキップ方式をやめて
+  「常に起動し、先頭の `changes` ジョブで後続を `if:` 制御する」方式（兄弟リポ `code-tactics-lp` の
+  `.github/workflows/ci.yml` が前例）へ移行すること。さもないと docs だけの PR が Pending のまま
+  マージ不能になる
+- `docs/copy.md` は LP 文言の正典で `src/` と同時に更新する運用のため、`site.yml` の paths には含めていない
+  （`src/` 側の変更が必ず伴うので結果的に検証される）
+- `public/**` は現行テストでは実体（画像・動画ファイル）そのものは検証していないが、
+  将来のカバレッジ確保のため意図的に `site.yml` の paths に含めてある
+- `src/styles/global.css` は Biome も `astro check` も対象外なので、`site.yml` の E2E（axe の
+  色コントラスト検査を含む）が唯一の自動検証。CSS だけの変更でも `site.yml` の paths（`src/**`）で拾われる
 
 ## ビルド時の落とし穴（外さないこと）
 

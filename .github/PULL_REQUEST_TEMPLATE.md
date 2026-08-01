@@ -18,9 +18,10 @@ Closes #
 
 ## 動作確認
 
-- [ ] `npm run lint` が通る
-- [ ] `npm run build` が通る (`astro check` 含む)
-- [ ] `npm run preview` で表示崩れがない
+- [ ] `pnpm run lint` が通る
+- [ ] `pnpm run typecheck` が通る (`astro check`)
+- [ ] `pnpm run build` が通る
+- [ ] `pnpm run preview` で表示崩れがない
 - [ ] (UI 変更時) スクリーンショットを添付
 
 ## スクリーンショット / 動作キャプチャ

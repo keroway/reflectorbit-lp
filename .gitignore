@@ -33,6 +33,11 @@ test-results/
 playwright-report/
 
 # AI agents (Claude Code / pi)
-.claude/
+# settings.json / hooks / README はチーム共有する Claude Code 設定としてトラッキング。
+# settings.local.json / worktrees などのセッションローカルなものは ignore のまま。
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+!.claude/README.md
 .pi/
 .pi-subagents/

@@ -2,12 +2,14 @@
 name: workflow-lint
 
 on:
-  push:
-    branches: [main]
   pull_request:
     paths:
       - ".github/workflows/**"
       - "**/*.sh"
+  # PR の paths は actionlint/zizmor/shellcheck 向けに絞ってあるため typos がリポジトリ全体
+  # （docs/ や src/）を検査する機会が無い。週次で全ジョブを走らせてそこを埋める。
+  schedule:
+    - cron: "0 7 * * 1"
   workflow_dispatch:
 
 permissions:

@@ -35,6 +35,13 @@
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "github-actions minor/patch",
       "groupSlug": "github-actions"
+    },
+    {
+      "description": "astro check が依存する @astrojs/language-server が TypeScript 7.x のプログラマティック API に未対応で、`Cannot read properties of undefined (reading 'fileExists')` を投げて astro check がクラッシュする（孤児PR #82 の Typecheck 失敗で実際に確認）。TS7 対応まで typescript の major 更新を抑止する。参照: https://github.com/withastro/roadmap/discussions/1321",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["typescript"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }

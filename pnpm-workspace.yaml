@@ -30,9 +30,12 @@ allowBuilds:
 # @astrojs/check > yaml-language-server 経由の脆弱版 (GHSA-48c2-rrv3-qjmp) 対応。
 overrides:
   svgo: ^4.0.2
-  fast-uri: ^4.1.1
+  fast-uri: ^4.1.2
   sharp: ^0.35.3
   adm-zip: ^0.6.0
   "@hono/node-server": ^2.0.11
   yaml: ^2.8.3
-  postcss: ^8.5.18
+  js-yaml: ^4.3.1
+  hono: ^4.12.34
+  nanoid: ^3.3.17
+  postcss: ^8.5.23

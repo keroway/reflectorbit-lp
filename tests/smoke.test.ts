@@ -190,4 +190,10 @@ test("リリース公開後は本体リポへリンクし JSON-LD に InStock �
 
   await expect(page.locator("a[href*='releases/latest']")).not.toHaveCount(0);
   await expect(page.locator("[aria-disabled='true']")).toHaveCount(0);
+
+  // JSON-LD だけを見ると、SiteFooter のリンクが REPO_FALLBACK_URL のまま
+  // 残っていても気づけない。実際の <a> も見る。
+  await expect(
+    page.locator("a[href='https://github.com/keroway/reflectorbit']")
+  ).not.toHaveCount(0);
 });

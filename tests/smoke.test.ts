@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { RELEASE_AVAILABLE } from "../src/consts";
 
 test("トップページが HTTP 200 を返す", async ({ page }) => {
   const response = await page.goto("/");
@@ -121,4 +122,72 @@ test("@mobile 320px 幅でページが横スクロールしない", async ({ pag
   }
   expect(box.x).toBeGreaterThanOrEqual(0);
   expect(box.x + box.width).toBeLessThanOrEqual(clientWidth);
+});
+
+// ─────────── リリース公開ゲート (RELEASE_AVAILABLE) の不変条件 ───────────
+//
+// RELEASE_AVAILABLE は consts / Hero / Download / SiteFooter / Layout の
+// 5 ファイルにまたがる。**片方だけ直す/戻す事故**が起きやすいのに、これまで
+// 効果を検証するテストが 1 つも無かった（#146）。
+//
+// 未公開側・公開側の両方を対で置く。フラグを倒した瞬間に、倒し忘れた箇所が
+// 落ちて分かるようにするため。片側だけだと「倒したら全部 skip されて緑」に
+// なり、検証していないのと同じになる。
+
+test("リリース未公開の間、到達不能な本体リポ URL を出力に含めない", async ({
+  page,
+}) => {
+  test.skip(RELEASE_AVAILABLE, "公開後は本体リポ URL が載るのが正");
+  await page.goto("/");
+
+  // 本体リポは private のため匿名訪問者には 404。href だけでなく HTML 全体を
+  // 見る（JSON-LD・meta・コメントのどこに混ざっても流出は流出）。
+  expect(await page.content()).not.toContain("github.com/keroway/reflectorbit");
+});
+
+test("リリース未公開の間、JSON-LD は到達可能な sameAs のみを持ち offers を出さない", async ({
+  page,
+}) => {
+  test.skip(RELEASE_AVAILABLE, "公開後は offers が InStock で復活するのが正");
+  await page.goto("/");
+
+  const ld = JSON.parse(
+    await page.locator('script[type="application/ld+json"]').innerText()
+  );
+  expect(ld.sameAs).toEqual(["https://github.com/keroway"]);
+  // 到達できない商品を InStock と主張しないこと。件数ではなく中身を見る。
+  expect(ld.offers).toBeUndefined();
+});
+
+test("リリース未公開の間、ダウンロード CTA は disabled でリリース URL へリンクしない", async ({
+  page,
+}) => {
+  test.skip(RELEASE_AVAILABLE, "公開後はリンクが有効になるのが正");
+  await page.goto("/");
+
+  await expect(
+    page.locator("section#download [aria-disabled='true']")
+  ).toBeVisible();
+  await expect(
+    page.locator("section#top [aria-disabled='true']")
+  ).toBeVisible();
+  await expect(page.locator("a[href*='releases/latest']")).toHaveCount(0);
+});
+
+test("リリース公開後は本体リポへリンクし JSON-LD に InStock の offers を持つ", async ({
+  page,
+}) => {
+  test.skip(!RELEASE_AVAILABLE, "未公開の間は載せないのが正");
+  await page.goto("/");
+
+  const ld = JSON.parse(
+    await page.locator('script[type="application/ld+json"]').innerText()
+  );
+  expect(ld.sameAs).toEqual(["https://github.com/keroway/reflectorbit"]);
+  expect(ld.offers).toMatchObject({
+    availability: "https://schema.org/InStock",
+  });
+
+  await expect(page.locator("a[href*='releases/latest']")).not.toHaveCount(0);
+  await expect(page.locator("[aria-disabled='true']")).toHaveCount(0);
 });

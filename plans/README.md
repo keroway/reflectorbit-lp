@@ -9,12 +9,16 @@ status row when done.
 
 | Plan | Title                                               | Priority | Effort | Depends on | Status | Issue                                                         |
 | ---- | --------------------------------------------------- | -------- | ------ | ---------- | ------ | ------------------------------------------------------------- |
-| 001  | モバイル幅の Hero 横スクロールを解消する            | P1       | S      | —          | TODO   | [#118](https://github.com/keroway/reflectorbit-lp/issues/118) |
-| 002  | 404 ページから検索用ゲームメタデータを除外する      | P1       | S      | —          | TODO   | [#119](https://github.com/keroway/reflectorbit-lp/issues/119) |
+| 001  | モバイル幅の Hero 横スクロールを解消する            | P1       | S      | —          | DONE   | [#118](https://github.com/keroway/reflectorbit-lp/issues/118) |
+| 002  | 404 ページから検索用ゲームメタデータを除外する      | P1       | S      | —          | DONE   | [#119](https://github.com/keroway/reflectorbit-lp/issues/119) |
 | 003  | High 脆弱性のある svgo を更新し監査を CI に組み込む | P1       | S      | —          | DONE   | implemented in `1c94033`                                     |
-| 004  | 保守ドキュメントを現行構成へ同期する                | P2       | S      | —          | TODO   | [#120](https://github.com/keroway/reflectorbit-lp/issues/120) |
+| 004  | 保守ドキュメントを現行構成へ同期する                | P2       | S      | —          | DONE   | [#120](https://github.com/keroway/reflectorbit-lp/issues/120) |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED | REJECTED
+
+> 2026-08-14: #118 / #119 / #120 はすべて CLOSED 済みなのに Status が TODO のままだった
+> ドリフトを是正（astro-blog の plans/README.md が同種のドリフトを 2026-08-11 に是正済み。
+> issue 側の変更を都度反映する運用を徹底できていなかった）。
 
 ## Dependency notes
 

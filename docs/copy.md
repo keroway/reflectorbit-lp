@@ -80,8 +80,9 @@ Web 版はタッチ / ポインタ操作にも対応。
 ## CTA
 
 - 主 CTA: 「▶ ブラウザで今すぐプレイ」 → <https://reflectorbit.pages.dev>
-- 副 CTA: 本体の初回リリース公開後に有効化する「ネイティブ版をダウンロード」 → <https://github.com/keroway/reflectorbit/releases/latest>
-  - 公開前は「ネイティブ版（近日公開）」表記の disabled 表示にして 404 を踏ませない（`src/consts.ts` の `RELEASE_AVAILABLE` で切替）
+- 副 CTA: 「ネイティブ版をダウンロード」 → <https://github.com/keroway/reflectorbit-releases/releases/latest>
+  （成果物配布専用の公開リポジトリ。本体ソースは非公開のまま）
+  - `src/consts.ts` の `DOWNLOAD_AVAILABLE` で有効/無効を切替（現在 true）
 
 ## ダウンロード（Download セクション）
 
@@ -91,14 +92,14 @@ Web 版はタッチ / ポインタ操作にも対応。
 | macOS (Apple Silicon) | `reflectorbit-macos-aarch64`      |
 | Windows (x86_64)      | `reflectorbit-windows-x86_64.exe` |
 
-- 公開後: 「最新リリースを見る」 → <https://github.com/keroway/reflectorbit/releases/latest>
-- 公開前: 「最新リリースを見る（近日公開）」の disabled 表示。代わりにブラウザ版プレイへ誘導する。
+- 「最新リリースを見る」 → <https://github.com/keroway/reflectorbit-releases/releases/latest>
 - ※ 配布バイナリは未署名のため初回起動時に OS 警告が出る場合がある（手順は本体 README 参照）。
 
 ## フッター
 
-- ゲーム本体（公開後）: <https://github.com/keroway/reflectorbit>
-- 制作者 GitHub（公開前のフォールバック先・到達可能）: <https://github.com/keroway>
+- ゲーム本体（本体ソースの公開後）: <https://github.com/keroway/reflectorbit>
+- 制作者 GitHub（本体非公開時のフォールバック先・到達可能）: <https://github.com/keroway>
+  - `src/consts.ts` の `SOURCE_AVAILABLE` で切替（現在 false。本体ソースは非公開のまま運用する方針）
 - 制作: keroway
 
 ## 404 ページ（src/pages/404.astro）

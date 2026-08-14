@@ -1,5 +1,11 @@
 ---
-import { PLAY_URL, RELEASE_AVAILABLE, REPO_FALLBACK_URL, REPO_URL } from '../consts';
+import {
+  DOWNLOAD_AVAILABLE,
+  PLAY_URL,
+  REPO_FALLBACK_URL,
+  REPO_URL,
+  SOURCE_AVAILABLE,
+} from '../consts';
 import '../styles/global.css';
 
 interface Props {
@@ -31,10 +37,11 @@ const ogImage = Astro.site
 // ブラウザ版のプレイ URL は playMode → SinglePlayer / gamePlatform で示す。
 // 出所は docs/copy.md と本体リポジトリ (https://github.com/keroway/reflectorbit)。
 //
-// 本体リポは初回リリース公開まで非公開のため、`sameAs` と `offers` は
-// RELEASE_AVAILABLE フラグに連動させる。
-//   - 非公開時: sameAs は作者アカウント (200 OK) のみ。offers は到達不能 URL を載せないため省略。
-//   - 公開後 (RELEASE_AVAILABLE=true): sameAs に本体リポを含め、offers をブラウザ版プレイ URL で InStock として復活。
+// 本体リポは非公開運用のため `sameAs` は SOURCE_AVAILABLE に連動させる。
+//   - 非公開時: sameAs は作者アカウント (200 OK) のみ。
+//   - 公開後 (SOURCE_AVAILABLE=true): sameAs に本体リポを含める。
+// `offers` は「プレイ／入手可能かどうか」を表すため DOWNLOAD_AVAILABLE に連動させる
+// （ブラウザ版は常時プレイ可能だが、ネイティブ版配布が始まるまでは offers を出さない方針だった名残）。
 const jsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': 'VideoGame',
@@ -58,10 +65,10 @@ const jsonLd: Record<string, unknown> = {
     name: 'keroway',
     url: 'https://github.com/keroway',
   },
-  sameAs: RELEASE_AVAILABLE ? [REPO_URL] : [REPO_FALLBACK_URL],
+  sameAs: SOURCE_AVAILABLE ? [REPO_URL] : [REPO_FALLBACK_URL],
 };
 
-if (RELEASE_AVAILABLE) {
+if (DOWNLOAD_AVAILABLE) {
   jsonLd.offers = {
     '@type': 'Offer',
     price: '0',

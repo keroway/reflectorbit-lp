@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { RELEASE_AVAILABLE } from "../src/consts";
+import { DOWNLOAD_AVAILABLE, SOURCE_AVAILABLE } from "../src/consts";
 
 test("トップページが HTTP 200 を返す", async ({ page }) => {
   const response = await page.goto("/");
@@ -124,45 +124,55 @@ test("@mobile 320px 幅でページが横スクロールしない", async ({ pag
   expect(box.x + box.width).toBeLessThanOrEqual(clientWidth);
 });
 
-// ─────────── リリース公開ゲート (RELEASE_AVAILABLE) の不変条件 ───────────
+// ─────────── ソースリポジトリ公開ゲート (SOURCE_AVAILABLE) の不変条件 ───────────
 //
-// RELEASE_AVAILABLE は consts / Hero / Download / SiteFooter / Layout の
-// 5 ファイルにまたがる。**片方だけ直す/戻す事故**が起きやすいのに、これまで
-// 効果を検証するテストが 1 つも無かった（#146）。
-//
+// SOURCE_AVAILABLE は SiteFooter / Layout の sameAs にまたがる。
 // 未公開側・公開側の両方を対で置く。フラグを倒した瞬間に、倒し忘れた箇所が
 // 落ちて分かるようにするため。片側だけだと「倒したら全部 skip されて緑」に
 // なり、検証していないのと同じになる。
+//
+// 注意: DOWNLOAD_URL は keroway/reflectorbit-releases（配布専用の公開ミラー）を指し、
+// リポジトリ名が "reflectorbit" の前方一致になる。部分一致の contain チェックは
+// ミラー URL を本体リポ URL と誤検知するため、href の完全一致で見ること。
 
-test("リリース未公開の間、到達不能な本体リポ URL を出力に含めない", async ({
+test("本体ソース非公開の間、到達不能な本体リポ URL へリンクしない", async ({
   page,
 }) => {
-  test.skip(RELEASE_AVAILABLE, "公開後は本体リポ URL が載るのが正");
+  test.skip(SOURCE_AVAILABLE, "公開後は本体リポ URL が載るのが正");
   await page.goto("/");
 
-  // 本体リポは private のため匿名訪問者には 404。href だけでなく HTML 全体を
-  // 見る（JSON-LD・meta・コメントのどこに混ざっても流出は流出）。
-  expect(await page.content()).not.toContain("github.com/keroway/reflectorbit");
-});
-
-test("リリース未公開の間、JSON-LD は到達可能な sameAs のみを持ち offers を出さない", async ({
-  page,
-}) => {
-  test.skip(RELEASE_AVAILABLE, "公開後は offers が InStock で復活するのが正");
-  await page.goto("/");
+  await expect(
+    page.locator("a[href='https://github.com/keroway/reflectorbit']")
+  ).toHaveCount(0);
 
   const ld = JSON.parse(
     await page.locator('script[type="application/ld+json"]').innerText()
   );
   expect(ld.sameAs).toEqual(["https://github.com/keroway"]);
-  // 到達できない商品を InStock と主張しないこと。件数ではなく中身を見る。
-  expect(ld.offers).toBeUndefined();
 });
 
-test("リリース未公開の間、ダウンロード CTA は disabled でリリース URL へリンクしない", async ({
+test("本体ソース公開後は本体リポへリンクし JSON-LD sameAs に含める", async ({
   page,
 }) => {
-  test.skip(RELEASE_AVAILABLE, "公開後はリンクが有効になるのが正");
+  test.skip(!SOURCE_AVAILABLE, "非公開の間は載せないのが正");
+  await page.goto("/");
+
+  await expect(
+    page.locator("a[href='https://github.com/keroway/reflectorbit']")
+  ).not.toHaveCount(0);
+
+  const ld = JSON.parse(
+    await page.locator('script[type="application/ld+json"]').innerText()
+  );
+  expect(ld.sameAs).toEqual(["https://github.com/keroway/reflectorbit"]);
+});
+
+// ─────────── ダウンロード公開ゲート (DOWNLOAD_AVAILABLE) の不変条件 ───────────
+
+test("ダウンロード未公開の間、ダウンロード CTA は disabled でリリース URL へリンクせず offers も出さない", async ({
+  page,
+}) => {
+  test.skip(DOWNLOAD_AVAILABLE, "公開後はリンクが有効になるのが正");
   await page.goto("/");
 
   await expect(
@@ -172,28 +182,27 @@ test("リリース未公開の間、ダウンロード CTA は disabled でリ�
     page.locator("section#top [aria-disabled='true']")
   ).toBeVisible();
   await expect(page.locator("a[href*='releases/latest']")).toHaveCount(0);
-});
-
-test("リリース公開後は本体リポへリンクし JSON-LD に InStock の offers を持つ", async ({
-  page,
-}) => {
-  test.skip(!RELEASE_AVAILABLE, "未公開の間は載せないのが正");
-  await page.goto("/");
 
   const ld = JSON.parse(
     await page.locator('script[type="application/ld+json"]').innerText()
   );
-  expect(ld.sameAs).toEqual(["https://github.com/keroway/reflectorbit"]);
-  expect(ld.offers).toMatchObject({
-    availability: "https://schema.org/InStock",
-  });
+  // 到達できない商品を InStock と主張しないこと。件数ではなく中身を見る。
+  expect(ld.offers).toBeUndefined();
+});
+
+test("ダウンロード公開後はリリース URL へリンクし JSON-LD に InStock の offers を持つ", async ({
+  page,
+}) => {
+  test.skip(!DOWNLOAD_AVAILABLE, "未公開の間は載せないのが正");
+  await page.goto("/");
 
   await expect(page.locator("a[href*='releases/latest']")).not.toHaveCount(0);
   await expect(page.locator("[aria-disabled='true']")).toHaveCount(0);
 
-  // JSON-LD だけを見ると、SiteFooter のリンクが REPO_FALLBACK_URL のまま
-  // 残っていても気づけない。実際の <a> も見る。
-  await expect(
-    page.locator("a[href='https://github.com/keroway/reflectorbit']")
-  ).not.toHaveCount(0);
+  const ld = JSON.parse(
+    await page.locator('script[type="application/ld+json"]').innerText()
+  );
+  expect(ld.offers).toMatchObject({
+    availability: "https://schema.org/InStock",
+  });
 });

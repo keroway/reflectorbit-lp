@@ -1,5 +1,5 @@
 ---
-import { DOWNLOAD_URL, PLAY_URL, RELEASE_AVAILABLE } from '../consts';
+import { DOWNLOAD_AVAILABLE, DOWNLOAD_URL, PLAY_URL } from '../consts';
 ---
 
 <section id="top" class="relative flex min-h-screen flex-col items-center justify-center text-center">
@@ -161,7 +161,7 @@ import { DOWNLOAD_URL, PLAY_URL, RELEASE_AVAILABLE } from '../consts';
     <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
       <a class="btn-primary" href={PLAY_URL}>&#9654; ブラウザで今すぐプレイ</a>
       {
-        RELEASE_AVAILABLE ? (
+        DOWNLOAD_AVAILABLE ? (
           <a class="btn-ghost" href={DOWNLOAD_URL}>ネイティブ版をダウンロード</a>
         ) : (
           <span

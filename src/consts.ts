@@ -1,21 +1,25 @@
 // LP 全体で参照する定数の単一の出所。
 // 外部リンクと表データの正典は docs/copy.md（CTA / How to Play / Download セクション）。
 
-// リリース公開ゲート。
-// 本体 keroway/reflectorbit は初回リリース未公開・非公開リポのため、
-// DOWNLOAD_URL（releases/latest）と REPO_URL（リポトップ）は匿名訪問者には 404 を返す。
-// 公開されるまでの間 false のままにし、ダウンロード CTA とリポリンクを安全側に倒す。
+// ダウンロード公開ゲート。
+// ネイティブ版バイナリは keroway/reflectorbit-releases（配布専用の公開リポジトリ。
+// ソースコードは含まない）から配布中。DOWNLOAD_URL は匿名訪問者にも到達可能。
+export const DOWNLOAD_AVAILABLE = true;
+
+// ソースリポジトリ公開ゲート。
+// 本体 keroway/reflectorbit は非公開で運用する方針（成果物のみ公開ミラーで配布）。
+// REPO_URL（リポトップ）は匿名訪問者には 404 を返すため、公開するまで false のままにする。
 //
 // 公開後の戻し方:
-//   1. RELEASE_AVAILABLE = true にする
-//   2. docs/copy.md の CTA / Download / フッター節を再度同期する
-//   3. Layout.astro の JSON-LD `offers` がそのまま InStock として復活する
-export const RELEASE_AVAILABLE = false;
+//   1. SOURCE_AVAILABLE = true にする
+//   2. docs/copy.md の フッター節を再度同期する
+//   3. Layout.astro の JSON-LD `sameAs` にリポジトリが含まれるようになる
+export const SOURCE_AVAILABLE = false;
 
 // 外部リンク (docs/copy.md の CTA / Download セクションが正典)
 export const PLAY_URL = "https://reflectorbit.pages.dev";
 export const DOWNLOAD_URL =
-  "https://github.com/keroway/reflectorbit/releases/latest";
+  "https://github.com/keroway/reflectorbit-releases/releases/latest";
 export const REPO_URL = "https://github.com/keroway/reflectorbit";
 
 // 本体リポが非公開の間に使う到達可能なフォールバック先（作者アカウント = 200 OK）。

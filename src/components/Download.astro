@@ -1,8 +1,8 @@
 ---
 import {
+  DOWNLOAD_AVAILABLE,
   DOWNLOAD_URL,
   PLAY_URL,
-  RELEASE_AVAILABLE,
   downloads,
 } from '../consts';
 ---
@@ -22,7 +22,7 @@ import {
     }
   </ul>
   {
-    RELEASE_AVAILABLE ? (
+    DOWNLOAD_AVAILABLE ? (
       <>
         <a class="btn-primary mt-8 inline-block" href={DOWNLOAD_URL}>最新リリースを見る</a>
         <p class="mt-4 text-sm text-rb-muted/70">

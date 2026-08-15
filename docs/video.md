@@ -98,15 +98,15 @@ Cloudflare Pages の `pnpm run build` では再生成しない）に揃える。
 
 ### 受け入れ条件（この Track 全体の完了条件）
 
-- [ ] `public/videos/trailer.mp4` / `trailer.webm` / `trailer-poster.jpg` が上記仕様でコミットされている
-- [ ] `src/components/Trailer.astro` が実装され、`src/pages/index.astro` に
+- [x] `public/videos/trailer.mp4` / `trailer.webm` / `trailer-poster.jpg` が上記仕様でコミットされている
+- [x] `src/components/Trailer.astro` が実装され、`src/pages/index.astro` に
       Concept と Screenshots の間で組み込まれている
-- [ ] クリックするまで `<video>` がロードされない（DevTools Network で確認）
-- [ ] `aspect-video` 等でレイアウトシフトが起きない
-- [ ] `prefers-reduced-motion: reduce` でも自動再生されない（もともとファサード方式なので問題ない想定だが、
+- [x] クリックするまで `<video>` がロードされない（DevTools Network で確認）
+- [x] `aspect-video` 等でレイアウトシフトが起きない
+- [x] `prefers-reduced-motion: reduce` でも自動再生されない（もともとファサード方式なので問題ない想定だが、
       確認する）
-- [ ] `docs/copy.md` / `docs/design.md` / `docs/assets.md` / `README.md` のページ構成一覧を更新
-- [ ] Playwright smoke テスト（`tests/smoke.test.ts`）に Trailer セクションの表示確認を追加
+- [x] `docs/copy.md` / `docs/design.md` / `docs/assets.md` / `README.md` のページ構成一覧を更新
+- [x] Playwright smoke テスト（`tests/smoke.test.ts`）に Trailer セクションの表示確認を追加
 
 ---
 

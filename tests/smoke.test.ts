@@ -52,7 +52,18 @@ test("Playable Demo セクションはクリックまで iframe をロードし�
 
   await launchButton.click();
 
-  await expect(section.locator("iframe")).toHaveCount(1);
+  const iframe = section.locator("iframe");
+  await expect(iframe).toHaveCount(1);
+
+  // #demo-loading は iframe より前面（z-index）にあり、隠れない
+  const loading = section.locator("#demo-loading");
+  const loadingZIndex = await loading.evaluate(
+    (el) => getComputedStyle(el).zIndex
+  );
+  const iframeZIndex = await iframe.evaluate(
+    (el) => getComputedStyle(el).zIndex
+  );
+  expect(Number(loadingZIndex)).toBeGreaterThan(Number(iframeZIndex));
 });
 
 test("How to Play セクションに図解動画が表示される", async ({ page }) => {

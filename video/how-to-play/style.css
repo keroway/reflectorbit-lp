@@ -1,7 +1,8 @@
 /*
  * How to Play 動画コンポジション用スタイル。
  * 色は docs/design.md のブランドカラー表をそのまま参照する（LP 独自色は発明しない）。
- *   Core: #ADBDFF / Shield: #FF33CC / Meteor: #FF801A / Reflected: #4DFF8C / Background: #0A0A0F
+ * このファイルで実際に使用しているのは以下のみ（Meteor / Reflected は未実装のため未使用）:
+ *   Core: #ADBDFF / Shield: #FF33CC / Background: #0A0A0F
  */
 
 * {

@@ -14,6 +14,7 @@ export const DOWNLOAD_AVAILABLE = true;
 //   1. SOURCE_AVAILABLE = true にする
 //   2. docs/copy.md の フッター節を再度同期する
 //   3. Layout.astro の JSON-LD `sameAs` にリポジトリが含まれるようになる
+//   4. README.md のリンク一覧も REPO_URL に戻す
 export const SOURCE_AVAILABLE = false;
 
 // 外部リンク (docs/copy.md の CTA / Download セクションが正典)

@@ -5,12 +5,18 @@
 [![Biome](https://img.shields.io/badge/Biome-2-60A5FA?logo=biome&logoColor=white)](https://biomejs.dev/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
 
-[REFLECTORBIT](https://github.com/keroway/reflectorbit) の紹介用ランディングページです。  
+REFLECTORBIT の紹介用ランディングページです。  
 ゲーム本体は Zig + sokol-zig 製のベクター調・軌道反射アクションゲームで、このサイトはその世界観・遊び方・導線を 1 ページで伝えるために作られています。
 
 - Live: <https://reflectorbit-lp.pages.dev>
 - Play in browser: <https://reflectorbit.pages.dev>
-- Game repository: <https://github.com/keroway/reflectorbit>
+- Author: <https://github.com/keroway>
+
+> [!NOTE]
+> ゲーム本体 `keroway/reflectorbit` は非公開リポジトリのため、直接リンクは公開ゲート
+> （`src/consts.ts` の `SOURCE_AVAILABLE`）が `true` になるまでここには載せない。
+> `SOURCE_AVAILABLE = true` に切り替えるタイミングで、上記リンクも
+> `https://github.com/keroway/reflectorbit` に戻す。
 
 ## このサイトについて
 

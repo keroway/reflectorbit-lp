@@ -33,3 +33,5 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
+      # video/**/*.css は Biome の対象外 (biome.json) のため、ブランドカラーの乖離を別途検証する（#158）。
+      - run: pnpm run check:video-colors

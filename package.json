@@ -24,6 +24,7 @@
     "format:prettier": "prettier --write \"**/*.md\"",
     "og:gen": "node scripts/gen-og.mjs",
     "video:howtoplay:gen": "node scripts/gen-how-to-play-video.mjs",
+    "check:video-colors": "node scripts/check-video-colors.mjs",
     "test": "playwright test",
     "smoke": "playwright test tests/smoke.test.ts",
     "smoke:a11y": "playwright test tests/a11y.test.ts",

@@ -14,6 +14,7 @@ on:
       - "src/**"
       - "public/**"
       - "tests/**"
+      - "video/**"
       - "astro.config.mjs"
       - "playwright.config.ts"
       - "tsconfig.json"

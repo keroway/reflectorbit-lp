@@ -1,0 +1,54 @@
+name: asset-drift
+
+# public/og-default.png と public/videos/how-to-play.* は「ローカルで生成コマンドを
+# 実行してコミットし、CI では再生成しない」運用（docs/development.md / CLAUDE.md）。
+# そのため、デザインソース（public/og-default.svg / video/how-to-play/*）だけを編集して
+# 生成コマンドの実行・コミットを忘れても、CI / Lint も Site / Typecheck・E2E も気付かない
+# (#160)。og:gen / video:howtoplay:gen を実際に実行して git diff --exit-code で
+# ソースと生成物の乖離を検知する。
+#
+# ビルド系 CI (ci.yml / site.yml) には混ぜず独立ワークフローにしてある: 動画の
+# レンダリング（headless Chrome 起動 + エンコード）は数分かかる上、mp4 / poster / PNG は
+# 再生成してもバイト一致するが .webm（VP9）はマルチスレッドエンコードの非決定性により
+# 同一ソースでも実行のたびにバイト列が変わることをローカル検証で確認した
+# （ソース不変でも毎回 diff が出て誤検知になるため、乖離検知の対象から除外する）。
+# 毎 PR のブロッキングチェックにすると無関係な PR まで赤くするリスクもあるため、
+# 週次 cron の可視化ジョブとして独立させ、PR をブロックしない
+# （workflow-lint.yml の週次パターンに合わせた）。
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  drift-check:
+    name: Detect generated asset drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '26'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Ensure ffmpeg is available
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+      - run: pnpm run og:gen
+      - run: pnpm run video:howtoplay:gen
+      - name: Fail if generated assets drifted from source
+        run: |
+          if ! git diff --exit-code -- public/og-default.png public/videos/how-to-play.mp4 public/videos/how-to-play-poster.jpg; then
+            echo "::error::生成物がソースと乖離しています。ローカルで pnpm run og:gen / pnpm run video:howtoplay:gen を実行してコミットしてください。"
+            exit 1
+          fi

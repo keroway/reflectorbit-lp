@@ -87,7 +87,7 @@ CI では再生成しない（`pnpm run build` は PNG がコミット済み前�
   （外部 advisory DB の更新タイミングで無関係な PR の Lint が赤くなるのを避けるため）。復活させないこと
 - 秘密情報スキャン (`gitleaks.yml`) だけは PR に加えて `push: main` も維持している。
   秘密漏洩は取り返しがつかないため、直 push が起きた場合に週次 cron まで検知が遅れるリスクを許容しない
-- ローカルの `just check` は `lint` → `typecheck` → `build` → `pnpm test` を通しで実行する（CI と同じ組み合わせ）
+- ローカルの `just check` は `lint` → `check:video-colors` → `typecheck` → `build` → `pnpm test` を通しで実行する（CI と同じ組み合わせ）
 
 ### CI を変更する前に読む不変条件
 

@@ -16,9 +16,10 @@ lint:
 format:
     pnpm run format
 
-# lint / typecheck / build / Playwright (smoke + a11y) をまとめて実行（コミット前の全通し確認）
+# lint / video-colors / typecheck / build / Playwright (smoke + a11y) をまとめて実行（コミット前の全通し確認）
 check:
     pnpm run lint
+    pnpm run check:video-colors
     pnpm run typecheck
     pnpm run build
     pnpm test

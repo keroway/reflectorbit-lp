@@ -92,6 +92,31 @@ test("prefers-reduced-motion: reduce では図解動画の自動再生・ルー�
   await expect(video).not.toHaveAttribute("loop", "");
 });
 
+test("prefers-reduced-motion: reduce では Hero 背景 SVG の SMIL アニメーションが止まる", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const paused = await page.evaluate(() => {
+    const svg = document.querySelector<SVGSVGElement>(".hero-svg");
+    return svg?.animationsPaused();
+  });
+  expect(paused).toBe(true);
+});
+
+test("通常時は Hero 背景 SVG の SMIL アニメーションが再生されている", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const paused = await page.evaluate(() => {
+    const svg = document.querySelector<SVGSVGElement>(".hero-svg");
+    return svg?.animationsPaused();
+  });
+  expect(paused).toBe(false);
+});
+
 test("存在しないパスは HTTP 404 を返し、検索エンジン向けメタデータを含まない", async ({
   page,
 }) => {

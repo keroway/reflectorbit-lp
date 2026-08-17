@@ -117,3 +117,5 @@ CI では再生成しない（`pnpm run build` は PNG がコミット済み前�
 - `docs/copy.md` — LP に載せる文言・キャッチコピー（正典）
 - `docs/design.md` — ブランドカラー（hex + 元定数）・トーン・タイポ・セクション意図
 - `docs/assets.md` — 必要なロゴ / スクショ / OGP 素材のチェックリスト
+- `docs/video.md` — 動画演出（Trailer / How to Play 動画化）の設計メモ
+- `docs/development.md` — 開発・ビルド・デプロイ情報

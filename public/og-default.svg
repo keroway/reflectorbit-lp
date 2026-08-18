@@ -30,6 +30,11 @@
     <!-- 軌道リング (外側) -->
     <circle r="220" fill="none" stroke="#adbdff" stroke-opacity="0.18" stroke-width="2"/>
     <circle r="170" fill="none" stroke="#adbdff" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="2 8"/>
+    <!-- 衛星ドット (本体 assets/icon 刷新後のエンブレム意匠に追従) -->
+    <circle cx="85" cy="147.22" r="8" fill="#adbdff" opacity="0.85"/>
+    <circle cx="-147.22" cy="85" r="8" fill="#adbdff" opacity="0.85"/>
+    <circle cx="-147.22" cy="-85" r="8" fill="#adbdff" opacity="0.85"/>
+    <circle cx="147.22" cy="-85" r="8" fill="#adbdff" opacity="0.85"/>
     <!-- Core 本体 -->
     <circle r="60" fill="url(#coreFill)"/>
     <circle r="36" fill="#adbdff"/>

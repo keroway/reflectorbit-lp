@@ -4,7 +4,7 @@ LP 制作で用意・収集が必要な素材のチェックリスト。
 
 ## 画像 / 動画
 
-- [ ] タイトルロゴ（SVG 推奨。ベクター調に合わせる）。本体は 2dca98b（#435）でベクターワードマーク・app icon（`assets/icon/*`）・favicon・cover art に刷新済み。LP は独自の `public/favicon.svg`/`og-default.svg` を維持中で未対応
+- [x] タイトルロゴ（SVG 推奨。ベクター調に合わせる）。本体は 2dca98b（#435）でベクターワードマーク・app icon（`assets/icon/*`）・favicon・cover art に刷新済み。本体アイコンは Core + 衛星ドット4個 + Shield ドット1個のエンブレム構成（`scripts/generate_icon_assets.py`）で、LP の `public/favicon.svg`/`og-default.svg` には衛星ドットが欠けていたため追加して追従済み（色は M17 #414/#415 時点で既に同期済み）
 - [x] Hero 用スクリーンショット or ループ動画（プレイ中の反射シーン）— SVG インラインアニメーションで代替実装済み（`src/components/Hero.astro`）。実ゲーム画像が揃い次第差し替え可能
 - [x] How to Play 用の操作図解（Space で縮小 / Shift で拡大の概念図。HyperFrames 生成の動画（`public/videos/how-to-play.mp4`/`.webm`）を `src/components/HowToPlay.astro` で統合済み。旧インライン SVG 図解は置換済み）
 - [x] ギャラリー用スクショ数枚 — 本体 `assets/press/screenshot-{title,playing,gameover}.png`（#411）を `public/screenshots/` にコピーし、`src/components/Screenshots.astro` のギャラリーで使用中。コンボ・難易度選択画面のカットは本体に未収録

@@ -66,6 +66,85 @@ test("Playable Demo セクションはクリックまで iframe をロードし�
   expect(Number(loadingZIndex)).toBeGreaterThan(Number(iframeZIndex));
 });
 
+test("SiteNav の各リンクをクリックすると対象セクションへ遷移する", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const targets = [
+    { label: "Concept", id: "concept" },
+    { label: "Trailer", id: "trailer" },
+    { label: "Screenshots", id: "screenshots" },
+    { label: "How to Play", id: "how-to-play" },
+    { label: "Playable Demo", id: "demo" },
+    { label: "Download", id: "download" },
+  ];
+
+  const nav = page.locator('nav[aria-label="サイト内ナビゲーション"]');
+  for (const { label, id } of targets) {
+    const link = nav.getByRole("link", { name: label, exact: true });
+    await expect(link).toHaveAttribute("href", `#${id}`);
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`#${id}$`));
+    await expect(page.locator(`section#${id}`)).toBeInViewport();
+  }
+});
+
+test("PlayableDemo の常設フォールバックリンクは起動前から表示され PLAY_URL を指す", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const section = page.locator("section#demo");
+  // 起動前（iframe ロード前）から存在すること
+  await expect(section.locator("iframe")).toHaveCount(0);
+
+  const fallbackLink = section.getByRole("link", {
+    name: "ブラウザ版を別タブで開く",
+  });
+  await expect(fallbackLink).toBeVisible();
+  await expect(fallbackLink).toHaveAttribute("target", "_blank");
+  await expect(fallbackLink).toHaveAttribute("rel", "noopener");
+
+  const frameEl = section.locator("#demo-frame");
+  const playUrl = await frameEl.getAttribute("data-play-url");
+  expect(playUrl).toBeTruthy();
+  await expect(fallbackLink).toHaveAttribute("href", playUrl ?? "");
+});
+
+test("PlayableDemo は iframe の読み込みが 8 秒経っても完了しない場合、遅延フォールバックに切り替わる", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto("/");
+
+  const section = page.locator("section#demo");
+  const frameEl = section.locator("#demo-frame");
+  const playUrl = await frameEl.getAttribute("data-play-url");
+  expect(playUrl).toBeTruthy();
+
+  // iframe のドキュメント読み込みを止め、load イベントを発火させない
+  await page.route(playUrl ?? "", async (_route) => {
+    // レスポンスを返さないまま握り続け、load が完了しない状態を模す
+    await new Promise(() => {});
+  });
+
+  await section.locator("#demo-launch").click();
+
+  const loading = section.locator("#demo-loading");
+  await expect(loading).toBeVisible();
+  await expect(loading.getByRole("link", { name: "別タブで開く" })).toHaveCount(
+    0
+  );
+
+  await page.clock.fastForward(8000);
+
+  const fallbackLink = loading.getByRole("link", { name: "別タブで開く" });
+  await expect(fallbackLink).toBeVisible();
+  await expect(fallbackLink).toHaveAttribute("href", playUrl ?? "");
+  await expect(fallbackLink).toHaveAttribute("target", "_blank");
+});
+
 test("How to Play セクションに図解動画が表示される", async ({ page }) => {
   await page.goto("/");
 

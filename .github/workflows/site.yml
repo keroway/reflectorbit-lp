@@ -1,6 +1,7 @@
 name: Site
 
-# 配信物に影響する差分に限って、ビルド + Playwright(smoke/a11y/mobile-320) を実行する。
+# 配信物に影響する差分に限って、ビルド + Playwright(smoke/a11y、320px 幅の横スクロール検証のみの
+# mobile-320) を実行する。
 # このリポジトリの main-protection ruleset には required status checks を設定していない
 # （required にしているのは CI / Lint のみ）。そのため paths でジョブごと起動しない方式が
 # 安全に成立する（起動しなくても PR が Pending で詰まらない）。
@@ -65,6 +66,8 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm run build
       # smoke / a11y / mobile-320 を 1 プロセスで実行する（preview サーバー起動も 1 回で済む）。
+      # mobile-320 は @mobile タグを付けた 1 テスト（320px 幅での横スクロール検証）のみを実行し、
+      # smoke/a11y の他のケースは chromium プロジェクト（Desktop Chrome viewport）でのみ検証される。
       - run: pnpm test
       - name: Upload Playwright report
         if: failure()

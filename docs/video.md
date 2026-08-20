@@ -98,9 +98,12 @@ Cloudflare Pages の `pnpm run build` では再生成しない）に揃える。
 
 ### 受け入れ条件（この Track 全体の完了条件）
 
-- [x] `public/videos/trailer.mp4` / `trailer.webm` / `trailer-poster.jpg` が上記仕様でコミットされている
+- [ ] `public/videos/trailer.mp4` / `trailer.webm` / `trailer-poster.jpg` が上記仕様（実プレイ映像・
+      15〜30秒）でコミットされている。現状はスクリーンショット3枚のスライドショーによる
+      **プレースホルダ**が同名ファイルでコミット済みで、実写素材の収集・差し替えは #85 待ち
 - [x] `src/components/Trailer.astro` が実装され、`src/pages/index.astro` に
-      Concept と Screenshots の間で組み込まれている
+      Concept と Screenshots の間で組み込まれている（プレースホルダ動画で完了済み。
+      実写素材への差し替えは同名ファイルの入れ替えのみで反映される）
 - [x] クリックするまで `<video>` がロードされない（DevTools Network で確認）
 - [x] `aspect-video` 等でレイアウトシフトが起きない
 - [x] `prefers-reduced-motion: reduce` でも自動再生されない（もともとファサード方式なので問題ない想定だが、

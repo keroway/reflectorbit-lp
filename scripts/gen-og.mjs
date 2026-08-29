@@ -5,6 +5,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { updateManifest } from "./asset-manifest.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const svgPath = resolve(here, "..", "public", "og-default.svg");
@@ -18,3 +19,6 @@ const png = await sharp(svg, { density: 192 })
 
 await writeFile(pngPath, png);
 console.log(`wrote ${pngPath} (${png.length} bytes)`);
+// ソース一式のハッシュを記録し、CI の asset-drift(再生成ではなくハッシュ照合)が
+// 「ソース編集後に生成コマンドが実行されたか」を環境非依存に検証できるようにする (#185)
+await updateManifest("og");

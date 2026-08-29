@@ -13,6 +13,7 @@
 import { execFileSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { updateManifest } from "./asset-manifest.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
@@ -54,3 +55,6 @@ run("ffmpeg", ["-y", "-i", mp4Path, "-frames:v", "1", "-q:v", "3", posterPath]);
 console.log(`wrote ${mp4Path}`);
 console.log(`wrote ${webmPath}`);
 console.log(`wrote ${posterPath}`);
+// ソース一式のハッシュを記録し、CI の asset-drift(再生成ではなくハッシュ照合)が
+// 「ソース編集後に生成コマンドが実行されたか」を環境非依存に検証できるようにする (#185)
+await updateManifest("how-to-play-video");

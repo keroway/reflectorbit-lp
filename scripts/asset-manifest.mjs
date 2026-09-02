@@ -32,6 +32,17 @@ const SOURCE_SETS = {
   ],
 };
 
+// キーごとの期待する生成物。source hash が一致していても、これらが欠落・空なら
+// verify を失敗させる（#189: source hash だけでは生成物自体の欠落を検出できない）。
+const EXPECTED_OUTPUTS = {
+  og: ["public/og-default.png"],
+  "how-to-play-video": [
+    "public/videos/how-to-play.mp4",
+    "public/videos/how-to-play.webm",
+    "public/videos/how-to-play-poster.jpg",
+  ],
+};
+
 // 生成コマンドの案内（verify 失敗時のメッセージ用）
 const REGEN_COMMANDS = {
   og: "pnpm run og:gen",
@@ -81,23 +92,41 @@ export async function updateManifest(key) {
   console.log(`updated ${manifestPath} (${key})`);
 }
 
+async function findMissingOutputs(key) {
+  const missing = [];
+  for (const output of EXPECTED_OUTPUTS[key]) {
+    const abs = resolve(root, output);
+    const info = await stat(abs).catch(() => null);
+    if (!info?.isFile() || info.size === 0) missing.push(output);
+  }
+  return missing;
+}
+
 async function verify() {
   const manifest = await readManifest();
   let failed = false;
   for (const key of Object.keys(SOURCE_SETS)) {
     const recorded = manifest[key]?.source_hash;
     const actual = await computeSourceHash(key);
-    if (recorded === actual) {
+    const missingOutputs = await findMissingOutputs(key);
+    if (recorded === actual && missingOutputs.length === 0) {
       console.log(`${key}: ok`);
       continue;
     }
     failed = true;
-    const hint = recorded
-      ? "ソースが生成コマンドの実行後に変更されています"
-      : "マニフェストに記録がありません";
-    console.error(
-      `::error::${key}: ${hint}。ローカルで ${REGEN_COMMANDS[key]} を実行して、生成物と asset-manifest.json をコミットしてください。`
-    );
+    if (missingOutputs.length > 0) {
+      console.error(
+        `::error::${key}: 生成物が欠落または空です (${missingOutputs.join(", ")})。ローカルで ${REGEN_COMMANDS[key]} を実行して、生成物と asset-manifest.json をコミットしてください。`
+      );
+    }
+    if (recorded !== actual) {
+      const hint = recorded
+        ? "ソースが生成コマンドの実行後に変更されています"
+        : "マニフェストに記録がありません";
+      console.error(
+        `::error::${key}: ${hint}。ローカルで ${REGEN_COMMANDS[key]} を実行して、生成物と asset-manifest.json をコミットしてください。`
+      );
+    }
   }
   if (failed) process.exit(1);
 }

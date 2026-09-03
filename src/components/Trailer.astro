@@ -33,6 +33,28 @@
       <span class="text-lg font-semibold">クリックしてトレーラーを再生</span>
       <span class="text-sm text-rb-muted/60">※ 音声なし・ループ再生</span>
     </button>
+
+    {/* 再生失敗時のみ表示: play() reject / video error イベントで切り替える */}
+    <div
+      id="trailer-error"
+      hidden
+      class="absolute inset-0 z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-rb-bg/80 px-6 text-center text-rb-muted"
+    >
+      <p class="text-sm font-semibold text-white">トレーラーの再生に失敗しました</p>
+      <div class="flex gap-4 text-sm">
+        <button
+          type="button"
+          id="trailer-retry"
+          class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+        >
+          再試行
+        </button>
+        <a
+          class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+          href="#screenshots">スクリーンショットを見る</a
+        >
+      </div>
+    </div>
   </div>
 
   {/* ロード失敗時は poster のまま留まるため、Screenshots への導線を一言添える（docs/video.md） */}
@@ -48,38 +70,49 @@
 <script>
   const frame = document.getElementById('trailer-frame');
   const play = document.getElementById('trailer-play');
+  const errorPanel = document.getElementById('trailer-error');
+  const retry = document.getElementById('trailer-retry');
 
-  if (frame && play) {
-    play.addEventListener(
-      'click',
-      () => {
-        play.hidden = true;
+  if (frame && play && errorPanel && retry) {
+    const showError = () => {
+      frame.querySelector('video')?.remove();
+      play.hidden = true;
+      errorPanel.hidden = false;
+    };
 
-        const video = document.createElement('video');
-        video.className = 'absolute inset-0 h-full w-full object-cover';
-        video.poster = '/videos/trailer-poster.jpg';
-        video.muted = true;
-        video.loop = true;
-        video.controls = true;
-        video.playsInline = true;
-        // iOS Safari 向けに属性としても明示する
-        video.setAttribute('muted', '');
-        video.setAttribute('playsinline', '');
+    const startPlayback = () => {
+      play.hidden = true;
+      errorPanel.hidden = true;
 
-        const mp4 = document.createElement('source');
-        mp4.src = '/videos/trailer.mp4';
-        mp4.type = 'video/mp4';
-        const webm = document.createElement('source');
-        webm.src = '/videos/trailer.webm';
-        webm.type = 'video/webm';
-        video.append(webm, mp4);
+      const video = document.createElement('video');
+      video.className = 'absolute inset-0 h-full w-full object-cover';
+      video.poster = '/videos/trailer-poster.jpg';
+      video.muted = true;
+      video.loop = true;
+      video.controls = true;
+      video.playsInline = true;
+      // iOS Safari 向けに属性としても明示する
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
 
-        frame.appendChild(video);
-        // ユーザー操作起点 + muted なので再生ポリシーでブロックされない想定。
-        // 失敗時（省電力モード等）は controls から手動再生できる。
-        video.play().catch(() => {});
-      },
-      { once: true },
-    );
+      const mp4 = document.createElement('source');
+      mp4.src = '/videos/trailer.mp4';
+      mp4.type = 'video/mp4';
+      const webm = document.createElement('source');
+      webm.src = '/videos/trailer.webm';
+      webm.type = 'video/webm';
+      video.append(webm, mp4);
+
+      // メディア読み込み自体の失敗（ソース欠落・デコード不可等）を利用者に伝える。
+      video.addEventListener('error', showError);
+
+      frame.appendChild(video);
+      // ユーザー操作起点 + muted なので再生ポリシーでブロックされない想定。
+      // reject 時（省電力モード等）も失敗状態として表示する。
+      video.play().catch(showError);
+    };
+
+    play.addEventListener('click', startPlayback);
+    retry.addEventListener('click', startPlayback);
   }
 </script>

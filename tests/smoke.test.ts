@@ -39,6 +39,39 @@ test("Trailer セクションはクリックまで video をロードしない�
   await expect(video).toHaveAttribute("controls", "");
 });
 
+test("Trailer の再生に失敗すると失敗表示と再試行導線が出る", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const section = page.locator("section#trailer");
+  const playButton = section.locator("#trailer-play");
+
+  await playButton.click();
+
+  const video = section.locator("video");
+  await expect(video).toHaveCount(1);
+
+  // 実ブラウザの media error 発火タイミングは環境依存で不安定なため、
+  // video.play() reject / <video> の error イベントに反応する実装側のハンドラを
+  // 合成イベントで決定論的に検証する。
+  await video.evaluate((el: HTMLVideoElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+
+  const errorPanel = section.locator("#trailer-error");
+  await expect(errorPanel).toBeVisible();
+  await expect(section.locator("#trailer-retry")).toBeVisible();
+  await expect(errorPanel.locator('a[href="#screenshots"]')).toBeVisible();
+  await expect(playButton).toBeHidden();
+  await expect(video).toHaveCount(0);
+
+  await section.locator("#trailer-retry").click();
+
+  await expect(errorPanel).toBeHidden();
+  await expect(section.locator("video")).toHaveCount(1);
+});
+
 test("Playable Demo セクションはクリックまで iframe をロードしない（ファサード方式）", async ({
   page,
 }) => {

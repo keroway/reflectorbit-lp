@@ -30,7 +30,7 @@ REFLECTORBIT の紹介用ランディングページです。
 
 - **Hero** — タイトル、キャッチ、メイン CTA
 - **Concept** — ゲームのコアアイデア
-- **Trailer** — 実プレイ映像のトレーラー動画（詳細は `docs/video.md` Track A）
+- **Trailer** — トレーラー動画。現状はスクリーンショット3枚のスライドショーによるプレースホルダで、実プレイ映像への差し替えは #85 待ち（詳細は `docs/video.md` Track A）
 - **Screenshots** — タイトル / プレイ中 / GAME OVER
 - **How to Play** — 操作方法とルールの要点
 - **Playable Demo** — ブラウザ版への試遊導線

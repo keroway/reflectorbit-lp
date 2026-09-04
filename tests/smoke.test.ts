@@ -191,6 +191,34 @@ test("How to Play セクションに図解動画が表示される", async ({ pa
   );
 });
 
+test("How to Play 図解動画の再生に失敗すると失敗表示と再試行導線が出る", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const section = page.locator("section#how-to-play");
+  const video = section.locator("video.how-to-play-video");
+  await expect(video).toBeVisible();
+
+  // 実ブラウザの media error 発火タイミングは環境依存で不安定なため、
+  // video.play() reject / <video> の error イベントに反応する実装側のハンドラを
+  // 合成イベントで決定論的に検証する。
+  await video.evaluate((el: HTMLVideoElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+
+  const errorPanel = section.locator("#how-to-play-error");
+  await expect(errorPanel).toBeVisible();
+  await expect(section.locator("#how-to-play-retry")).toBeVisible();
+  await expect(errorPanel.locator('a[href="#how-to-play"]')).toBeVisible();
+  // poster を維持する方針のため video 要素自体は残す
+  await expect(video).toHaveCount(1);
+
+  await section.locator("#how-to-play-retry").click();
+
+  await expect(errorPanel).toBeHidden();
+});
+
 test("prefers-reduced-motion: reduce では図解動画の自動再生・ループが止まる", async ({
   page,
 }) => {

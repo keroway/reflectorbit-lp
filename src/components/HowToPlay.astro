@@ -36,7 +36,7 @@ import { controls } from '../consts';
 
   {/* Space=縮小 / Shift=拡大 の対比を示す動く図解（HyperFrames 生成） */}
   <figure class="mt-10">
-    <div class="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10">
+    <div id="how-to-play-frame" class="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10">
       <video
         class="how-to-play-video h-full w-full object-cover"
         muted
@@ -49,6 +49,28 @@ import { controls } from '../consts';
         <source src="/videos/how-to-play.webm" type="video/webm" />
         <source src="/videos/how-to-play.mp4" type="video/mp4" />
       </video>
+
+      {/* 再生失敗時のみ表示: play() reject / video error イベントで切り替える。poster は背後に維持する */}
+      <div
+        id="how-to-play-error"
+        hidden
+        class="absolute inset-0 z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-rb-bg/80 px-6 text-center text-rb-muted"
+      >
+        <p class="text-sm font-semibold text-white">図解動画の再生に失敗しました</p>
+        <div class="flex gap-4 text-sm">
+          <button
+            type="button"
+            id="how-to-play-retry"
+            class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+          >
+            再試行
+          </button>
+          <a
+            class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+            href="#how-to-play">上の操作表を見る</a
+          >
+        </div>
+      </div>
     </div>
     <figcaption class="mt-3 text-center text-sm text-rb-muted/70">
       Space / Shift で軌道半径を変え、Meteor のタイミングを合わせる。
@@ -65,9 +87,25 @@ import { controls } from '../consts';
    * ユーザーが望めば手動再生できるようにする（Hero.astro の pauseAnimations() 分岐と同様の考え方）。
    */
   const howToPlayVideo = document.querySelector<HTMLVideoElement>('.how-to-play-video');
+  const errorPanel = document.getElementById('how-to-play-error');
+  const retry = document.getElementById('how-to-play-retry');
 
-  if (howToPlayVideo) {
+  if (howToPlayVideo && errorPanel && retry) {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // 失敗状態を表示する。poster は <video> ごと背後に残し、上に失敗パネルを重ねる。
+    const showError = () => {
+      errorPanel.hidden = false;
+    };
+
+    const retryPlayback = () => {
+      errorPanel.hidden = true;
+      void howToPlayVideo!.play().catch(showError);
+    };
+
+    // メディア読み込み自体の失敗（ソース欠落・デコード不可等）を利用者に伝える。
+    howToPlayVideo.addEventListener('error', showError);
+    retry.addEventListener('click', retryPlayback);
 
     function applyMotionPreference(reduced: boolean) {
       if (reduced) {
@@ -78,7 +116,7 @@ import { controls } from '../consts';
       } else {
         howToPlayVideo!.setAttribute('autoplay', '');
         howToPlayVideo!.setAttribute('loop', '');
-        void howToPlayVideo!.play().catch(() => {});
+        void howToPlayVideo!.play().catch(showError);
       }
     }
 

@@ -37,7 +37,7 @@ export const controls = [
   { key: "P", desc: "ポーズ / 再開" },
   {
     key: "↑ / ↓",
-    desc: "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では ←/→ で Stage/Endless/Daily を切替）",
+    desc: "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では ↑/↓ で Easy/Normal/Hard の難易度を切替）",
   },
 ];
 

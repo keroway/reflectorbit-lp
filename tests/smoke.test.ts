@@ -99,6 +99,40 @@ test("Playable Demo セクションはクリックまで iframe をロードし�
   expect(Number(loadingZIndex)).toBeGreaterThan(Number(iframeZIndex));
 });
 
+test("PlayableDemo の iframe 読み込みに失敗すると失敗表示と再試行導線が出る", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const section = page.locator("section#demo");
+  const launchButton = section.locator("#demo-launch");
+
+  await launchButton.click();
+
+  const iframe = section.locator("iframe");
+  await expect(iframe).toHaveCount(1);
+
+  // 実ブラウザの iframe error 発火条件は環境依存で不安定なため、
+  // 実装側のハンドラを合成イベントで決定論的に検証する。
+  await iframe.evaluate((el: HTMLIFrameElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+
+  const errorPanel = section.locator("#demo-error");
+  await expect(errorPanel).toBeVisible();
+  await expect(section.locator("#demo-retry")).toBeVisible();
+  await expect(
+    errorPanel.getByRole("link", { name: "別タブで開く" })
+  ).toBeVisible();
+  await expect(launchButton).toBeHidden();
+  await expect(section.locator("iframe")).toHaveCount(0);
+
+  await section.locator("#demo-retry").click();
+
+  await expect(errorPanel).toBeHidden();
+  await expect(section.locator("iframe")).toHaveCount(1);
+});
+
 test("SiteNav の各リンクをクリックすると対象セクションへ遷移する", async ({
   page,
 }) => {

@@ -35,6 +35,30 @@ import { PLAY_URL } from '../consts';
     >
       読み込み中…
     </div>
+
+    {/* 読み込み失敗時のみ表示: iframe の error イベントで切り替える */}
+    <div
+      id="demo-error"
+      hidden
+      class="absolute inset-0 z-10 flex h-full w-full flex-col items-center justify-center gap-3 bg-rb-bg/80 px-6 text-center text-rb-muted"
+    >
+      <p class="text-sm font-semibold text-white">試遊の読み込みに失敗しました</p>
+      <div class="flex gap-4 text-sm">
+        <button
+          type="button"
+          id="demo-retry"
+          class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+        >
+          再試行
+        </button>
+        <a
+          class="rounded-sm text-rb-core underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rb-core"
+          href={PLAY_URL}
+          target="_blank"
+          rel="noopener">別タブで開く</a
+        >
+      </div>
+    </div>
   </div>
 
   {/* 常設フォールバック: 埋め込みが動かない環境でもプレイページへ到達できる */}
@@ -52,12 +76,16 @@ import { PLAY_URL } from '../consts';
   const frame = document.getElementById('demo-frame');
   const launch = document.getElementById('demo-launch');
   const loading = document.getElementById('demo-loading');
+  const errorPanel = document.getElementById('demo-error');
+  const retry = document.getElementById('demo-retry');
   const playUrl = frame?.dataset.playUrl;
 
-  if (frame && launch && loading && playUrl) {
-    launch.addEventListener('click', () => {
+  if (frame && launch && loading && errorPanel && retry && playUrl) {
+    const startLaunch = () => {
       launch.hidden = true;
+      errorPanel.hidden = true;
       loading.hidden = false;
+      loading.textContent = '読み込み中…';
 
       const iframe = document.createElement('iframe');
       iframe.src = playUrl;
@@ -76,13 +104,32 @@ import { PLAY_URL } from '../consts';
           '" target="_blank" rel="noopener">別タブで開く</a>';
       }, 8000);
 
+      const showError = () => {
+        if (settled) {
+          // フォールバック導線表示後の error は無視し、既存の導線を維持する。
+          return;
+        }
+        settled = true;
+        window.clearTimeout(fallbackTimer);
+        iframe.remove();
+        loading.hidden = true;
+        launch.hidden = true;
+        errorPanel.hidden = false;
+      };
+
       iframe.addEventListener('load', () => {
         settled = true;
         window.clearTimeout(fallbackTimer);
         loading.hidden = true;
       });
 
+      // 埋め込み先が到達不能・CSP frame-ancestors 拒否等でロードに失敗した場合を検出する。
+      iframe.addEventListener('error', showError);
+
       frame.appendChild(iframe);
-    });
+    };
+
+    launch.addEventListener('click', startLaunch);
+    retry.addEventListener('click', startLaunch);
   }
 </script>

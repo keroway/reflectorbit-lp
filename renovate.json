@@ -42,6 +42,13 @@
       "matchPackageNames": ["typescript"],
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "description": "js-yaml は pnpm-workspace.yaml の overrides でピン留めしている脆弱性対応版（GHSA-48c2-rrv3-qjmp 起点）。v5 は default export を廃止した ESM-only 版で、astro CLI 内部の `import yaml from 'js-yaml'` が壊れて Typecheck/E2E が失敗する（PR #206 で実際に確認）。astro が v5 に対応するまで major 更新を抑止する。",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["js-yaml"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }

@@ -5,6 +5,7 @@
   "schedule": ["before 10am on monday"],
   "labels": ["infra"],
   "prConcurrentLimit": 5,
+  "minimumReleaseAge": "3 days",
   "packageRules": [
     {
       "matchManagers": ["npm"],

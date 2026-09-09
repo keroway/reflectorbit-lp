@@ -25,6 +25,7 @@
     "og:gen": "node scripts/gen-og.mjs",
     "video:howtoplay:gen": "node scripts/gen-how-to-play-video.mjs",
     "check:video-colors": "node scripts/check-video-colors.mjs",
+    "test:video-colors": "node --test scripts/check-video-colors.test.mjs",
     "asset:verify": "node scripts/asset-manifest.mjs verify",
     "test": "playwright test",
     "smoke": "playwright test tests/smoke.test.ts",

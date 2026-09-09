@@ -36,3 +36,5 @@ jobs:
       - run: pnpm run lint
       # video/**/*.css は Biome の対象外 (biome.json) のため、ブランドカラーの乖離を別途検証する（#158）。
       - run: pnpm run check:video-colors
+      # check:video-colors の色記法別の回帰検証（4桁hex・空白区切りRGB・HSL の見逃しを防ぐ、#210）。
+      - run: pnpm run test:video-colors

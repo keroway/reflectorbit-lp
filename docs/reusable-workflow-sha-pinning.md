@@ -10,6 +10,7 @@
 - `.github/workflows/osv-scan.yml`
 - `.github/workflows/gitleaks.yml`
 - `.github/workflows/workflow-lint.yml`
+- `.github/workflows/ci-failure-issue.yml`
 
 ## SHA の更新手順
 

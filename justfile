@@ -20,6 +20,7 @@ format:
 check:
     pnpm run lint
     pnpm run check:video-colors
+    pnpm run test:video-colors
     pnpm run typecheck
     pnpm run build
     pnpm test

@@ -30,8 +30,10 @@ const ALLOWED_HEX = new Set([
 
 function normalizeHex(hex) {
   const h = hex.toLowerCase();
-  if (h.length === 3) {
+  // 3桁・4桁 (alpha付き) は各桁を複製して6桁化し、4桁目の alpha は落とす
+  if (h.length === 3 || h.length === 4) {
     return h
+      .slice(0, 3)
       .split("")
       .map((c) => c + c)
       .join("");
@@ -42,6 +44,29 @@ function normalizeHex(hex) {
 
 function rgbToHex(r, g, b) {
   return [r, g, b].map((v) => Number(v).toString(16).padStart(2, "0")).join("");
+}
+
+function hslToHex(h, s, l) {
+  const hue = ((Number(h) % 360) + 360) % 360;
+  const sat = Number(s) / 100;
+  const light = Number(l) / 100;
+  const c = (1 - Math.abs(2 * light - 1)) * sat;
+  const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
+  const m = light - c / 2;
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  if (hue < 60) [r, g, b] = [c, x, 0];
+  else if (hue < 120) [r, g, b] = [x, c, 0];
+  else if (hue < 180) [r, g, b] = [0, c, x];
+  else if (hue < 240) [r, g, b] = [0, x, c];
+  else if (hue < 300) [r, g, b] = [x, 0, c];
+  else [r, g, b] = [c, 0, x];
+  return rgbToHex(
+    Math.round((r + m) * 255),
+    Math.round((g + m) * 255),
+    Math.round((b + m) * 255)
+  );
 }
 
 function findCssFiles(dir) {
@@ -58,8 +83,7 @@ function findCssFiles(dir) {
   return results;
 }
 
-function checkFile(path) {
-  const css = readFileSync(path, "utf8");
+export function checkCss(css) {
   const violations = [];
 
   for (const match of css.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {
@@ -69,6 +93,7 @@ function checkFile(path) {
     }
   }
 
+  // カンマ区切り (`rgb(255, 0, 0)`) と空白区切り (`rgb(255 0 0)`) の両方を検査する。
   for (const match of css.matchAll(
     /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,[^)]+)?\)/g
   )) {
@@ -78,30 +103,61 @@ function checkFile(path) {
     }
   }
 
+  for (const match of css.matchAll(
+    /rgba?\(\s*(\d+)\s+(\d+)\s+(\d+)\s*(?:\/[^)]+)?\)/g
+  )) {
+    const hex = rgbToHex(match[1], match[2], match[3]);
+    if (!ALLOWED_HEX.has(hex)) {
+      violations.push(match[0]);
+    }
+  }
+
+  // カンマ区切り・空白区切り、`deg` サフィックス、alpha 付きの hsl() を検査する。
+  for (const match of css.matchAll(
+    /hsla?\(\s*(-?\d+(?:\.\d+)?)(?:deg)?[,\s]+(\d+(?:\.\d+)?)%[,\s]+(\d+(?:\.\d+)?)%\s*(?:[,/][^)]+)?\)/g
+  )) {
+    const hex = hslToHex(match[1], match[2], match[3]);
+    if (!ALLOWED_HEX.has(hex)) {
+      violations.push(match[0]);
+    }
+  }
+
   return violations;
 }
 
-const cssFiles = findCssFiles(videoDir);
-let hasViolation = false;
+function checkFile(path) {
+  return checkCss(readFileSync(path, "utf8"));
+}
 
-for (const file of cssFiles) {
-  const violations = checkFile(file);
-  if (violations.length > 0) {
-    hasViolation = true;
-    console.error(`${file}: docs/design.md にないブランドカラーを検出しました`);
-    for (const v of violations) {
-      console.error(`  ${v}`);
+function main() {
+  const cssFiles = findCssFiles(videoDir);
+  let hasViolation = false;
+
+  for (const file of cssFiles) {
+    const violations = checkFile(file);
+    if (violations.length > 0) {
+      hasViolation = true;
+      console.error(
+        `${file}: docs/design.md にないブランドカラーを検出しました`
+      );
+      for (const v of violations) {
+        console.error(`  ${v}`);
+      }
     }
   }
-}
 
-if (hasViolation) {
-  console.error(
-    "\nvideo/**/*.css の色は docs/design.md のブランドカラー表から選ぶこと。"
+  if (hasViolation) {
+    console.error(
+      "\nvideo/**/*.css の色は docs/design.md のブランドカラー表から選ぶこと。"
+    );
+    process.exit(1);
+  }
+
+  console.log(
+    `checked ${cssFiles.length} file(s) under video/ — all colors match docs/design.md`
   );
-  process.exit(1);
 }
 
-console.log(
-  `checked ${cssFiles.length} file(s) under video/ — all colors match docs/design.md`
-);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}

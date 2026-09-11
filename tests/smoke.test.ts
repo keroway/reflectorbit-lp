@@ -112,8 +112,10 @@ test("PlayableDemo の iframe 読み込みに失敗すると失敗表示と再�
   const iframe = section.locator("iframe");
   await expect(iframe).toHaveCount(1);
 
-  // 実ブラウザの iframe error 発火条件は環境依存で不安定なため、
-  // 実装側のハンドラを合成イベントで決定論的に検証する。
+  // error イベントは iframe 自体のエラー（ネットワーク到達不能等）でのみ発火し、
+  // X-Frame-Options / CSP frame-ancestors によるブロック時は load が発火する
+  // （issue #219 で実測済み、その場合は下の別テストを参照）。
+  // ここではハンドラ自体の分岐ロジックを合成イベントで決定論的に検証する。
   await iframe.evaluate((el: HTMLIFrameElement) =>
     el.dispatchEvent(new Event("error"))
   );
@@ -131,6 +133,49 @@ test("PlayableDemo の iframe 読み込みに失敗すると失敗表示と再�
 
   await expect(errorPanel).toBeHidden();
   await expect(section.locator("iframe")).toHaveCount(1);
+});
+
+test("PlayableDemo: X-Frame-Options: DENY で埋め込み先がブロックされると load が発火する(error ではない、既知の限界)", async ({
+  page,
+}) => {
+  // 実ブラウザ(Chromium)の実測: X-Frame-Options / CSP frame-ancestors によるブロックは
+  // load を発火し、error は発火しない（issue #219）。このテストはその事実を固定し、
+  // 将来の実装がこの限界を前提としたまま壊れないようにするための回帰テスト。
+  // 検出できない旨は docs/development.md にも記録している。
+  await page.route("https://reflectorbit.pages.dev/**", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { "X-Frame-Options": "DENY", "content-type": "text/html" },
+      body: "<html><body>blocked</body></html>",
+    })
+  );
+
+  await page.addInitScript(() => {
+    (window as unknown as { __iframeEvent: string | null }).__iframeEvent =
+      null;
+    const origAppendChild = Node.prototype.appendChild;
+    Node.prototype.appendChild = function <T extends Node>(child: T): T {
+      if (child instanceof HTMLIFrameElement) {
+        const w = window as unknown as { __iframeEvent: string | null };
+        child.addEventListener("load", () => {
+          if (w.__iframeEvent === null) w.__iframeEvent = "load";
+        });
+        child.addEventListener("error", () => {
+          if (w.__iframeEvent === null) w.__iframeEvent = "error";
+        });
+      }
+      return origAppendChild.call(this, child) as T;
+    };
+  });
+
+  await page.goto("/");
+  await page.locator("section#demo #demo-launch").click();
+
+  const result = await page.waitForFunction(
+    () => (window as unknown as { __iframeEvent: string | null }).__iframeEvent,
+    { timeout: 5000 }
+  );
+  expect(await result.jsonValue()).toBe("load");
 });
 
 test("SiteNav の各リンクをクリックすると対象セクションへ遷移する", async ({

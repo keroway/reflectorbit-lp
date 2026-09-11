@@ -66,6 +66,34 @@ pnpm run video:howtoplay:gen
 > トレーラー動画（`public/videos/trailer.*`）は現状スクリーンショットのスライドショーによる
 > プレースホルダです。実プレイ映像の収録は別 issue（#85）で対応し、同名ファイルの差し替えで反映されます。
 
+## PlayableDemo の iframe 読み込み失敗検出について（既知の限界）
+
+`src/components/PlayableDemo.astro` は `iframe` の `error` イベントで読み込み失敗
+（`demo-error` パネル表示）を検出しているが、これは実ブラウザでは
+**`X-Frame-Options` / CSP `frame-ancestors` によるブロックを検出できない**（issue #219 で実測済み）。
+
+Playwright(Chromium) で `PLAY_URL` に `X-Frame-Options: DENY` を返すよう
+route interception した場合の実測結果:
+
+- `iframe` は `error` ではなく **`load` を発火する**（ブロックされたナビゲーションも
+  「読み込み完了」として扱われるため）。
+- `load` 発火後に `iframe.contentWindow.location.href` を読もうとすると、
+  ブロック時・成功時のどちらも `SecurityError` で例外になり、**この方法では
+  ブロックされたかどうかを判別できない**（クロスオリジンの `iframe` は成功時も
+  中身を読めないため、ブロック時と区別が付かない）。
+
+つまり、埋め込み先（`reflectorbit.pages.dev`）と協調した通知手段
+（例: 埋め込み先から `postMessage` で「起動できた」を送る）を追加しない限り、
+LP 側の JS だけで「実際に遊べる状態で読み込めたか」を確実に判定する方法は無い。
+このため現状は以下の多層フォールバックで実用上の到達可能性を担保している
+（`load` イベント自体の誤検出耐性を高める対応ではない点に注意）:
+
+1. 起動後 8 秒で応答が無い場合に「別タブで開く」導線を表示（`fallbackTimer`）
+2. セクション下部に常設の「うまく動かない場合は別タブで開く」リンク
+
+`reflectorbit`（ゲーム本体）側に `postMessage` ハンドシェイクを追加すればより確実な
+検出が可能になるが、それは別リポジトリの変更を要するため本リポジトリの scope 外。
+
 ## 関連ドキュメント
 
 - [`copy.md`](./copy.md)

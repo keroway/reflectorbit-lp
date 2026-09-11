@@ -123,7 +123,11 @@ import { PLAY_URL } from '../consts';
         loading.hidden = true;
       });
 
-      // 埋め込み先が到達不能・CSP frame-ancestors 拒否等でロードに失敗した場合を検出する。
+      // ネットワーク到達不能等で iframe 自体がエラーになった場合を検出する。
+      // 注意: X-Frame-Options / CSP frame-ancestors によるブロックは実ブラウザでは
+      // error ではなく load を発火するため、このリスナーでは検出できない（issue #219 で実測済み。
+      // 詳細は docs/development.md の「PlayableDemo の iframe 読み込み失敗検出について」を参照）。
+      // そのケースは下の fallbackTimer と常設フォールバックリンクで到達可能性を担保する。
       iframe.addEventListener('error', showError);
 
       frame.appendChild(iframe);

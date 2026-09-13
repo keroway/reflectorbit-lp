@@ -51,3 +51,21 @@ test("許可色と同値の hsl() は成功として扱う", () => {
   // #adbdff (173,189,255) 相当の hsl 値。
   assert.deepEqual(checkCss(".probe { color: hsl(228.28 100% 83.92%); }"), []);
 });
+
+test("コメント内の旧色コードは無視し、実際の宣言だけを検査する (#221)", () => {
+  assert.deepEqual(
+    checkCss(
+      `/* previous color: #${OFF_BRAND_RED} */\n.probe { color: #${ALLOWED_HEX_SAMPLE}; }`
+    ),
+    []
+  );
+});
+
+test("コメントと同じ色コードが実際の宣言にあれば検出する (#221)", () => {
+  assert.deepEqual(
+    checkCss(
+      `/* previous color: #${OFF_BRAND_RED} */\n.probe { color: #${OFF_BRAND_RED}; }`
+    ),
+    [`#${OFF_BRAND_RED}`]
+  );
+});

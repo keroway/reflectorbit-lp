@@ -83,7 +83,12 @@ function findCssFiles(dir) {
   return results;
 }
 
-export function checkCss(css) {
+function stripComments(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+export function checkCss(rawCss) {
+  const css = stripComments(rawCss);
   const violations = [];
 
   for (const match of css.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {

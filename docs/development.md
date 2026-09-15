@@ -14,6 +14,10 @@ pnpm run lint       # Biome
 pnpm run format     # Biome で整形
 pnpm run smoke      # Playwright smoke test
 pnpm run smoke:a11y # Playwright + axe-core
+
+pnpm run check:video-colors # video/**/*.css の色が docs/design.md のブランドカラー表から逸脱していないか検証（CI: ci.yml Lint）
+pnpm run test:video-colors  # check:video-colors 自身の回帰テスト（CI: ci.yml Lint）
+pnpm run asset:verify       # 生成アセット（OGP画像・How to Play動画）とソースの同期をハッシュ照合で検証（CI: asset-drift.yml 週次）
 ```
 
 ## ディレクトリ概要

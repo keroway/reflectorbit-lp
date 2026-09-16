@@ -30,7 +30,7 @@
     "test": "playwright test",
     "smoke": "playwright test tests/smoke.test.ts",
     "smoke:a11y": "playwright test tests/a11y.test.ts",
-    "postinstall": "lefthook install"
+    "postinstall": "lefthook install || true"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

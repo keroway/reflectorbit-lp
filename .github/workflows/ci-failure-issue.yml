@@ -1,8 +1,9 @@
-# CI (workflows/ci.yml) が失敗したら決定的にissueを起票/コメント追記する。
+# CI/Site/osv-scan/asset-drift/workflow-lint が失敗したら決定的にissueを起票/コメント追記する。
 # LLMポーリング（agent-assets の ci-triage モード）の代替（keroway/.github#28）。
 #
-# 監視対象は name: CI（.github/workflows/ci.yml）。workflow_run はworkflow名で
-# マッチするため、ci.yml側の `name:` を変える場合はここも合わせて変更すること。
+# 監視対象は各 workflow の name:（ci.yml=CI, site.yml=Site, osv-scan.yml=osv-scan,
+# asset-drift.yml=asset-drift, workflow-lint.yml=workflow-lint）。workflow_run は
+# workflow名でマッチするため、これらの `name:` を変える場合はここも合わせて変更すること。
 name: ci-failure-issue
 
 # workflow_run自体は一般に危険だが、呼び出し先 reusable-ci-failure-issue.yml は
@@ -10,7 +11,7 @@ name: ci-failure-issue
 # GitHub API（issues.create/createComment）の引数として渡すだけ（keroway/.github#31で監査済み）。
 on: # zizmor: ignore[dangerous-triggers] — 詳細は上のコメント参照
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CI", "Site", "osv-scan", "asset-drift", "workflow-lint"]
     types: [completed]
 
 permissions:

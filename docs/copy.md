@@ -94,7 +94,7 @@ Web 版はタッチ / ポインタ操作にも対応。
 | Windows (x86_64)      | `reflectorbit-windows-x86_64.exe` |
 
 - 「最新リリースを見る」 → <https://github.com/keroway/reflectorbit-releases/releases/latest>
-- ※ 配布バイナリは未署名のため初回起動時に OS 警告が出る場合がある（手順は本体 README 参照）。
+- ※ 配布バイナリは未署名のため初回起動時に OS 警告が出る場合がある（macOS: 右クリックで「開く」を選択 / Windows: 「詳細情報」→「実行」を選択）。
 
 ## フッター
 

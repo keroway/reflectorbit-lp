@@ -19,6 +19,34 @@ test("主要セクションが存在する", async ({ page }) => {
   await expect(page.locator("footer")).toBeVisible();
 });
 
+test("Concept セクションの箇条書きは docs/copy.md と同期した 10 件・各項目のキーワードを保持する", async ({
+  page,
+}) => {
+  // 実装 (Concept.astro の <li>) は docs/copy.md の文言を手で複製しており、
+  // 構造的な同期チェックが無い(#77 で乖離が長期間気付かれなかった実績あり)。
+  // 件数と代表キーワードを固定し、docs/copy.md との乖離を検知する。
+  await page.goto("/");
+
+  const items = page.locator("section#concept li");
+  await expect(items).toHaveCount(10);
+
+  const text = (await items.allTextContents()).join("\n");
+  for (const keyword of [
+    "Space/Shift で半径",
+    "味方色（緑）に変色",
+    "内周ほど高スコア",
+    "PERFECT REFLECT",
+    "Heavy",
+    "Stage / Endless / Daily",
+    "Shield カラー（EMBER / AURORA / SOLAR）",
+    "Core HP",
+    "全 10 ステージ",
+    "Boss",
+  ]) {
+    expect(text).toContain(keyword);
+  }
+});
+
 test("Trailer セクションはクリックまで video をロードしない（ファサード方式）", async ({
   page,
 }) => {

@@ -253,8 +253,35 @@ function stripComments(css) {
   return css.replace(/\/\*[\s\S]*?\*\//g, "");
 }
 
+// セレクタ (`.red`, `#abc` 等) や at-rule プレリュードは宣言値ではないため、
+// `{ ... }` の中身だけを検査対象として残す。
+function extractDeclarations(css) {
+  let depth = 0;
+  let out = "";
+  for (const ch of css) {
+    if (ch === "{") {
+      depth++;
+      continue;
+    }
+    if (ch === "}") {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+    if (depth > 0) out += ch;
+  }
+  return out;
+}
+
+// `url(...)` の中身と文字列リテラルは色値ではないため、検査前に空にする
+// (`content: "red"` や `url("/images/black.svg")` を誤検出させないため)。
+function stripUrlsAndStrings(declarations) {
+  return declarations
+    .replace(/url\(\s*(['"]?)([\s\S]*?)\1\s*\)/gi, "url()")
+    .replace(/"[^"]*"|'[^']*'/g, '""');
+}
+
 export function checkCss(rawCss) {
-  const css = stripComments(rawCss);
+  const css = stripUrlsAndStrings(extractDeclarations(stripComments(rawCss)));
   const violations = [];
 
   for (const match of css.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {

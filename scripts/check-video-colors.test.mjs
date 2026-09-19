@@ -96,3 +96,40 @@ test("パーセント表記の許可色 rgb() は成功として扱う (#246)", 
   // #adbdff (173,189,255) 相当のパーセント値 (67.84%, 74.12%, 100%)。
   assert.deepEqual(checkCss(".probe { color: rgb(67.84% 74.12% 100%); }"), []);
 });
+
+test("クラス名の色名は誤検出しない (#248)", () => {
+  assert.deepEqual(checkCss(`.red { color: #${ALLOWED_HEX_SAMPLE}; }`), []);
+});
+
+test("ID セレクタの hex は誤検出しない (#248)", () => {
+  assert.deepEqual(checkCss(`#abc { color: #${ALLOWED_HEX_SAMPLE}; }`), []);
+});
+
+test("表示文字列中の色名は誤検出しない (#248)", () => {
+  assert.deepEqual(
+    checkCss(
+      `.probe::before { content: "red"; color: #${ALLOWED_HEX_SAMPLE}; }`
+    ),
+    []
+  );
+});
+
+test("画像 URL 中の色名は誤検出しない (#248)", () => {
+  assert.deepEqual(
+    checkCss('.probe { background-image: url("/images/black.svg"); }'),
+    []
+  );
+});
+
+test("クォート無し url() 中の色名も誤検出しない (#248)", () => {
+  assert.deepEqual(
+    checkCss(".probe { background-image: url(/images/black.svg); }"),
+    []
+  );
+});
+
+test("宣言値の色名は引き続き検出する (#248)", () => {
+  assert.deepEqual(checkCss('.red-alert { content: "red"; color: red; }'), [
+    "red",
+  ]);
+});

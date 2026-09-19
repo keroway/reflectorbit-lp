@@ -69,3 +69,30 @@ test("コメントと同じ色コードが実際の宣言にあれば検出す�
     [`#${OFF_BRAND_RED}`]
   );
 });
+
+test("パーセント表記 rgb() のブランド外色を検出する (#246)", () => {
+  assert.deepEqual(checkCss(".probe { color: rgb(100% 0% 0%); }"), [
+    "rgb(100% 0% 0%)",
+  ]);
+});
+
+test("大文字関数名 RGB() のブランド外色を検出する (#246)", () => {
+  assert.deepEqual(checkCss(".probe { color: RGB(255 0 0); }"), [
+    "RGB(255 0 0)",
+  ]);
+});
+
+test("色名 (red) のブランド外色を検出する (#246)", () => {
+  assert.deepEqual(checkCss(".probe { color: red; }"), ["red"]);
+});
+
+test("turn 単位の hsl() のブランド外色を検出する (#246)", () => {
+  assert.deepEqual(checkCss(".probe { color: hsl(0turn 100% 50%); }"), [
+    "hsl(0turn 100% 50%)",
+  ]);
+});
+
+test("パーセント表記の許可色 rgb() は成功として扱う (#246)", () => {
+  // #adbdff (173,189,255) 相当のパーセント値 (67.84%, 74.12%, 100%)。
+  assert.deepEqual(checkCss(".probe { color: rgb(67.84% 74.12% 100%); }"), []);
+});

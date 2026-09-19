@@ -28,6 +28,163 @@ const ALLOWED_HEX = new Set([
   "40ff94", // Trail Reflected
 ]);
 
+// CSS 標準の拡張色名 (transparent / currentcolor を除く)。brand palette は
+// すべて hex 定義のため、これらの名前が使われていれば即ブランド外とみなす。
+const CSS_COLOR_NAMES = [
+  "aliceblue",
+  "antiquewhite",
+  "aqua",
+  "aquamarine",
+  "azure",
+  "beige",
+  "bisque",
+  "black",
+  "blanchedalmond",
+  "blue",
+  "blueviolet",
+  "brown",
+  "burlywood",
+  "cadetblue",
+  "chartreuse",
+  "chocolate",
+  "coral",
+  "cornflowerblue",
+  "cornsilk",
+  "crimson",
+  "cyan",
+  "darkblue",
+  "darkcyan",
+  "darkgoldenrod",
+  "darkgray",
+  "darkgreen",
+  "darkgrey",
+  "darkkhaki",
+  "darkmagenta",
+  "darkolivegreen",
+  "darkorange",
+  "darkorchid",
+  "darkred",
+  "darksalmon",
+  "darkseagreen",
+  "darkslateblue",
+  "darkslategray",
+  "darkslategrey",
+  "darkturquoise",
+  "darkviolet",
+  "deeppink",
+  "deepskyblue",
+  "dimgray",
+  "dimgrey",
+  "dodgerblue",
+  "firebrick",
+  "floralwhite",
+  "forestgreen",
+  "fuchsia",
+  "gainsboro",
+  "ghostwhite",
+  "gold",
+  "goldenrod",
+  "gray",
+  "green",
+  "greenyellow",
+  "grey",
+  "honeydew",
+  "hotpink",
+  "indianred",
+  "indigo",
+  "ivory",
+  "khaki",
+  "lavender",
+  "lavenderblush",
+  "lawngreen",
+  "lemonchiffon",
+  "lightblue",
+  "lightcoral",
+  "lightcyan",
+  "lightgoldenrodyellow",
+  "lightgray",
+  "lightgreen",
+  "lightgrey",
+  "lightpink",
+  "lightsalmon",
+  "lightseagreen",
+  "lightskyblue",
+  "lightslategray",
+  "lightslategrey",
+  "lightsteelblue",
+  "lightyellow",
+  "lime",
+  "limegreen",
+  "linen",
+  "magenta",
+  "maroon",
+  "mediumaquamarine",
+  "mediumblue",
+  "mediumorchid",
+  "mediumpurple",
+  "mediumseagreen",
+  "mediumslateblue",
+  "mediumspringgreen",
+  "mediumturquoise",
+  "mediumvioletred",
+  "midnightblue",
+  "mintcream",
+  "mistyrose",
+  "moccasin",
+  "navajowhite",
+  "navy",
+  "oldlace",
+  "olive",
+  "olivedrab",
+  "orange",
+  "orangered",
+  "orchid",
+  "palegoldenrod",
+  "palegreen",
+  "paleturquoise",
+  "palevioletred",
+  "papayawhip",
+  "peachpuff",
+  "peru",
+  "pink",
+  "plum",
+  "powderblue",
+  "purple",
+  "rebeccapurple",
+  "red",
+  "rosybrown",
+  "royalblue",
+  "saddlebrown",
+  "salmon",
+  "sandybrown",
+  "seagreen",
+  "seashell",
+  "sienna",
+  "silver",
+  "skyblue",
+  "slateblue",
+  "slategray",
+  "slategrey",
+  "snow",
+  "springgreen",
+  "steelblue",
+  "tan",
+  "teal",
+  "thistle",
+  "tomato",
+  "turquoise",
+  "violet",
+  "wheat",
+  "white",
+  "whitesmoke",
+  "yellow",
+  "yellowgreen",
+];
+const NAMED_COLOR_PATTERN = new RegExp(
+  `\\b(?:${CSS_COLOR_NAMES.join("|")})\\b`,
+  "gi"
+);
+
 function normalizeHex(hex) {
   const h = hex.toLowerCase();
   // 3桁・4桁 (alpha付き) は各桁を複製して6桁化し、4桁目の alpha は落とす
@@ -46,8 +203,17 @@ function rgbToHex(r, g, b) {
   return [r, g, b].map((v) => Number(v).toString(16).padStart(2, "0")).join("");
 }
 
-function hslToHex(h, s, l) {
-  const hue = ((Number(h) % 360) + 360) % 360;
+// `50%` のようなパーセント表記は 0-255 レンジへ変換し、整数値はそのまま使う。
+function rgbChannel(value) {
+  return value.endsWith("%")
+    ? Math.round((Number.parseFloat(value) / 100) * 255)
+    : Number(value);
+}
+
+function hslToHex(h, unit, s, l) {
+  // `turn` は 1turn = 360deg。`deg` (省略時含む) はそのまま度として扱う。
+  const degrees = unit === "turn" ? Number(h) * 360 : Number(h);
+  const hue = ((degrees % 360) + 360) % 360;
   const sat = Number(s) / 100;
   const light = Number(l) / 100;
   const c = (1 - Math.abs(2 * light - 1)) * sat;
@@ -98,33 +264,56 @@ export function checkCss(rawCss) {
     }
   }
 
-  // カンマ区切り (`rgb(255, 0, 0)`) と空白区切り (`rgb(255 0 0)`) の両方を検査する。
+  // カンマ区切り (`rgb(255, 0, 0)`)・空白区切り (`rgb(255 0 0)`)、整数・パーセント値
+  // (`rgb(100% 0% 0%)`)、大文字関数名 (`RGB(...)`) を検査する。
+  const CHANNEL = "\\d+(?:\\.\\d+)?%?";
   for (const match of css.matchAll(
-    /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,[^)]+)?\)/g
+    new RegExp(
+      `rgba?\\(\\s*(${CHANNEL})\\s*,\\s*(${CHANNEL})\\s*,\\s*(${CHANNEL})\\s*(?:,[^)]+)?\\)`,
+      "gi"
+    )
   )) {
-    const hex = rgbToHex(match[1], match[2], match[3]);
+    const hex = rgbToHex(
+      rgbChannel(match[1]),
+      rgbChannel(match[2]),
+      rgbChannel(match[3])
+    );
     if (!ALLOWED_HEX.has(hex)) {
       violations.push(match[0]);
     }
   }
 
   for (const match of css.matchAll(
-    /rgba?\(\s*(\d+)\s+(\d+)\s+(\d+)\s*(?:\/[^)]+)?\)/g
+    new RegExp(
+      `rgba?\\(\\s*(${CHANNEL})\\s+(${CHANNEL})\\s+(${CHANNEL})\\s*(?:\\/[^)]+)?\\)`,
+      "gi"
+    )
   )) {
-    const hex = rgbToHex(match[1], match[2], match[3]);
+    const hex = rgbToHex(
+      rgbChannel(match[1]),
+      rgbChannel(match[2]),
+      rgbChannel(match[3])
+    );
     if (!ALLOWED_HEX.has(hex)) {
       violations.push(match[0]);
     }
   }
 
-  // カンマ区切り・空白区切り、`deg` サフィックス、alpha 付きの hsl() を検査する。
+  // カンマ区切り・空白区切り、`deg`/`turn` サフィックス、alpha 付き、大文字関数名の
+  // hsl() を検査する。
   for (const match of css.matchAll(
-    /hsla?\(\s*(-?\d+(?:\.\d+)?)(?:deg)?[,\s]+(\d+(?:\.\d+)?)%[,\s]+(\d+(?:\.\d+)?)%\s*(?:[,/][^)]+)?\)/g
+    /hsla?\(\s*(-?\d+(?:\.\d+)?)(deg|turn)?[,\s]+(\d+(?:\.\d+)?)%[,\s]+(\d+(?:\.\d+)?)%\s*(?:[,/][^)]+)?\)/gi
   )) {
-    const hex = hslToHex(match[1], match[2], match[3]);
+    const hex = hslToHex(match[1], match[2], match[3], match[4]);
     if (!ALLOWED_HEX.has(hex)) {
       violations.push(match[0]);
     }
+  }
+
+  // CSS 標準の色名 (`red` 等) は brand palette がすべて hex 定義のため、
+  // 使われていれば無条件でブランド外として検出する。
+  for (const match of css.matchAll(NAMED_COLOR_PATTERN)) {
+    violations.push(match[0]);
   }
 
   return violations;

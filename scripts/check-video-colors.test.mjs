@@ -133,3 +133,34 @@ test("宣言値の色名は引き続き検出する (#248)", () => {
     "red",
   ]);
 });
+
+test("文字列中の閉じ括弧の後の宣言も検出する (#250)", () => {
+  assert.deepEqual(checkCss('.probe::before { content: "}"; color: red; }'), [
+    "red",
+  ]);
+});
+
+test("@media 内のネストしたクラスセレクタは誤検出しない (#250)", () => {
+  assert.deepEqual(
+    checkCss(
+      `@media (min-width: 1px) { .red { color: #${ALLOWED_HEX_SAMPLE}; } }`
+    ),
+    []
+  );
+});
+
+test("@media 内のネストした ID セレクタは誤検出しない (#250)", () => {
+  assert.deepEqual(
+    checkCss(
+      `@media (min-width: 1px) { #abc { color: #${ALLOWED_HEX_SAMPLE}; } }`
+    ),
+    []
+  );
+});
+
+test("@media 内のネストしたセレクタでもブランド外色は検出する (#250)", () => {
+  assert.deepEqual(
+    checkCss(`@media (min-width: 1px) { .red { color: #${OFF_BRAND_RED}; } }`),
+    [`#${OFF_BRAND_RED}`]
+  );
+});

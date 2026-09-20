@@ -254,20 +254,41 @@ function stripComments(css) {
 }
 
 // セレクタ (`.red`, `#abc` 等) や at-rule プレリュードは宣言値ではないため、
-// `{ ... }` の中身だけを検査対象として残す。
+// `{ ... }` の中身だけを検査対象として残す。文字列リテラル中の `{`/`}` は
+// ブロック境界として扱わず、ネストしたルール (`@media { .red { ... } }`) の
+// 内側セレクタは直後の `{` でバッファごと破棄することで宣言だけを残す。
 function extractDeclarations(css) {
   let depth = 0;
+  let buffer = "";
   let out = "";
-  for (const ch of css) {
+  let quote = null;
+  for (let i = 0; i < css.length; i++) {
+    const ch = css[i];
+    if (quote) {
+      if (depth > 0) buffer += ch;
+      if (ch === quote && css[i - 1] !== "\\") quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      if (depth > 0) buffer += ch;
+      continue;
+    }
     if (ch === "{") {
+      // ここまでのバッファはセレクタ/at-rule プレリュードなので捨てる。
+      buffer = "";
       depth++;
       continue;
     }
     if (ch === "}") {
-      depth = Math.max(0, depth - 1);
+      if (depth > 0) {
+        out += buffer;
+        buffer = "";
+        depth--;
+      }
       continue;
     }
-    if (depth > 0) out += ch;
+    if (depth > 0) buffer += ch;
   }
   return out;
 }

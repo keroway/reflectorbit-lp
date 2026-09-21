@@ -119,3 +119,9 @@ CI では再生成しない（`pnpm run build` は PNG がコミット済み前�
 - `docs/assets.md` — 必要なロゴ / スクショ / OGP 素材のチェックリスト
 - `docs/video.md` — 動画演出（Trailer / How to Play 動画化）の設計メモ
 - `docs/development.md` — 開発・ビルド・デプロイ情報
+
+## Codex 向け運用ルール
+
+Codex 向けの横断運用ルールは `keroway/CLAUDE.md` ではなく
+[agent-assets `docs/codex-common-instructions.md`](https://github.com/keroway/agent-assets/blob/main/docs/codex-common-instructions.md)
+を正典とする（Codex は git ルートより上の AGENTS.md を読まないため）。

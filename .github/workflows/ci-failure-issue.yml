@@ -22,6 +22,6 @@ jobs:
     if: github.event.workflow_run.conclusion == 'failure'
     # SHA は keroway/.github の main（2026-09-09 時点でレビュー済み）に固定。
     # 更新手順は docs/reusable-workflow-sha-pinning.md を参照。
-    uses: keroway/.github/.github/workflows/reusable-ci-failure-issue.yml@f46116661fa12e4ff3911c40970cf0f8510e9823
+    uses: keroway/.github/.github/workflows/reusable-ci-failure-issue.yml@f46116661fa12e4ff3911c40970cf0f8510e9823 # v1.0.0
     with:
       extra-body: ""

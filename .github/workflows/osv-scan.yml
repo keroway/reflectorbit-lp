@@ -8,12 +8,14 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - "osv-scanner.toml"
       - ".github/workflows/osv-scan.yml"
   pull_request:
     paths:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - "osv-scanner.toml"
       - ".github/workflows/osv-scan.yml"
   schedule:
     - cron: "0 6 * * 1"

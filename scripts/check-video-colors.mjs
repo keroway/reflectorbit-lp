@@ -255,40 +255,47 @@ function stripComments(css) {
 
 // セレクタ (`.red`, `#abc` 等) や at-rule プレリュードは宣言値ではないため、
 // `{ ... }` の中身だけを検査対象として残す。文字列リテラル中の `{`/`}` は
-// ブロック境界として扱わず、ネストしたルール (`@media { .red { ... } }`) の
-// 内側セレクタは直後の `{` でバッファごと破棄することで宣言だけを残す。
+// ブロック境界として扱わない。ネストしたルール (`.x { color: red; &:hover { ... } }`)
+// に入るときは、そのネスト境界のバッファ全体ではなく直近のセミコロン以降
+// （ネストしたルールのセレクタ/at-rule プレリュード部分）だけを捨て、それより前の
+// 親宣言はバッファが破棄される前に out へ確定させる（ネストしたルール自身の宣言は、
+// それが閉じる `}` で別途 out に積まれる）。
 function extractDeclarations(css) {
   let depth = 0;
-  let buffer = "";
+  const bufStack = [];
   let out = "";
   let quote = null;
   for (let i = 0; i < css.length; i++) {
     const ch = css[i];
     if (quote) {
-      if (depth > 0) buffer += ch;
+      if (depth > 0) bufStack[depth - 1] += ch;
       if (ch === quote && css[i - 1] !== "\\") quote = null;
       continue;
     }
     if (ch === '"' || ch === "'") {
       quote = ch;
-      if (depth > 0) buffer += ch;
+      if (depth > 0) bufStack[depth - 1] += ch;
       continue;
     }
     if (ch === "{") {
-      // ここまでのバッファはセレクタ/at-rule プレリュードなので捨てる。
-      buffer = "";
+      if (depth > 0) {
+        const buffer = bufStack[depth - 1];
+        const lastSemi = buffer.lastIndexOf(";");
+        out += lastSemi === -1 ? "" : buffer.slice(0, lastSemi + 1);
+        bufStack[depth - 1] = "";
+      }
+      bufStack.push("");
       depth++;
       continue;
     }
     if (ch === "}") {
       if (depth > 0) {
-        out += buffer;
-        buffer = "";
+        out += bufStack.pop();
         depth--;
       }
       continue;
     }
-    if (depth > 0) buffer += ch;
+    if (depth > 0) bufStack[depth - 1] += ch;
   }
   return out;
 }

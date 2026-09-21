@@ -164,3 +164,30 @@ test("@media 内のネストしたセレクタでもブランド外色は検出�
     [`#${OFF_BRAND_RED}`]
   );
 });
+
+test("ネストしたルール (&:hover) の直前の親宣言も検出する (#252)", () => {
+  assert.deepEqual(
+    checkCss(
+      `.probe { color: #${OFF_BRAND_RED}; &:hover { color: #${ALLOWED_HEX_SAMPLE}; } }`
+    ),
+    [`#${OFF_BRAND_RED}`]
+  );
+});
+
+test("ネストした @media の直前の親宣言も検出する (#252)", () => {
+  assert.deepEqual(
+    checkCss(
+      `.probe { color: #${OFF_BRAND_RED}; @media (min-width: 1px) { color: #${ALLOWED_HEX_SAMPLE}; } }`
+    ),
+    [`#${OFF_BRAND_RED}`]
+  );
+});
+
+test("ネストしたルール自身のブランド外色も検出する (#252)", () => {
+  assert.deepEqual(
+    checkCss(
+      `.probe { color: #${ALLOWED_HEX_SAMPLE}; &:hover { color: #${OFF_BRAND_RED}; } }`
+    ),
+    [`#${OFF_BRAND_RED}`]
+  );
+});

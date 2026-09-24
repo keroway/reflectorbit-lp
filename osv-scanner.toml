@@ -1,7 +1,4 @@
 # osv-scan (keroway/.github の reusable-osv-scan.yml 経由) の抑制設定。
-# pnpm-workspace.yaml の overrides コメント (33行目) で明記されている通り、
-# adm-zip 0.6.0 系の GHSA-vwc7-r8mq-g2x9 は本ファイル作成時点 (2026-09) で
-# 上流修正版が無く、組織として既に受容済みのリスク。#244 参照。
-[[IgnoredVulns]]
-id = "GHSA-vwc7-r8mq-g2x9"
-reason = "adm-zip 0.6.0系に上流修正版が無い残存リスクとして受容済み (pnpm-workspace.yaml overrides コメント参照)"
+# adm-zip 0.6.0 系の GHSA-vwc7-r8mq-g2x9 を受容していた ignore は、
+# 別件 GHSA-7q85-xj36-vmfc を修正した 0.6.1 への更新 (pnpm-workspace.yaml overrides) で
+# 両方とも解消したため削除した。#244 参照。

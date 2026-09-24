@@ -5,6 +5,7 @@
       "**",
       "!dist",
       "!.astro",
+      "!.agents",
       "!.claude",
       "!.pi",
       "!.pi-subagents",

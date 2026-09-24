@@ -30,13 +30,17 @@ allowBuilds:
 # - sharp: hyperframes が要求する古い版 (GHSA-f88m-g3jw-g9cj)。ルートの
 #   devDependencies sharp (^0.35.4) と揃えて重複バージョンを解消する
 # - adm-zip: hyperframes / onnxruntime-node が要求する古い版 (GHSA-xcpc-8h2w-3j85)。
-#   0.6.0 系には本 issue 作成時点 (2026-09) で上流修正版が無い (GHSA-vwc7-r8mq-g2x9)。
-#   ^0.6.0 のまま据え置き、修正版が出るまでの残存リスクとして受容する
+#   0.6.0 系の GHSA-vwc7-r8mq-g2x9 は本 issue 作成時点 (2026-09) で上流修正版が無く
+#   osv-scanner.toml で受容済みだったが、別件の GHSA-7q85-xj36-vmfc を修正した 0.6.1 が
+#   2026-09-11 に出たため ^0.6.1 に更新する
 # - @hono/node-server: hyperframes が要求する古い版 (Windows 限定の path traversal)
 # - hono: hyperframes が要求する古い版 (GHSA-crvj-82cr-hjcx / GHSA-g6gw-c38x-mqfc / GHSA-gqvv-2mrq-wpjv)
 # - js-yaml / smol-toml: astro が要求する古い版
 # - postcss: @tailwindcss/vite / astro / vitefu 経由の vite が要求する古い版
 #   (GHSA-r28c-9q8g-f849: sourceMappingURL 経由の Path Traversal)
+# - devalue: astro が要求する古い版 (GHSA-9rgm-9g3h-6x36)。5.9.2 で修正済み。
+#   Renovate の minor/patch PR (#204) は直接依存しか上げないため対象外だった
+#   (agent-assets#438)
 #
 # NOTE: pnpm-workspace.yaml の overrides と package.json の pnpm.overrides は
 # 併用すると後者が無視される (pnpm-workspace.yaml 側が優先されマージされない)。
@@ -46,7 +50,8 @@ overrides:
   svgo: ^4.1.0
   fast-uri: ^4.1.3
   sharp: ^0.35.4
-  adm-zip: ^0.6.0
+  adm-zip: ^0.6.1
+  devalue: ^5.9.2
   "@hono/node-server": ^2.0.11
   yaml: ^2.8.3
   js-yaml: ^4.3.2

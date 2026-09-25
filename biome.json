@@ -11,7 +11,8 @@
       "!.pi-subagents",
       "!**/*.astro",
       "!**/*.css",
-      "!test-results"
+      "!test-results",
+      "!playwright-report"
     ]
   },
   "formatter": {

@@ -29,6 +29,13 @@ export default defineConfig({
   ],
   webServer: {
     command: "pnpm run preview --port 4322",
+    // astro 7.3 は AI エージェント環境(このセッション含む)を自動検知すると
+    // `astro preview` を強制的にバックグラウンドデーモン化し、フォアグラウンド
+    // プロセスが即 exit 0 するため webServer が "exited early" と誤判定する
+    // (reflectorbit-lp#263)。ASTRO_PREVIEW_BACKGROUND を設定するとこの自動検知が
+    // 無効化され、明示的な --background フラグが無い限りフォアグラウンドで
+    // 起動するようになる(astro/dist/cli/preview/index.js の agentDetected 判定)。
+    env: { ASTRO_PREVIEW_BACKGROUND: "false" },
     url: "http://localhost:4322",
     reuseExistingServer: false,
     timeout: 120000,

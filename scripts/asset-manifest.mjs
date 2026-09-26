@@ -35,9 +35,10 @@ const SOURCE_SETS = {
 // キーごとの期待する生成物。source hash が一致していても、これらが欠落・空なら
 // verify を失敗させる（#189: source hash だけでは生成物自体の欠落を検出できない）。
 //
-// trailer は SOURCE_SETS を持たない（実写素材で生成スクリプトが無いため、ソース
-// ハッシュとの照合は不可能）。欠落・空ファイル検知のみで #86/#92 でコミットされた
-// 3 ファイルの意図しない削除・破損を asset-drift.yml でカバーする（#270）。
+// trailer / screenshots は SOURCE_SETS を持たない（本体リポジトリ由来のコミット済み
+// 静的アセットで生成スクリプトが無いため、ソースハッシュとの照合は不可能）。
+// 欠落・空ファイル検知のみで、意図しない削除・破損を asset-drift.yml でカバーする
+// （trailer は #270、screenshots は #276）。
 const EXPECTED_OUTPUTS = {
   og: ["public/og-default.png"],
   "how-to-play-video": [
@@ -50,6 +51,11 @@ const EXPECTED_OUTPUTS = {
     "public/videos/trailer.webm",
     "public/videos/trailer-poster.jpg",
   ],
+  screenshots: [
+    "public/screenshots/screenshot-title.png",
+    "public/screenshots/screenshot-playing.png",
+    "public/screenshots/screenshot-gameover.png",
+  ],
 };
 
 // 生成コマンドの案内（verify 失敗時のメッセージ用）。trailer は手動撮影・エンコードの
@@ -58,6 +64,7 @@ const REGEN_COMMANDS = {
   og: "pnpm run og:gen",
   "how-to-play-video": "pnpm run video:howtoplay:gen",
   trailer: "docs/video.md の Track A 節の手順で撮影・エンコードし直して",
+  screenshots: "ゲーム本体リポジトリからスクリーンショットを撮り直して",
 };
 
 async function listFiles(path) {

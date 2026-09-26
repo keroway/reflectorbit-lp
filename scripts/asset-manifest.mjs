@@ -34,6 +34,10 @@ const SOURCE_SETS = {
 
 // キーごとの期待する生成物。source hash が一致していても、これらが欠落・空なら
 // verify を失敗させる（#189: source hash だけでは生成物自体の欠落を検出できない）。
+//
+// trailer は SOURCE_SETS を持たない（実写素材で生成スクリプトが無いため、ソース
+// ハッシュとの照合は不可能）。欠落・空ファイル検知のみで #86/#92 でコミットされた
+// 3 ファイルの意図しない削除・破損を asset-drift.yml でカバーする（#270）。
 const EXPECTED_OUTPUTS = {
   og: ["public/og-default.png"],
   "how-to-play-video": [
@@ -41,12 +45,19 @@ const EXPECTED_OUTPUTS = {
     "public/videos/how-to-play.webm",
     "public/videos/how-to-play-poster.jpg",
   ],
+  trailer: [
+    "public/videos/trailer.mp4",
+    "public/videos/trailer.webm",
+    "public/videos/trailer-poster.jpg",
+  ],
 };
 
-// 生成コマンドの案内（verify 失敗時のメッセージ用）
+// 生成コマンドの案内（verify 失敗時のメッセージ用）。trailer は手動撮影・エンコードの
+// ため生成コマンドが無く、docs/video.md の手順を案内する。
 const REGEN_COMMANDS = {
   og: "pnpm run og:gen",
   "how-to-play-video": "pnpm run video:howtoplay:gen",
+  trailer: "docs/video.md の Track A 節の手順で撮影・エンコードし直して",
 };
 
 async function listFiles(path) {
@@ -105,21 +116,29 @@ async function findMissingOutputs(key) {
 async function verify() {
   const manifest = await readManifest();
   let failed = false;
-  for (const key of Object.keys(SOURCE_SETS)) {
+  const keys = new Set([
+    ...Object.keys(SOURCE_SETS),
+    ...Object.keys(EXPECTED_OUTPUTS),
+  ]);
+  for (const key of keys) {
+    const hasSourceSet = key in SOURCE_SETS;
     const recorded = manifest[key]?.source_hash;
-    const actual = await computeSourceHash(key);
+    const actual = hasSourceSet ? await computeSourceHash(key) : null;
     const missingOutputs = await findMissingOutputs(key);
-    if (recorded === actual && missingOutputs.length === 0) {
+    if ((!hasSourceSet || recorded === actual) && missingOutputs.length === 0) {
       console.log(`${key}: ok`);
       continue;
     }
     failed = true;
     if (missingOutputs.length > 0) {
+      const action = hasSourceSet
+        ? `ローカルで ${REGEN_COMMANDS[key]} を実行して`
+        : REGEN_COMMANDS[key];
       console.error(
-        `::error::${key}: 生成物が欠落または空です (${missingOutputs.join(", ")})。ローカルで ${REGEN_COMMANDS[key]} を実行して、生成物と asset-manifest.json をコミットしてください。`
+        `::error::${key}: 生成物が欠落または空です (${missingOutputs.join(", ")})。${action}、生成物${hasSourceSet ? "と asset-manifest.json " : " "}をコミットしてください。`
       );
     }
-    if (recorded !== actual) {
+    if (hasSourceSet && recorded !== actual) {
       const hint = recorded
         ? "ソースが生成コマンドの実行後に変更されています"
         : "マニフェストに記録がありません";

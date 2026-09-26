@@ -26,6 +26,8 @@
     "video:howtoplay:gen": "node scripts/gen-how-to-play-video.mjs",
     "check:video-colors": "node scripts/check-video-colors.mjs",
     "test:video-colors": "node --test scripts/check-video-colors.test.mjs",
+    "check:headers": "node scripts/check-headers.mjs",
+    "test:headers": "node --test scripts/check-headers.test.mjs",
     "asset:verify": "node scripts/asset-manifest.mjs verify",
     "test": "playwright test",
     "smoke": "playwright test tests/smoke.test.ts",

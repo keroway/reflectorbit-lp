@@ -1,7 +1,7 @@
 ---
 import {
   DOWNLOAD_AVAILABLE,
-  PLAY_URL,
+  DOWNLOAD_URL,
   REPO_FALLBACK_URL,
   REPO_URL,
   SOURCE_AVAILABLE,
@@ -40,7 +40,8 @@ const ogImage = Astro.site
 // 本体リポは非公開運用のため `sameAs` は SOURCE_AVAILABLE に連動させる。
 //   - 非公開時: sameAs は作者アカウント (200 OK) のみ。
 //   - 公開後 (SOURCE_AVAILABLE=true): sameAs に本体リポを含める。
-// `offers` は「プレイ／入手可能かどうか」を表すため DOWNLOAD_AVAILABLE に連動させる
+// `offers` はネイティブ版（ダウンロード配布物）の入手可否を表すため DOWNLOAD_AVAILABLE に連動させ、
+// url は入手先である DOWNLOAD_URL（GitHub Releases）を指す
 // （ブラウザ版は常時プレイ可能だが、ネイティブ版配布が始まるまでは offers を出さない方針だった名残）。
 const jsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
@@ -74,7 +75,7 @@ if (DOWNLOAD_AVAILABLE) {
     price: '0',
     priceCurrency: 'JPY',
     availability: 'https://schema.org/InStock',
-    url: PLAY_URL,
+    url: DOWNLOAD_URL,
   };
 }
 ---

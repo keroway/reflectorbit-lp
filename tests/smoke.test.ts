@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { DOWNLOAD_AVAILABLE, SOURCE_AVAILABLE } from "../src/consts";
+import {
+  DOWNLOAD_AVAILABLE,
+  DOWNLOAD_URL,
+  SOURCE_AVAILABLE,
+} from "../src/consts";
 
 test("トップページが HTTP 200 を返す", async ({ page }) => {
   const response = await page.goto("/");
@@ -487,5 +491,6 @@ test("ダウンロード公開後はリリース URL へリンクし JSON-LD に
   );
   expect(ld.offers).toMatchObject({
     availability: "https://schema.org/InStock",
+    url: DOWNLOAD_URL,
   });
 });

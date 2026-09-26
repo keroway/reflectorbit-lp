@@ -38,3 +38,7 @@ jobs:
       - run: pnpm run check:video-colors
       # check:video-colors の色記法別の回帰検証（4桁hex・空白区切りRGB・HSL の見逃しを防ぐ、#210）。
       - run: pnpm run test:video-colors
+      # public/_headers は拡張子なしファイルで Biome/astro check の対象外のため、
+      # 必須セキュリティディレクティブの有無を静的に検証する（#264）。
+      - run: pnpm run check:headers
+      - run: pnpm run test:headers

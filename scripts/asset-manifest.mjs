@@ -85,22 +85,31 @@ export async function computeSourceHash(key) {
   return createHash("sha256").update(entries.join("")).digest("hex");
 }
 
-async function readManifest() {
+// 新規作成（ファイル無し）だけを空扱いにする。読み込み失敗・不正 JSON を {} に
+// 潰すと、updateManifest が既存の他キーを黙って上書き破棄する (#280)。
+export async function readManifest(path = manifestPath) {
+  let text;
   try {
-    return JSON.parse(await readFile(manifestPath, "utf8"));
-  } catch {
-    return {};
+    text = await readFile(path, "utf8");
+  } catch (e) {
+    if (e?.code === "ENOENT") return {};
+    throw new Error(`${path} を読み込めません: ${e.message}`, { cause: e });
+  }
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error(`${path} が不正な JSON です: ${e.message}`, { cause: e });
   }
 }
 
-export async function updateManifest(key) {
-  const manifest = await readManifest();
+export async function updateManifest(key, path = manifestPath) {
+  const manifest = await readManifest(path);
   manifest[key] = {
     source_hash: await computeSourceHash(key),
     generated_at: new Date().toISOString(),
   };
-  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-  console.log(`updated ${manifestPath} (${key})`);
+  await writeFile(path, `${JSON.stringify(manifest, null, 2)}\n`);
+  console.log(`updated ${path} (${key})`);
 }
 
 async function findMissingOutputs(key) {

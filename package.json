@@ -29,6 +29,7 @@
     "check:headers": "node scripts/check-headers.mjs",
     "test:headers": "node --test scripts/check-headers.test.mjs",
     "asset:verify": "node scripts/asset-manifest.mjs verify",
+    "test:asset-manifest": "node --test scripts/asset-manifest.test.mjs",
     "test": "playwright test",
     "smoke": "playwright test tests/smoke.test.ts",
     "smoke:a11y": "playwright test tests/a11y.test.ts",

@@ -23,6 +23,7 @@ check:
     pnpm run test:video-colors
     pnpm run check:headers
     pnpm run test:headers
+    pnpm run test:asset-manifest
     pnpm run typecheck
     pnpm run build
     pnpm test

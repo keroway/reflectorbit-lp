@@ -42,3 +42,5 @@ jobs:
       # 必須セキュリティディレクティブの有無を静的に検証する（#264）。
       - run: pnpm run check:headers
       - run: pnpm run test:headers
+      # asset-manifest.json の読み込み失敗時に既存キーを破棄しない回帰検証（#280）。
+      - run: pnpm run test:asset-manifest

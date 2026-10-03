@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72",
+  "packageManager": "pnpm@11.28.3+sha512.d49760a13b1755948775a5d4cb1bc4ba871ff2dc941adf851630d044ed722f9b5be8be57bef93166098c80c706bd612c282d05526dd1d0ae660188c086820f35",
   "homepage": "https://reflectorbit-lp.pages.dev",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@biomejs/biome": "^2.5.5",
     "@playwright/test": "^1.61.1",
-    "hyperframes": "0.7.70",
+    "hyperframes": "0.8.97",
     "lefthook": "^2.1.10",
     "prettier": "^3.9.6",
     "sharp": "^0.35.4",

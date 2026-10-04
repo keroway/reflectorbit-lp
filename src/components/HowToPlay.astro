@@ -98,9 +98,18 @@ import { controls } from '../consts';
       errorPanel.hidden = false;
     };
 
+    // play() の拒否理由で振り分ける。自動再生ポリシー (NotAllowedError) や
+    // load/pause による中断 (AbortError) は失敗ではない。poster と controls が残るので
+    // 利用者は手動再生できる。それ以外 (NotSupportedError 等) のみ失敗パネルを出す。
+    const handlePlayRejection = (err: unknown) => {
+      const name = err instanceof DOMException ? err.name : '';
+      if (name === 'NotAllowedError' || name === 'AbortError') return;
+      showError();
+    };
+
     const retryPlayback = () => {
       errorPanel.hidden = true;
-      void howToPlayVideo!.play().catch(showError);
+      void howToPlayVideo!.play().catch(handlePlayRejection);
     };
 
     // メディア読み込み自体の失敗（ソース欠落・デコード不可等）を利用者に伝える。
@@ -116,7 +125,7 @@ import { controls } from '../consts';
       } else {
         howToPlayVideo!.setAttribute('autoplay', '');
         howToPlayVideo!.setAttribute('loop', '');
-        void howToPlayVideo!.play().catch(showError);
+        void howToPlayVideo!.play().catch(handlePlayRejection);
       }
     }
 

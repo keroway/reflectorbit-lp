@@ -330,6 +330,38 @@ test("How to Play 図解動画の再生に失敗すると失敗表示と再試�
   await expect(errorPanel).toBeHidden();
 });
 
+for (const [rejection, expectError] of [
+  ["NotAllowedError", false],
+  ["AbortError", false],
+  ["NotSupportedError", true],
+] as const) {
+  test(`How to Play 図解動画の play() が ${rejection} で拒否されたとき失敗表示は ${expectError ? "出る" : "出ない"}`, async ({
+    page,
+  }) => {
+    await page.addInitScript((name) => {
+      HTMLMediaElement.prototype.play = () =>
+        Promise.reject(new DOMException("rejected", name));
+    }, rejection);
+    await page.goto("/");
+
+    const section = page.locator("section#how-to-play");
+    const video = section.locator("video.how-to-play-video");
+    await expect(video).toBeVisible();
+    // 手動再生できるよう controls は常に残る
+    await expect(video).toHaveAttribute("controls", "");
+
+    const errorPanel = section.locator("#how-to-play-error");
+    if (expectError) {
+      await expect(errorPanel).toBeVisible();
+      await section.locator("#how-to-play-retry").click();
+      // 再試行でも同じ理由で拒否されれば再び表示される
+      await expect(errorPanel).toBeVisible();
+    } else {
+      await expect(errorPanel).toBeHidden();
+    }
+  });
+}
+
 test("prefers-reduced-motion: reduce では図解動画の自動再生・ループが止まる", async ({
   page,
 }) => {

@@ -46,6 +46,19 @@ test("不正 JSON のときは停止し、ファイルを書き換えない", as
   });
 });
 
+test("トップレベルが非オブジェクトの JSON は拒否し、ファイルを書き換えない", async () => {
+  for (const content of ["[]", "null", "42", '"text"']) {
+    await withTempManifest(async (path) => {
+      await writeFile(path, content);
+      await assert.rejects(
+        updateManifest("og", path),
+        /JSON オブジェクトではありません/
+      );
+      assert.equal(await readFile(path, "utf8"), content);
+    });
+  }
+});
+
 test("ENOENT 以外の読み込み失敗（ディレクトリ等）は停止する", async () => {
   await withTempManifest(async (path) => {
     const dir = join(path, "..");

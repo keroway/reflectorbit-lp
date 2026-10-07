@@ -102,11 +102,18 @@ export async function readManifest(path = manifestPath) {
     if (e?.code === "ENOENT") return {};
     throw new Error(`${path} を読み込めません: ${e.message}`, { cause: e });
   }
+  let parsed;
   try {
-    return JSON.parse(text);
+    parsed = JSON.parse(text);
   } catch (e) {
     throw new Error(`${path} が不正な JSON です: ${e.message}`, { cause: e });
   }
+  // 配列は名前付きプロパティが JSON.stringify で落ち、null / プリミティブは
+  // 代入で例外になる。書き込み前にオブジェクト以外を拒否する (#292)。
+  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(`${path} のトップレベルが JSON オブジェクトではありません`);
+  }
+  return parsed;
 }
 
 export async function updateManifest(key, path = manifestPath) {

@@ -54,6 +54,119 @@ export function parseHeaders(text) {
   return blocks;
 }
 
+// HSTS の max-age 下限（1 年）。これ未満への変更は弱体化とみなす。
+const MIN_HSTS_MAX_AGE = 31536000;
+const STRONG_REFERRER_POLICIES = [
+  "no-referrer",
+  "same-origin",
+  "strict-origin",
+  "strict-origin-when-cross-origin",
+];
+// 常に空 allowlist `()` で無効化しておくべき Permissions-Policy 機能。
+const DISABLED_FEATURES = ["geolocation", "microphone", "camera", "payment"];
+
+// CSP の必須制約。ディレクティブ名 → 値に含まれるべきトークン。
+const CSP_REQUIRED = {
+  "default-src": ["'self'"],
+  "frame-ancestors": ["'none'"],
+  "base-uri": ["'self'"],
+  "form-action": ["'self'"],
+};
+// script 系で許さないソース（任意スクリプト実行・任意オリジン許可）。
+const CSP_FORBIDDEN_SCRIPT_TOKENS = ["*", "'unsafe-eval'", "http:", "https:"];
+
+function parseCsp(value) {
+  const map = new Map();
+  for (const part of value.split(";")) {
+    const [name, ...tokens] = part.trim().split(/\s+/);
+    if (name) map.set(name.toLowerCase(), tokens);
+  }
+  return map;
+}
+
+function checkValue(key, value) {
+  const problems = [];
+  switch (key) {
+    case "X-Frame-Options":
+      if (value.toUpperCase() !== "DENY") {
+        problems.push(
+          `X-Frame-Options は DENY である必要があります: "${value}"`
+        );
+      }
+      break;
+    case "X-Content-Type-Options":
+      if (value.toLowerCase() !== "nosniff") {
+        problems.push(
+          `X-Content-Type-Options は nosniff である必要があります: "${value}"`
+        );
+      }
+      break;
+    case "Referrer-Policy": {
+      const policies = value.split(",").map((p) => p.trim().toLowerCase());
+      if (!policies.every((p) => STRONG_REFERRER_POLICIES.includes(p))) {
+        problems.push(`Referrer-Policy が弱い値です: "${value}"`);
+      }
+      break;
+    }
+    case "Permissions-Policy": {
+      const features = new Map(
+        value.split(",").map((f) => {
+          const [name, ...rest] = f.trim().split("=");
+          return [name.trim(), rest.join("=").trim()];
+        })
+      );
+      for (const feature of DISABLED_FEATURES) {
+        if (features.get(feature) !== "()") {
+          problems.push(
+            `Permissions-Policy の ${feature} は () で無効化する必要があります`
+          );
+        }
+      }
+      break;
+    }
+    case "Strict-Transport-Security": {
+      const maxAge = value.match(/(?:^|;)\s*max-age=(\d+)/i);
+      if (!maxAge || Number(maxAge[1]) < MIN_HSTS_MAX_AGE) {
+        problems.push(
+          `Strict-Transport-Security の max-age は ${MIN_HSTS_MAX_AGE} 以上が必要です: "${value}"`
+        );
+      }
+      if (!/(?:^|;)\s*includeSubDomains\s*(?:;|$)/i.test(value)) {
+        problems.push(
+          "Strict-Transport-Security に includeSubDomains がありません"
+        );
+      }
+      break;
+    }
+    case "Content-Security-Policy": {
+      const csp = parseCsp(value);
+      for (const [name, required] of Object.entries(CSP_REQUIRED)) {
+        const tokens = csp.get(name);
+        if (!tokens) {
+          problems.push(`CSP に ${name} がありません`);
+          continue;
+        }
+        for (const token of required) {
+          if (!tokens.includes(token)) {
+            problems.push(`CSP の ${name} に ${token} が必要です`);
+          }
+        }
+      }
+      for (const name of ["default-src", "script-src"]) {
+        for (const token of csp.get(name) ?? []) {
+          if (CSP_FORBIDDEN_SCRIPT_TOKENS.includes(token.toLowerCase())) {
+            problems.push(
+              `CSP の ${name} に許可できないソース ${token} があります`
+            );
+          }
+        }
+      }
+      break;
+    }
+  }
+  return problems;
+}
+
 export function checkBlocks(blocks) {
   const violations = [];
 
@@ -73,6 +186,8 @@ export function checkBlocks(blocks) {
   for (const { key, value } of wildcard.directives) {
     if (value === "") {
       violations.push(`${key} の値が空です`);
+    } else {
+      violations.push(...checkValue(key, value));
     }
   }
 

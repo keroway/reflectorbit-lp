@@ -89,7 +89,8 @@
       video.className = 'absolute inset-0 h-full w-full object-cover';
       video.poster = '/videos/trailer-poster.jpg';
       video.muted = true;
-      video.loop = true;
+      // docs/video.md: reduce 設定では自動ループしない（クリック再生は一回で止まる）
+      video.loop = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       video.controls = true;
       video.playsInline = true;
       // iOS Safari 向けに属性としても明示する

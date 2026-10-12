@@ -71,6 +71,25 @@ test("Trailer セクションはクリックまで video をロードしない�
   await expect(video).toHaveAttribute("controls", "");
 });
 
+test("Trailer はクリック後に通常時はループし、reduce 時はループしない", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const section = page.locator("section#trailer");
+  await section.locator("#trailer-play").click();
+  const video = section.locator("video");
+  await expect(video).toHaveCount(1);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(true);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+
+  await section.locator("#trailer-play").click();
+  await expect(video).toHaveCount(1);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(false);
+});
+
 test("Trailer の再生に失敗すると失敗表示と再試行導線が出る", async ({
   page,
 }) => {

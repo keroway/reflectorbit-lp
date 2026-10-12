@@ -191,3 +191,39 @@ test("ネストしたルール自身のブランド外色も検出する (#252)"
     [`#${OFF_BRAND_RED}`]
   );
 });
+
+test("color() をパレット比較できない色関数として拒否する (#294)", () => {
+  assert.deepEqual(checkCss(".probe { color: color(srgb 1 0 0); }"), [
+    "color(",
+  ]);
+});
+
+test("hwb() をパレット比較できない色関数として拒否する (#294)", () => {
+  assert.deepEqual(checkCss(".probe { color: hwb(0 0% 0%); }"), ["hwb("]);
+});
+
+test("oklch() / oklab() / lab() / lch() / color-mix() を拒否する (#294)", () => {
+  assert.deepEqual(checkCss(".probe { color: oklch(60% 0.25 30); }"), [
+    "oklch(",
+  ]);
+  assert.deepEqual(checkCss(".probe { color: OKLAB(60% 0.1 0.1); }"), [
+    "OKLAB(",
+  ]);
+  assert.deepEqual(checkCss(".probe { color: lab(50% 40 59); }"), ["lab("]);
+  assert.deepEqual(checkCss(".probe { color: lch(50% 80 30); }"), ["lch("]);
+  assert.deepEqual(
+    checkCss(
+      ".probe { color: color-mix(in srgb, currentcolor 50%, transparent); }"
+    ),
+    ["color-mix("]
+  );
+});
+
+test("プロパティ名 color / background-color は色関数として誤検出しない (#294)", () => {
+  assert.deepEqual(
+    checkCss(
+      `.probe { color: #${ALLOWED_HEX_SAMPLE}; background-color: #${ALLOWED_HEX_SAMPLE}; }`
+    ),
+    []
+  );
+});

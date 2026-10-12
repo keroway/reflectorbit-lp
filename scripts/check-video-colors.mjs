@@ -365,6 +365,14 @@ export function checkCss(rawCss) {
     }
   }
 
+  // パレットと比較できない色関数は黙って通さず、無条件で違反として拒否する
+  // (`color(srgb 1 0 0)` / `hwb(...)` / `oklch(...)` 等。#294)。
+  for (const match of css.matchAll(
+    /(?<![\w-])(?:color-mix|color|hwb|oklch|oklab|lab|lch)\(/gi
+  )) {
+    violations.push(match[0]);
+  }
+
   // CSS 標準の色名 (`red` 等) は brand palette がすべて hex 定義のため、
   // 使われていれば無条件でブランド外として検出する。
   for (const match of css.matchAll(NAMED_COLOR_PATTERN)) {

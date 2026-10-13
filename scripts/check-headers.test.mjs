@@ -106,6 +106,30 @@ test("HSTS の max-age が短いと検出する", () => {
   }
 });
 
+test("HSTS の max-age の不正な末尾と重複指定を検出する", () => {
+  for (const value of [
+    "max-age=31536000garbage; includeSubDomains",
+    "max-age=31536000; max-age=0; includeSubDomains",
+    "max-age=; includeSubDomains",
+  ]) {
+    const violations = violationsFor({ "Strict-Transport-Security": value });
+    assert.ok(
+      violations.some((v) => v.includes("max-age")),
+      value
+    );
+  }
+});
+
+test("HSTS の正常値は違反にならない", () => {
+  const violations = violationsFor({
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+  });
+  assert.equal(
+    violations.filter((v) => v.includes("Strict-Transport-Security")).length,
+    0
+  );
+});
+
 test("HSTS に includeSubDomains が無いと検出する", () => {
   const violations = violationsFor({
     "Strict-Transport-Security": "max-age=31536000",

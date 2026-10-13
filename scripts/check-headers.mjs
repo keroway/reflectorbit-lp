@@ -72,6 +72,12 @@ const CSP_REQUIRED = {
   "base-uri": ["'self'"],
   "form-action": ["'self'"],
 };
+// 許可トークンを固定するディレクティブ。'self' を残したまま `*` や外部オリジンを
+// 足す緩和を拒否する（#304）。ここに無いトークンはすべて違反とする。
+const CSP_ALLOWED_ONLY = {
+  "base-uri": ["'self'", "'none'"],
+  "form-action": ["'self'", "'none'"],
+};
 // script 系で許さないソース（任意スクリプト実行・任意オリジン許可）。
 const CSP_FORBIDDEN_SCRIPT_TOKENS = ["*", "'unsafe-eval'", "http:", "https:"];
 
@@ -172,6 +178,15 @@ function checkValue(key, value) {
         for (const token of required) {
           if (!tokens.includes(token)) {
             problems.push(`CSP の ${name} に ${token} が必要です`);
+          }
+        }
+      }
+      for (const [name, allowed] of Object.entries(CSP_ALLOWED_ONLY)) {
+        for (const token of csp.get(name) ?? []) {
+          if (!allowed.includes(token.toLowerCase())) {
+            problems.push(
+              `CSP の ${name} に許可できないソース ${token} があります`
+            );
           }
         }
       }

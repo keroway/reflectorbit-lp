@@ -167,6 +167,22 @@ test("CSP の script-src-elem / script-src-attr の禁止ソースを検出す�
   }
 });
 
+test("CSP の base-uri / form-action に 'self' 以外の許可先が追加されると検出する (#304)", () => {
+  for (const name of ["base-uri", "form-action"]) {
+    for (const token of ["*", "https:", "https://example.com"]) {
+      const csp = VALID["Content-Security-Policy"].replace(
+        `${name} 'self'`,
+        `${name} 'self' ${token}`
+      );
+      const violations = violationsFor({ "Content-Security-Policy": csp });
+      assert.ok(
+        violations.some((v) => v.includes(name) && v.includes(token)),
+        `${name} ${token}`
+      );
+    }
+  }
+});
+
 test("CSP の重複ディレクティブを拒否し、先頭の禁止ソースも検出する (#302)", () => {
   const csp = `default-src *; ${VALID["Content-Security-Policy"]}`;
   const violations = violationsFor({ "Content-Security-Policy": csp });

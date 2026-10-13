@@ -151,11 +151,29 @@ function checkValue(key, value) {
       break;
     }
     case "Strict-Transport-Security": {
-      const maxAge = value.match(/(?:^|;)\s*max-age=(\d+)/i);
-      if (!maxAge || Number(maxAge[1]) < MIN_HSTS_MAX_AGE) {
+      // RFC 6797 §6.1: ディレクティブは ; 区切り。max-age は 1 回だけ、値は数字のみ。
+      const maxAges = value
+        .split(";")
+        .map((d) => d.trim())
+        .filter((d) => /^max-age\s*=/i.test(d));
+      if (maxAges.length > 1) {
         problems.push(
-          `Strict-Transport-Security の max-age は ${MIN_HSTS_MAX_AGE} 以上が必要です: "${value}"`
+          `Strict-Transport-Security の max-age が重複しています: "${value}"`
         );
+      } else {
+        const raw = maxAges[0]
+          ?.split("=")[1]
+          ?.trim()
+          .replace(/^"(.*)"$/, "$1");
+        if (
+          raw === undefined ||
+          !/^\d+$/.test(raw) ||
+          Number(raw) < MIN_HSTS_MAX_AGE
+        ) {
+          problems.push(
+            `Strict-Transport-Security の max-age は ${MIN_HSTS_MAX_AGE} 以上の整数が必要です: "${value}"`
+          );
+        }
       }
       if (!/(?:^|;)\s*includeSubDomains\s*(?:;|$)/i.test(value)) {
         problems.push(

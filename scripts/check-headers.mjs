@@ -75,13 +75,33 @@ const CSP_REQUIRED = {
 // script 系で許さないソース（任意スクリプト実行・任意オリジン許可）。
 const CSP_FORBIDDEN_SCRIPT_TOKENS = ["*", "'unsafe-eval'", "http:", "https:"];
 
+// 禁止ソース検査の対象。script-src-elem / script-src-attr は script-src より
+// 優先して適用されるため、ここに https: 等を足されても素通りさせない（#302）。
+const CSP_SCRIPT_DIRECTIVES = [
+  "default-src",
+  "script-src",
+  "script-src-elem",
+  "script-src-attr",
+];
+
+// 同名ディレクティブが複数あるとブラウザは最初の1つだけを採用する（CSP3 §2.2.1）。
+// 後勝ちで上書きすると先頭の禁止ソースを見失うため、全出現のトークンを結合し、
+// 重複した名前は duplicates として返して別途違反にする。
 function parseCsp(value) {
   const map = new Map();
+  const duplicates = new Set();
   for (const part of value.split(";")) {
-    const [name, ...tokens] = part.trim().split(/\s+/);
-    if (name) map.set(name.toLowerCase(), tokens);
+    const [rawName, ...tokens] = part.trim().split(/\s+/);
+    if (!rawName) continue;
+    const name = rawName.toLowerCase();
+    if (map.has(name)) {
+      duplicates.add(name);
+      map.get(name).push(...tokens);
+    } else {
+      map.set(name, tokens);
+    }
   }
-  return map;
+  return { map, duplicates };
 }
 
 function checkValue(key, value) {
@@ -139,7 +159,10 @@ function checkValue(key, value) {
       break;
     }
     case "Content-Security-Policy": {
-      const csp = parseCsp(value);
+      const { map: csp, duplicates } = parseCsp(value);
+      for (const name of duplicates) {
+        problems.push(`CSP の ${name} が重複しています`);
+      }
       for (const [name, required] of Object.entries(CSP_REQUIRED)) {
         const tokens = csp.get(name);
         if (!tokens) {
@@ -152,7 +175,7 @@ function checkValue(key, value) {
           }
         }
       }
-      for (const name of ["default-src", "script-src"]) {
+      for (const name of CSP_SCRIPT_DIRECTIVES) {
         for (const token of csp.get(name) ?? []) {
           if (CSP_FORBIDDEN_SCRIPT_TOKENS.includes(token.toLowerCase())) {
             problems.push(

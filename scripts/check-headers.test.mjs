@@ -152,3 +152,26 @@ test("CSP の script-src に 'unsafe-eval' やワイルドカードがあると�
     );
   }
 });
+
+test("CSP の script-src-elem / script-src-attr の禁止ソースを検出する (#302)", () => {
+  for (const name of ["script-src-elem", "script-src-attr"]) {
+    const csp = VALID["Content-Security-Policy"].replace(
+      "script-src 'self'",
+      `${name} https:; script-src 'self'`
+    );
+    const violations = violationsFor({ "Content-Security-Policy": csp });
+    assert.ok(
+      violations.some((v) => v.includes(name) && v.includes("https:")),
+      name
+    );
+  }
+});
+
+test("CSP の重複ディレクティブを拒否し、先頭の禁止ソースも検出する (#302)", () => {
+  const csp = `default-src *; ${VALID["Content-Security-Policy"]}`;
+  const violations = violationsFor({ "Content-Security-Policy": csp });
+  assert.ok(violations.some((v) => v.includes("default-src が重複")));
+  assert.ok(
+    violations.some((v) => v.includes("default-src") && v.includes("*"))
+  );
+});

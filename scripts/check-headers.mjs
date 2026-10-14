@@ -162,8 +162,8 @@ function checkValue(key, value) {
         );
       } else {
         const raw = maxAges[0]
-          ?.split("=")[1]
-          ?.trim()
+          ?.replace(/^[^=]*=/, "")
+          .trim()
           .replace(/^"(.*)"$/, "$1");
         if (
           raw === undefined ||

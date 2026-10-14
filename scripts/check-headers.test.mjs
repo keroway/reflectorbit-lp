@@ -165,6 +165,22 @@ test("CSP の frame-ancestors が 'none' 以外だと検出する", () => {
   assert.ok(violations.some((v) => v.includes("frame-ancestors")));
 });
 
+test("CSP の frame-ancestors に 'none' と追加許可先の混在を検出する (#310)", () => {
+  for (const token of ["*", "https:", "https://example.com", "'self'"]) {
+    const csp = VALID["Content-Security-Policy"].replace(
+      "frame-ancestors 'none'",
+      `frame-ancestors 'none' ${token}`
+    );
+    const violations = violationsFor({ "Content-Security-Policy": csp });
+    assert.ok(
+      violations.some(
+        (v) => v.includes("frame-ancestors") && v.includes(token)
+      ),
+      token
+    );
+  }
+});
+
 test("CSP の script-src に 'unsafe-eval' やワイルドカードがあると検出する", () => {
   for (const token of ["'unsafe-eval'", "*", "https:"]) {
     const csp = VALID["Content-Security-Policy"].replace(

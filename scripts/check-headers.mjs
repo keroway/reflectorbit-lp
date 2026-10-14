@@ -75,6 +75,7 @@ const CSP_REQUIRED = {
 // 許可トークンを固定するディレクティブ。'self' を残したまま `*` や外部オリジンを
 // 足す緩和を拒否する（#304）。ここに無いトークンはすべて違反とする。
 const CSP_ALLOWED_ONLY = {
+  "frame-ancestors": ["'none'"],
   "base-uri": ["'self'", "'none'"],
   "form-action": ["'self'", "'none'"],
 };

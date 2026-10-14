@@ -111,6 +111,8 @@ test("HSTS の max-age の不正な末尾と重複指定を検出する", () => 
     "max-age=31536000garbage; includeSubDomains",
     "max-age=31536000; max-age=0; includeSubDomains",
     "max-age=; includeSubDomains",
+    "max-age=31536000=garbage; includeSubDomains",
+    'max-age="31536000"=x; includeSubDomains',
   ]) {
     const violations = violationsFor({ "Strict-Transport-Security": value });
     assert.ok(

@@ -227,10 +227,31 @@ function checkValue(key, value) {
 export function checkBlocks(blocks) {
   const violations = [];
 
-  const wildcard = blocks.find((b) => b.path === "/*");
+  const wildcards = blocks.filter((b) => b.path === "/*");
+  const wildcard = wildcards[0];
   if (!wildcard) {
     violations.push("`/*` ブロックが見つかりません");
     return violations;
+  }
+  if (wildcards.length > 1) {
+    violations.push(
+      `\`/*\` ブロックが ${wildcards.length} 個あります（1 個にまとめてください）`
+    );
+  }
+
+  // 最初の `/*` 以外のブロックも、含まれるセキュリティヘッダの値は検査する。
+  // 必須ディレクティブの有無は最初の `/*` ブロックだけで判定する。
+  for (const block of blocks) {
+    if (block === wildcard) continue;
+    for (const { key, value } of block.directives) {
+      if (value === "") {
+        violations.push(`${block.path}: ${key} の値が空です`);
+      } else {
+        violations.push(
+          ...checkValue(key, value).map((p) => `${block.path}: ${p}`)
+        );
+      }
+    }
   }
 
   const keys = wildcard.directives.map((d) => d.key);

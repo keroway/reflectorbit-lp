@@ -233,3 +233,23 @@ test("CSP の重複ディレクティブを拒否し、先頭の禁止ソース�
     violations.some((v) => v.includes("default-src") && v.includes("*"))
   );
 });
+
+test("追加パスブロックの弱いヘッダ値を検出する (#312)", () => {
+  const text = `${build()}\n/videos/*\n  X-Frame-Options: SAMEORIGIN\n`;
+  const violations = checkBlocks(parseHeaders(text));
+  assert.ok(
+    violations.some((v) => v.includes("/videos/*") && v.includes("X-Frame"))
+  );
+});
+
+test("追加パスブロックの正しい値と無関係なヘッダは違反にしない (#312)", () => {
+  const text = `${build()}\n/videos/*\n  X-Frame-Options: DENY\n  Cache-Control: public, max-age=60\n`;
+  assert.deepEqual(checkBlocks(parseHeaders(text)), []);
+});
+
+test("重複した `/*` ブロックを拒否し、2個目の弱い値も検出する (#312)", () => {
+  const text = `${build()}\n/*\n  X-Frame-Options: SAMEORIGIN\n`;
+  const violations = checkBlocks(parseHeaders(text));
+  assert.ok(violations.some((v) => v.includes("ブロックが 2 個")));
+  assert.ok(violations.some((v) => v.includes("X-Frame")));
+});

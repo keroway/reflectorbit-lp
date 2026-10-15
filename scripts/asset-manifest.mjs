@@ -24,6 +24,7 @@ const manifestPath = resolve(root, "asset-manifest.json");
 // キーごとのソース集合。生成スクリプト自身もソースに含める
 // （出力パラメータの変更も「生成物の更新が要る変更」のため）。
 // ディレクトリは再帰的に全ファイルを対象にする。
+// キーやパスを増減したら .github/workflows/asset-drift.yml の pull_request.paths も更新する。
 const SOURCE_SETS = {
   og: ["public/og-default.svg", "scripts/gen-og.mjs"],
   "how-to-play-video": [

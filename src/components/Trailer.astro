@@ -75,8 +75,11 @@
   const retry = document.getElementById('trailer-retry');
 
   if (frame && play && errorPanel && retry) {
-    const showError = () => {
-      frame.querySelector('video')?.remove();
+    // 失敗した video 自身を対象にする。再試行後に旧 video の遅延 error / play() reject が
+    // 届いても、現在の video を消さないよう（既に外れた video なら）無視する。
+    const showError = (video: HTMLVideoElement) => {
+      if (video.parentElement !== frame) return;
+      video.remove();
       play.hidden = true;
       errorPanel.hidden = false;
     };
@@ -106,12 +109,12 @@
       video.append(webm, mp4);
 
       // メディア読み込み自体の失敗（ソース欠落・デコード不可等）を利用者に伝える。
-      video.addEventListener('error', showError);
+      video.addEventListener('error', () => showError(video));
 
       frame.appendChild(video);
       // ユーザー操作起点 + muted なので再生ポリシーでブロックされない想定。
       // reject 時（省電力モード等）も失敗状態として表示する。
-      video.play().catch(showError);
+      video.play().catch(() => showError(video));
     };
 
     play.addEventListener('click', startPlayback);

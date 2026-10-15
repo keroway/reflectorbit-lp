@@ -14,10 +14,24 @@ name: asset-drift
 # （導入以来の週次実行 2 回が両方ともこの誤検知で failure だった）。
 # ハッシュ照合は決定論的・環境非依存で、pnpm install / Chrome / ffmpeg も不要。
 #
-# 毎 PR のブロッキングチェックにすると無関係な PR まで赤くするリスクがあるため、
-# 週次 cron の可視化ジョブとして独立させ、PR をブロックしない
-# （workflow-lint.yml の週次パターンに合わせた）。
+# 生成元・生成物・マニフェストに触れた PR でのみ起動し、同期漏れをマージ前に検知する
+# (#286)。paths フィルタにより無関係な PR は赤くならず、required check にも入れないため
+# docs のみの PR が Pending で詰まることもない。週次 cron は PR 経由以外の乖離
+# （直 push 等）を拾う保険として残す。
+# paths は scripts/asset-manifest.mjs の SOURCE_SETS / EXPECTED_OUTPUTS と同期させること。
 on:
+  pull_request:
+    paths:
+      - "asset-manifest.json"
+      - "scripts/asset-manifest.mjs"
+      - "scripts/gen-og.mjs"
+      - "scripts/gen-how-to-play-video.mjs"
+      - "public/og-default.svg"
+      - "public/og-default.png"
+      - "public/videos/**"
+      - "public/screenshots/**"
+      - "video/how-to-play/**"
+      - ".github/workflows/asset-drift.yml"
   schedule:
     - cron: "0 7 * * 1"
   workflow_dispatch:

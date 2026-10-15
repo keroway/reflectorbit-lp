@@ -111,8 +111,15 @@ function parseCsp(value) {
   return { map, duplicates };
 }
 
-function checkValue(key, value) {
+// HTTP のヘッダ名は大小文字を区別しない（RFC 9110 §5.1）。小文字・混在表記でも
+// 同じ検査を適用するため、既知の名前は固定表記へ正規化して照合する（#315）。
+const CANONICAL_NAMES = new Map(
+  REQUIRED_DIRECTIVES.map((name) => [name.toLowerCase(), name])
+);
+
+function checkValue(rawKey, value) {
   const problems = [];
+  const key = CANONICAL_NAMES.get(rawKey.toLowerCase()) ?? rawKey;
   switch (key) {
     case "X-Frame-Options":
       if (value.toUpperCase() !== "DENY") {
@@ -254,9 +261,9 @@ export function checkBlocks(blocks) {
     }
   }
 
-  const keys = wildcard.directives.map((d) => d.key);
+  const keys = wildcard.directives.map((d) => d.key.toLowerCase());
   for (const required of REQUIRED_DIRECTIVES) {
-    if (!keys.includes(required)) {
+    if (!keys.includes(required.toLowerCase())) {
       violations.push(`\`/*\` ブロックに ${required} がありません`);
     }
   }

@@ -253,3 +253,32 @@ test("重複した `/*` ブロックを拒否し、2個目の弱い値も検出�
   assert.ok(violations.some((v) => v.includes("ブロックが 2 個")));
   assert.ok(violations.some((v) => v.includes("X-Frame")));
 });
+
+test("追加パスブロックの小文字ヘッダ名でも弱い値を検出する (#315)", () => {
+  const text = `${build()}\n/test/*\n  x-frame-options: SAMEORIGIN\n  x-content-type-options: invalid\n  referrer-policy: unsafe-url\n  strict-transport-security: max-age=0\n`;
+  const violations = checkBlocks(parseHeaders(text));
+  for (const name of [
+    "X-Frame-Options",
+    "X-Content-Type-Options",
+    "Referrer-Policy",
+    "Strict-Transport-Security",
+  ]) {
+    assert.ok(
+      violations.some((v) => v.includes("/test/*") && v.includes(name)),
+      `${name} の違反が検出されません`
+    );
+  }
+});
+
+test("`/*` ブロックの小文字ヘッダ名も必須扱いで値を検査する (#315)", () => {
+  const toText = (entries) =>
+    `/*\n${entries.map(([k, v]) => `  ${k}: ${v}`).join("\n")}\n`;
+  const lower = Object.entries(VALID).map(([k, v]) => [k.toLowerCase(), v]);
+  assert.deepEqual(checkBlocks(parseHeaders(toText(lower))), []);
+
+  const weak = lower.map(([k, v]) =>
+    k === "x-frame-options" ? [k, "SAMEORIGIN"] : [k, v]
+  );
+  const violations = checkBlocks(parseHeaders(toText(weak)));
+  assert.ok(violations.some((v) => v.includes("X-Frame-Options")));
+});

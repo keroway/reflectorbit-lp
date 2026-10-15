@@ -92,6 +92,36 @@ test("turn 単位の hsl() のブランド外色を検出する (#246)", () => {
   ]);
 });
 
+test("rad / grad 単位の hsl() と指数表記 rgb() のブランド外色を検出する (#317)", () => {
+  assert.deepEqual(checkCss(".probe { color: hsl(0rad 100% 50%); }"), [
+    "hsl(0rad 100% 50%)",
+  ]);
+  assert.deepEqual(checkCss(".probe { color: hsl(0grad 100% 50%); }"), [
+    "hsl(0grad 100% 50%)",
+  ]);
+  assert.deepEqual(checkCss(".probe { color: rgb(1e2 0 0); }"), [
+    "rgb(1e2 0 0)",
+  ]);
+});
+
+test("解釈できない rgb() / hsl() 構文は違反として拒否する (#317)", () => {
+  assert.deepEqual(checkCss(".probe { color: rgb(from red r g b); }"), [
+    "rgb(from red r g b)",
+    "red",
+  ]);
+  assert.deepEqual(checkCss(".probe { color: hsl(none 100% 50%); }"), [
+    "hsl(none 100% 50%)",
+  ]);
+});
+
+test("rad / grad 単位の許可色 hsl() は成功として扱う (#317)", () => {
+  // 228.28deg = 3.9843rad = 253.64grad。
+  assert.deepEqual(
+    checkCss(".probe { color: hsl(253.64grad 100% 83.92%); }"),
+    []
+  );
+});
+
 test("パーセント表記の許可色 rgb() は成功として扱う (#246)", () => {
   // #adbdff (173,189,255) 相当のパーセント値 (67.84%, 74.12%, 100%)。
   assert.deepEqual(checkCss(".probe { color: rgb(67.84% 74.12% 100%); }"), []);

@@ -211,8 +211,10 @@ function rgbChannel(value) {
 }
 
 function hslToHex(h, unit, s, l) {
-  // `turn` は 1turn = 360deg。`deg` (省略時含む) はそのまま度として扱う。
-  const degrees = unit === "turn" ? Number(h) * 360 : Number(h);
+  // `turn` は 1turn = 360deg、`grad` は 400grad = 360deg、`rad` は 2π rad = 360deg。
+  // `deg` (省略時含む) はそのまま度として扱う。
+  const factor = { turn: 360, grad: 0.9, rad: 180 / Math.PI }[unit] ?? 1;
+  const degrees = Number(h) * factor;
   const hue = ((degrees % 360) + 360) % 360;
   const sat = Number(s) / 100;
   const light = Number(l) / 100;
@@ -321,13 +323,18 @@ export function checkCss(rawCss) {
 
   // カンマ区切り (`rgb(255, 0, 0)`)・空白区切り (`rgb(255 0 0)`)、整数・パーセント値
   // (`rgb(100% 0% 0%)`)、大文字関数名 (`RGB(...)`) を検査する。
-  const CHANNEL = "\\d+(?:\\.\\d+)?%?";
+  // 指数表記 (`1e2`) も受け付ける。
+  const CHANNEL = "\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?%?";
+  // パレットと照合できた rgb/hsl 呼び出しの開始位置。ここに無い呼び出しは
+  // 解釈できない構文として後段で拒否する。
+  const recognized = new Set();
   for (const match of css.matchAll(
     new RegExp(
       `rgba?\\(\\s*(${CHANNEL})\\s*,\\s*(${CHANNEL})\\s*,\\s*(${CHANNEL})\\s*(?:,[^)]+)?\\)`,
       "gi"
     )
   )) {
+    recognized.add(match.index);
     const hex = rgbToHex(
       rgbChannel(match[1]),
       rgbChannel(match[2]),
@@ -344,6 +351,7 @@ export function checkCss(rawCss) {
       "gi"
     )
   )) {
+    recognized.add(match.index);
     const hex = rgbToHex(
       rgbChannel(match[1]),
       rgbChannel(match[2]),
@@ -354,13 +362,21 @@ export function checkCss(rawCss) {
     }
   }
 
-  // カンマ区切り・空白区切り、`deg`/`turn` サフィックス、alpha 付き、大文字関数名の
-  // hsl() を検査する。
+  // カンマ区切り・空白区切り、`deg`/`turn`/`rad`/`grad` サフィックス、alpha 付き、
+  // 大文字関数名の hsl() を検査する。
   for (const match of css.matchAll(
-    /hsla?\(\s*(-?\d+(?:\.\d+)?)(deg|turn)?[,\s]+(\d+(?:\.\d+)?)%[,\s]+(\d+(?:\.\d+)?)%\s*(?:[,/][^)]+)?\)/gi
+    /hsla?\(\s*(-?\d+(?:\.\d+)?)(deg|turn|rad|grad)?[,\s]+(\d+(?:\.\d+)?)%[,\s]+(\d+(?:\.\d+)?)%\s*(?:[,/][^)]+)?\)/gi
   )) {
-    const hex = hslToHex(match[1], match[2], match[3], match[4]);
+    recognized.add(match.index);
+    const hex = hslToHex(match[1], match[2]?.toLowerCase(), match[3], match[4]);
     if (!ALLOWED_HEX.has(hex)) {
+      violations.push(match[0]);
+    }
+  }
+
+  // 上の正規表現で解釈できなかった rgb()/hsl() は、黙って通さず拒否する。
+  for (const match of css.matchAll(/(?<![\w-])(?:rgba?|hsla?)\([^)]*\)?/gi)) {
+    if (!recognized.has(match.index)) {
       violations.push(match[0]);
     }
   }

@@ -14,3 +14,7 @@ allow_merge: true
 # 行われている(agent-assets#394)。ci-triage(LLMセッションでのCI失敗解析)を
 # 候補から外す。
 ci_failure_issue_deployed: true
+
+# Codex による非対話 issue 実装を許可する。秘密情報を扱うリポジトリでは true にしない。
+# (agent-assets#371: 既定値依存をやめて明示する。本リポジトリは秘密情報・本番デプロイ資格情報を持たない)
+allow_codex_implementation: true

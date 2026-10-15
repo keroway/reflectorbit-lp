@@ -123,6 +123,47 @@ test("Trailer の再生に失敗すると失敗表示と再試行導線が出る
   await expect(section.locator("video")).toHaveCount(1);
 });
 
+test("Trailer は旧 video の遅延 play() reject で再試行後の video を消さない", async ({
+  page,
+}) => {
+  // play() の reject を任意のタイミングで起こせるようにする（#319）。
+  await page.addInitScript(() => {
+    const rejecters: Array<(reason: unknown) => void> = [];
+    (window as unknown as { __rejectPlay: (i: number) => void }).__rejectPlay =
+      (i) => rejecters[i]?.(new Error("late reject"));
+    HTMLMediaElement.prototype.play = () =>
+      new Promise<void>((_, reject) => {
+        rejecters.push(reject);
+      });
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#trailer");
+  await section.locator("#trailer-play").click();
+  const video = section.locator("video");
+  await expect(video).toHaveCount(1);
+
+  await video.evaluate((el: HTMLVideoElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+  const errorPanel = section.locator("#trailer-error");
+  await expect(errorPanel).toBeVisible();
+
+  await section.locator("#trailer-retry").click();
+  await expect(video).toHaveCount(1);
+  await expect(errorPanel).toBeHidden();
+
+  // 最初の再生試行の Promise が遅れて reject する。
+  await page.evaluate(() =>
+    (window as unknown as { __rejectPlay: (i: number) => void }).__rejectPlay(0)
+  );
+  // microtask を流してから状態を確認する。
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 50)));
+
+  await expect(video).toHaveCount(1);
+  await expect(errorPanel).toBeHidden();
+});
+
 test("Playable Demo セクションはクリックまで iframe をロードしない（ファサード方式）", async ({
   page,
 }) => {

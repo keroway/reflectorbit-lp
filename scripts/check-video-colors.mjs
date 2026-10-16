@@ -347,8 +347,25 @@ function namedColorScope(declarations) {
   return kept.join(";");
 }
 
+// CSS エスケープ (`\72 ed` = `red`, `r\65 d`, `\72 gb(...)`) を解釈した文字列に戻す。
+// 文字列・URL は除去済みの宣言に対して使うこと。不正なコードポイントは U+FFFD。
+function unescapeCss(css) {
+  return css.replace(
+    /\\(?:([0-9a-fA-F]{1,6})(?:\r\n|[ \t\n\r\f])?|([^\n\r\f]))/g,
+    (_, hex, ch) => {
+      if (ch !== undefined) return ch;
+      const code = Number.parseInt(hex, 16);
+      const valid =
+        code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff);
+      return valid ? String.fromCodePoint(code) : "�";
+    }
+  );
+}
+
 export function checkCss(rawCss) {
-  const css = stripUrlsAndStrings(extractDeclarations(stripComments(rawCss)));
+  const css = unescapeCss(
+    stripUrlsAndStrings(extractDeclarations(stripComments(rawCss)))
+  );
   const violations = [];
 
   for (const match of css.matchAll(/#([0-9a-fA-F]{3,8})\b/g)) {

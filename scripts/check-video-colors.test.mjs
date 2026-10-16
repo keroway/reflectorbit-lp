@@ -267,6 +267,26 @@ test("CSS 変数名・var() 参照・アニメーション名の色名は誤検�
   assert.deepEqual(checkCss(".x { animation-name: red; color: #adbdff; }"), []);
 });
 
+test("CSS エスケープされた色名・色関数名も検出する (#325)", () => {
+  assert.deepEqual(checkCss(".x { color: \\72 ed; }"), ["red"]);
+  assert.deepEqual(checkCss(".x { color: r\\65 d; }"), ["red"]);
+  assert.deepEqual(checkCss(".x { color: \\72 gb(255 0 0); }"), [
+    "rgb(255 0 0)",
+  ]);
+  assert.deepEqual(checkCss(".x { color: \\000072ed; }"), ["red"]);
+  assert.deepEqual(checkCss(".x { color: \\#ff0000; }"), ["#ff0000"]);
+});
+
+test("エスケープを含んでも許可色・文字列・URL・セレクタは誤検出しない (#325)", () => {
+  assert.deepEqual(checkCss(".x { color: #adbdff; }"), []);
+  assert.deepEqual(checkCss('.x { content: "\\72 ed"; color: #adbdff; }'), []);
+  assert.deepEqual(
+    checkCss(".x { background: url(/a/\\72 ed.svg); color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(checkCss(".\\72 ed { color: #adbdff; }"), []);
+});
+
 test("CSS 変数の値や通常プロパティの色名は引き続き検出する (#323)", () => {
   assert.deepEqual(checkCss(".x { color: blue; }"), ["blue"]);
   assert.deepEqual(checkCss(".x { --brand-blue: blue; }"), ["blue"]);

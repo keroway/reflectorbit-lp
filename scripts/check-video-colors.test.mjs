@@ -257,3 +257,18 @@ test("プロパティ名 color / background-color は色関数として誤検出
     []
   );
 });
+
+test("CSS 変数名・var() 参照・アニメーション名の色名は誤検出しない (#323)", () => {
+  assert.deepEqual(
+    checkCss(".x { --brand-blue: #adbdff; color: var(--brand-blue); }"),
+    []
+  );
+  assert.deepEqual(checkCss(".x { animation: blue 1s; color: #adbdff; }"), []);
+  assert.deepEqual(checkCss(".x { animation-name: red; color: #adbdff; }"), []);
+});
+
+test("CSS 変数の値や通常プロパティの色名は引き続き検出する (#323)", () => {
+  assert.deepEqual(checkCss(".x { color: blue; }"), ["blue"]);
+  assert.deepEqual(checkCss(".x { --brand-blue: blue; }"), ["blue"]);
+  assert.deepEqual(checkCss(".x { color: var(--c, red); }"), ["red"]);
+});

@@ -310,6 +310,43 @@ function stripUrlsAndStrings(declarations) {
     .replace(/"[^"]*"|'[^']*'/g, '""');
 }
 
+// 色を値に取らないプロパティ。ここに識別子（アニメーション名等）として色名が
+// 現れても色ではないため、色名検査から外す。
+const NON_COLOR_PROPERTIES = new Set([
+  "animation",
+  "animation-name",
+  "transition",
+  "transition-property",
+  "will-change",
+  "font-family",
+  "font",
+  "counter-reset",
+  "counter-increment",
+  "counter-set",
+  "grid-area",
+  "grid-template-areas",
+  "view-transition-name",
+  "container-name",
+]);
+
+// 色名検査の対象テキストを返す。プロパティ名（`--brand-blue` 等）、`var(--x)` の
+// 参照識別子、色を値に取らないプロパティの宣言は色ではないため除く。
+// 値の位置（`color: blue` / `--brand-blue: blue`）は残す。
+function namedColorScope(declarations) {
+  const kept = [];
+  for (const decl of declarations.split(";")) {
+    const colon = decl.indexOf(":");
+    if (colon === -1) {
+      kept.push(decl);
+      continue;
+    }
+    const property = decl.slice(0, colon).trim().toLowerCase();
+    if (NON_COLOR_PROPERTIES.has(property)) continue;
+    kept.push(decl.slice(colon + 1).replace(/var\(\s*--[\w-]+/gi, "var("));
+  }
+  return kept.join(";");
+}
+
 export function checkCss(rawCss) {
   const css = stripUrlsAndStrings(extractDeclarations(stripComments(rawCss)));
   const violations = [];
@@ -391,7 +428,7 @@ export function checkCss(rawCss) {
 
   // CSS 標準の色名 (`red` 等) は brand palette がすべて hex 定義のため、
   // 使われていれば無条件でブランド外として検出する。
-  for (const match of css.matchAll(NAMED_COLOR_PATTERN)) {
+  for (const match of namedColorScope(css).matchAll(NAMED_COLOR_PATTERN)) {
     violations.push(match[0]);
   }
 

@@ -292,3 +292,11 @@ test("CSS 変数の値や通常プロパティの色名は引き続き検出す�
   assert.deepEqual(checkCss(".x { --brand-blue: blue; }"), ["blue"]);
   assert.deepEqual(checkCss(".x { color: var(--c, red); }"), ["red"]);
 });
+
+test("末尾セミコロンを省略した隣接ルールでも色名を検出する (#331)", () => {
+  assert.deepEqual(checkCss(".a{color:red}"), ["red"]);
+  assert.deepEqual(checkCss(".a{color:red}.b{color:#adbdff}"), ["red"]);
+  assert.deepEqual(checkCss(".a{color:red;}.b{color:#adbdff}"), ["red"]);
+  assert.deepEqual(checkCss(".a{color:#adbdff}.b{color:blue}"), ["blue"]);
+  assert.deepEqual(checkCss(".red{color:#adbdff}.blue{color:#ff33cc}"), []);
+});

@@ -93,6 +93,20 @@ test("Permissions-Policy で無効化が外れていると検出する", () => {
   assert.ok(violations.some((v) => v.includes("payment")));
 });
 
+test("Permissions-Policy の同名機能の重複を検出する", () => {
+  for (const value of [
+    "geolocation=(), geolocation=*, microphone=(), camera=(), payment=()",
+    "geolocation=*, geolocation=(), microphone=(), camera=(), payment=()",
+    "geolocation=()=junk, geolocation=(), microphone=(), camera=(), payment=()",
+  ]) {
+    const violations = violationsFor({ "Permissions-Policy": value });
+    assert.ok(
+      violations.some((v) => v.includes("geolocation") && v.includes("重複")),
+      value
+    );
+  }
+});
+
 test("HSTS の max-age が短いと検出する", () => {
   for (const value of [
     "max-age=0; includeSubDomains",

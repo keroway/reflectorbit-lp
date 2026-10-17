@@ -292,7 +292,8 @@ function extractDeclarations(css) {
     }
     if (ch === "}") {
       if (depth > 0) {
-        out += bufStack.pop();
+        // 末尾セミコロンを省略したルールが隣接しても宣言境界が残るよう `;` で区切る
+        out += `${bufStack.pop()};`;
         depth--;
       }
       continue;

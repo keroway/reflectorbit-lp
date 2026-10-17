@@ -143,12 +143,19 @@ function checkValue(rawKey, value) {
       break;
     }
     case "Permissions-Policy": {
-      const features = new Map(
-        value.split(",").map((f) => {
-          const [name, ...rest] = f.trim().split("=");
-          return [name.trim(), rest.join("=").trim()];
-        })
-      );
+      // 同名機能が複数あると Map の後勝ちで先頭の弱い値・不正値を見失うため、
+      // 上書きする前に重複を検出して違反にする（#329）。
+      const features = new Map();
+      const duplicates = new Set();
+      for (const f of value.split(",")) {
+        const [name, ...rest] = f.trim().split("=");
+        const featureName = name.trim();
+        if (features.has(featureName)) duplicates.add(featureName);
+        features.set(featureName, rest.join("=").trim());
+      }
+      for (const name of duplicates) {
+        problems.push(`Permissions-Policy の ${name} が重複しています`);
+      }
       for (const feature of DISABLED_FEATURES) {
         if (features.get(feature) !== "()") {
           problems.push(

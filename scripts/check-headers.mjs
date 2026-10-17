@@ -163,7 +163,7 @@ function checkValue(rawKey, value) {
       const maxAges = value
         .split(";")
         .map((d) => d.trim())
-        .filter((d) => /^max-age\s*=/i.test(d));
+        .filter((d) => /^max-age\s*(?:=|$)/i.test(d));
       if (maxAges.length > 1) {
         problems.push(
           `Strict-Transport-Security の max-age が重複しています: "${value}"`

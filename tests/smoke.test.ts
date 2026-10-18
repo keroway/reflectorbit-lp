@@ -227,6 +227,47 @@ test("PlayableDemo の iframe 読み込みに失敗すると失敗表示と再�
   await expect(section.locator("iframe")).toHaveCount(1);
 });
 
+test("PlayableDemo は旧 iframe の遅延 load で再試行後の読み込み表示を消さない", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const section = page.locator("section#demo");
+  const playUrl = await section
+    .locator("#demo-frame")
+    .getAttribute("data-play-url");
+  expect(playUrl).toBeTruthy();
+  // 実ネットワークの load が先に表示を消さないよう、読み込みを止める。
+  await page.route(playUrl ?? "", async (_route) => {
+    await new Promise(() => {});
+  });
+
+  await section.locator("#demo-launch").click();
+  const iframe = section.locator("iframe");
+  await expect(iframe).toHaveCount(1);
+
+  // 旧 iframe の参照を保持したまま error → 再試行する（#335）。
+  const oldIframe = await iframe.elementHandle();
+  await iframe.evaluate((el: HTMLIFrameElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+  await section.locator("#demo-retry").click();
+  await expect(iframe).toHaveCount(1);
+
+  const loading = section.locator("#demo-loading");
+  await expect(loading).toBeVisible();
+
+  // 旧 iframe の load が遅れて届いても、現在の読み込み表示は維持される。
+  await oldIframe?.evaluate((el) => el.dispatchEvent(new Event("load")));
+  await expect(loading).toBeVisible();
+
+  // 現 iframe の load でのみ消える。
+  await iframe.evaluate((el: HTMLIFrameElement) =>
+    el.dispatchEvent(new Event("load"))
+  );
+  await expect(loading).toBeHidden();
+});
+
 test("PlayableDemo: X-Frame-Options: DENY で埋め込み先がブロックされると load が発火する(error ではない、既知の限界)", async ({
   page,
 }) => {

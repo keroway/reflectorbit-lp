@@ -24,6 +24,7 @@ check:
     pnpm run check:headers
     pnpm run test:headers
     pnpm run test:asset-manifest
+    pnpm run asset:verify
     pnpm run typecheck
     pnpm run build
     pnpm test

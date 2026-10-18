@@ -82,6 +82,9 @@ import { PLAY_URL } from '../consts';
   const playUrl = frame?.dataset.playUrl;
 
   if (frame && launch && loading && errorPanel && retry && playUrl) {
+    // 再試行後に旧 iframe のイベントが共有 UI を書き換えないよう、現在の試行を保持する。
+    let currentIframe: HTMLIFrameElement | null = null;
+
     const startLaunch = () => {
       launch.hidden = true;
       errorPanel.hidden = true;
@@ -94,10 +97,12 @@ import { PLAY_URL } from '../consts';
       iframe.className = 'absolute inset-0 z-0 h-full w-full border-0';
       iframe.allow = 'autoplay; fullscreen; gamepad; accelerometer';
 
+      currentIframe = iframe;
+
       // load 完了でプレースホルダを消す。応答が遅い場合はフォールバック導線を出す。
       let settled = false;
       const fallbackTimer = window.setTimeout(() => {
-        if (settled) return;
+        if (settled || currentIframe !== iframe) return;
         settled = true;
         loading.innerHTML =
           '読み込みに時間がかかっています。<a class="text-rb-core underline" href="' +
@@ -106,7 +111,7 @@ import { PLAY_URL } from '../consts';
       }, 8000);
 
       const showError = () => {
-        if (settled) {
+        if (settled || currentIframe !== iframe) {
           // フォールバック導線表示後の error は無視し、既存の導線を維持する。
           return;
         }
@@ -119,6 +124,7 @@ import { PLAY_URL } from '../consts';
       };
 
       iframe.addEventListener('load', () => {
+        if (currentIframe !== iframe) return;
         settled = true;
         window.clearTimeout(fallbackTimer);
         loading.hidden = true;

@@ -80,7 +80,27 @@ const CSP_ALLOWED_ONLY = {
   "form-action": ["'self'", "'none'"],
 };
 // script 系で許さないソース（任意スクリプト実行・任意オリジン許可）。
-const CSP_FORBIDDEN_SCRIPT_TOKENS = ["*", "'unsafe-eval'", "http:", "https:"];
+const CSP_FORBIDDEN_SCRIPT_TOKENS = [
+  "*",
+  "'unsafe-eval'",
+  "http:",
+  "https:",
+  "data:",
+];
+
+// `https://*` や `http://*` のようなスキーム付きワイルドカードは `*` と同じく
+// 任意ホストを許可する。完全一致だけでは見逃すため、ホスト部が `*` のみの
+// ソースを別途拒否する（`*.example.com` のような限定ワイルドカードは対象外）。
+const CSP_ANY_HOST_WILDCARD =
+  /^(?:[a-z][a-z0-9+.-]*:)?\/\/\*(?::(?:\*|\d+))?(?:\/.*)?$/i;
+
+function isForbiddenScriptSource(token) {
+  const lower = token.toLowerCase();
+  return (
+    CSP_FORBIDDEN_SCRIPT_TOKENS.includes(lower) ||
+    CSP_ANY_HOST_WILDCARD.test(lower)
+  );
+}
 
 // 禁止ソース検査の対象。script-src-elem / script-src-attr は script-src より
 // 優先して適用されるため、ここに https: 等を足されても素通りさせない（#302）。
@@ -225,7 +245,7 @@ function checkValue(rawKey, value) {
       }
       for (const name of CSP_SCRIPT_DIRECTIVES) {
         for (const token of csp.get(name) ?? []) {
-          if (CSP_FORBIDDEN_SCRIPT_TOKENS.includes(token.toLowerCase())) {
+          if (isForbiddenScriptSource(token)) {
             problems.push(
               `CSP の ${name} に許可できないソース ${token} があります`
             );

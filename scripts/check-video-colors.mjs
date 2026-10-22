@@ -299,7 +299,13 @@ function extractDeclarations(css) {
     const ch = css[i];
     if (quote) {
       if (depth > 0) bufStack[depth - 1] += ch;
-      if (ch === quote && css[i - 1] !== "\\") quote = null;
+      if (ch === "\\" && i + 1 < css.length) {
+        // バックスラッシュは直後の1文字を消費する（`"\\"` の閉じ引用符を見逃さない）
+        i++;
+        if (depth > 0) bufStack[depth - 1] += css[i];
+      } else if (ch === quote) {
+        quote = null;
+      }
       continue;
     }
     if (ch === '"' || ch === "'") {

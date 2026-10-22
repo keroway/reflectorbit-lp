@@ -117,8 +117,12 @@ import { controls } from '../consts';
       });
     };
 
+    // 再試行。メディアエラーは video に保持され play() だけでは復旧しないため、
+    // load() でソース選択と読み込みをやり直してから再生する。load() が中断した
+    // 旧 play() の AbortError は handlePlayRejection が無視する。
     const retryPlayback = () => {
       errorPanel.hidden = true;
+      howToPlayVideo.load();
       startPlayback();
     };
 

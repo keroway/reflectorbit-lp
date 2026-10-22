@@ -84,6 +84,18 @@
       errorPanel.hidden = false;
     };
 
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // 再生開始後に reduce へ変わったら、現在の video のループを止めて停止する。
+    // 再試行で作り直す video は startPlayback が最新の mq.matches を読むので別途の処理は不要。
+    mq.addEventListener('change', () => {
+      if (!mq.matches) return;
+      const current = frame.querySelector('video');
+      if (!current) return;
+      current.loop = false;
+      current.pause();
+    });
+
     const startPlayback = () => {
       play.hidden = true;
       errorPanel.hidden = true;
@@ -93,7 +105,7 @@
       video.poster = '/videos/trailer-poster.jpg';
       video.muted = true;
       // docs/video.md: reduce 設定では自動ループしない（クリック再生は一回で止まる）
-      video.loop = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      video.loop = !mq.matches;
       video.controls = true;
       video.playsInline = true;
       // iOS Safari 向けに属性としても明示する

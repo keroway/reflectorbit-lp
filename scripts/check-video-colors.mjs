@@ -342,7 +342,7 @@ function extractDeclarations(css) {
 function stripUrlsAndStrings(declarations) {
   return declarations
     .replace(/url\(\s*(['"]?)([\s\S]*?)\1\s*\)/gi, "url()")
-    .replace(/"[^"]*"|'[^']*'/g, '""');
+    .replace(/"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'/g, '""');
 }
 
 // 色を値に取らないプロパティ。ここに識別子（アニメーション名等）として色名が

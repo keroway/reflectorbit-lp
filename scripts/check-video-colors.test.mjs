@@ -232,6 +232,15 @@ test("hwb() をパレット比較できない色関数として拒否する (#29
   assert.deepEqual(checkCss(".probe { color: hwb(0 0% 0%); }"), ["hwb("]);
 });
 
+test("device-cmyk() を拒否する (#341)", () => {
+  assert.deepEqual(checkCss(".x { color: device-cmyk(0 1 1 0); }"), [
+    "device-cmyk(",
+  ]);
+  assert.deepEqual(checkCss(".x { color: DEVICE-CMYK(0 1 1 0); }"), [
+    "DEVICE-CMYK(",
+  ]);
+});
+
 test("oklch() / oklab() / lab() / lch() / color-mix() を拒否する (#294)", () => {
   assert.deepEqual(checkCss(".probe { color: oklch(60% 0.25 30); }"), [
     "oklch(",

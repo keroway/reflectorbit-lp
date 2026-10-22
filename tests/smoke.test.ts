@@ -463,6 +463,48 @@ for (const [rejection, expectError] of [
   });
 }
 
+test("How to Play 再試行が成功した後に古い play() が拒否されても失敗表示を再表示しない", async ({
+  page,
+}) => {
+  // 1 回目は保留 Promise（後で拒否）、2 回目以降は成功を返す
+  await page.addInitScript(() => {
+    let calls = 0;
+    HTMLMediaElement.prototype.play = () => {
+      calls += 1;
+      if (calls === 1) {
+        return new Promise<void>((_, reject) => {
+          (
+            window as unknown as { rejectFirstPlay: () => void }
+          ).rejectFirstPlay = () =>
+            reject(new DOMException("late", "NotSupportedError"));
+        });
+      }
+      return Promise.resolve();
+    };
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#how-to-play");
+  const video = section.locator("video.how-to-play-video");
+  await expect(video).toBeVisible();
+
+  await video.evaluate((el: HTMLVideoElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+  const errorPanel = section.locator("#how-to-play-error");
+  await expect(errorPanel).toBeVisible();
+
+  await section.locator("#how-to-play-retry").click();
+  await expect(errorPanel).toBeHidden();
+
+  await page.evaluate(() =>
+    (window as unknown as { rejectFirstPlay: () => void }).rejectFirstPlay()
+  );
+  // 拒否の microtask を消化させてから、失敗表示が戻っていないことを確認する
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 50)));
+  await expect(errorPanel).toBeHidden();
+});
+
 test("prefers-reduced-motion: reduce では図解動画の自動再生・ループが止まる", async ({
   page,
 }) => {

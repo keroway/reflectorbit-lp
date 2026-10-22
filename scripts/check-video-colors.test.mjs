@@ -11,6 +11,13 @@ test("6桁 hex のブランド外色を検出する", () => {
   ]);
 });
 
+test("文字列末尾のエスケープされたバックスラッシュの後続宣言も検査する (#342)", () => {
+  assert.deepEqual(
+    checkCss(`.x { content: "\\\\"; color: #${OFF_BRAND_RED}; }`),
+    [`#${OFF_BRAND_RED}`]
+  );
+});
+
 test("4桁 hex (alpha付き) のブランド外色を検出する (#210)", () => {
   assert.deepEqual(checkCss(".probe { color: #f00f; }"), ["#f00f"]);
 });

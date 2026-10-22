@@ -185,6 +185,58 @@ const NAMED_COLOR_PATTERN = new RegExp(
   "gi"
 );
 
+// CSS Color 4 のシステム色 (非推奨キーワード含む)。ユーザーエージェントや OS 設定で
+// 実際の色が決まりパレットと比較できないため、色名と同様に無条件で拒否する。
+// `mark` / `menu` 等の一般語を含むので、ハイフン付き識別子の一部は拾わない。
+const CSS_SYSTEM_COLORS = [
+  "AccentColor",
+  "AccentColorText",
+  "ActiveBorder",
+  "ActiveCaption",
+  "ActiveText",
+  "AppWorkspace",
+  "Background",
+  "ButtonBorder",
+  "ButtonFace",
+  "ButtonHighlight",
+  "ButtonShadow",
+  "ButtonText",
+  "Canvas",
+  "CanvasText",
+  "CaptionText",
+  "Field",
+  "FieldText",
+  "GrayText",
+  "Highlight",
+  "HighlightText",
+  "InactiveBorder",
+  "InactiveCaption",
+  "InactiveCaptionText",
+  "InfoBackground",
+  "InfoText",
+  "LinkText",
+  "Mark",
+  "MarkText",
+  "Menu",
+  "MenuText",
+  "Scrollbar",
+  "SelectedItem",
+  "SelectedItemText",
+  "ThreeDDarkShadow",
+  "ThreeDFace",
+  "ThreeDHighlight",
+  "ThreeDLightShadow",
+  "ThreeDShadow",
+  "VisitedText",
+  "Window",
+  "WindowFrame",
+  "WindowText",
+];
+const SYSTEM_COLOR_PATTERN = new RegExp(
+  `(?<![\\w-])(?:${CSS_SYSTEM_COLORS.join("|")})(?![\\w-])`,
+  "gi"
+);
+
 function normalizeHex(hex) {
   const h = hex.toLowerCase();
   // 3桁・4桁 (alpha付き) は各桁を複製して6桁化し、4桁目の alpha は落とす
@@ -490,7 +542,13 @@ export function checkCss(rawCss) {
 
   // CSS 標準の色名 (`red` 等) は brand palette がすべて hex 定義のため、
   // 使われていれば無条件でブランド外として検出する。
-  for (const match of namedColorScope(css).matchAll(NAMED_COLOR_PATTERN)) {
+  const namedScope = namedColorScope(css);
+  for (const match of namedScope.matchAll(NAMED_COLOR_PATTERN)) {
+    violations.push(match[0]);
+  }
+
+  // システム色キーワード (`CanvasText` / `LinkText` 等。#348)。
+  for (const match of namedScope.matchAll(SYSTEM_COLOR_PATTERN)) {
     violations.push(match[0]);
   }
 

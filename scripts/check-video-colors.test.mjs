@@ -330,6 +330,31 @@ test("Grid プロパティを除外しても実際の color: red は検出する
   ]);
 });
 
+test("CSS システム色を拒否する (#348)", () => {
+  assert.deepEqual(
+    checkCss(".x { color: CanvasText; background-color: Canvas; }"),
+    ["CanvasText", "Canvas"]
+  );
+  assert.deepEqual(
+    checkCss(".x { color: LinkText; border-color: ButtonText; }"),
+    ["LinkText", "ButtonText"]
+  );
+  assert.deepEqual(checkCss(".x { color: canvastext; }"), ["canvastext"]);
+  assert.deepEqual(checkCss(".x { color: var(--c, Highlight); }"), [
+    "Highlight",
+  ]);
+});
+
+test("システム色と同名の識別子・表示文字列・ハイフン付き語は誤検出しない (#348)", () => {
+  assert.deepEqual(
+    checkCss(
+      '.canvas { --window: #adbdff; color: var(--window); content: "Canvas"; transition: background 1s; }'
+    ),
+    []
+  );
+  assert.deepEqual(checkCss(".x { color: #adbdff; mask-mode: mark-up; }"), []);
+});
+
 test("CSS エスケープされた色名・色関数名も検出する (#325)", () => {
   assert.deepEqual(checkCss(".x { color: \\72 ed; }"), ["red"]);
   assert.deepEqual(checkCss(".x { color: r\\65 d; }"), ["red"]);

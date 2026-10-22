@@ -90,6 +90,53 @@ test("Trailer はクリック後に通常時はループし、reduce 時はル�
   expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(false);
 });
 
+test("Trailer は再生開始後に reduce へ変わるとループを止めて停止する", async ({
+  page,
+}) => {
+  // ローカルのプレビューでは動画素材が無く media error で video が除去されるため、
+  // error リスナー登録を無効化し、play / pause は呼び出しだけ記録する。
+  await page.addInitScript(() => {
+    const w = window as unknown as { __pauseCalls: number };
+    w.__pauseCalls = 0;
+    const original = HTMLVideoElement.prototype.addEventListener;
+    HTMLVideoElement.prototype.addEventListener = function (
+      this: HTMLVideoElement,
+      type: string,
+      ...rest: unknown[]
+    ) {
+      if (type === "error") return;
+      return (original as (...args: unknown[]) => void).call(
+        this,
+        type,
+        ...rest
+      );
+    } as typeof original;
+    HTMLMediaElement.prototype.play = () => Promise.resolve();
+    HTMLMediaElement.prototype.pause = function (this: HTMLMediaElement) {
+      if (this.closest("#trailer-frame")) w.__pauseCalls += 1;
+    };
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#trailer");
+  await section.locator("#trailer-play").click();
+  const video = section.locator("video");
+  await expect(video).toHaveCount(1);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(true);
+
+  // ページ再読込なしで設定だけを切り替える
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.loop))
+    .toBe(false);
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { __pauseCalls: number }).__pauseCalls
+    )
+  ).toBe(1);
+});
+
 test("Trailer の再生に失敗すると失敗表示と再試行導線が出る", async ({
   page,
 }) => {

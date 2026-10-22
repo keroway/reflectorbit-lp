@@ -251,8 +251,36 @@ function findCssFiles(dir) {
   return results;
 }
 
+// 文字列リテラル内の `/*` `*/` はコメント境界ではないため、引用符とバックスラッシュ
+// エスケープを認識して走査する。文字列はそのまま残し、後段で除去する。
 function stripComments(css) {
-  return css.replace(/\/\*[\s\S]*?\*\//g, "");
+  let out = "";
+  let quote = null;
+  for (let i = 0; i < css.length; i++) {
+    const ch = css[i];
+    if (quote) {
+      out += ch;
+      if (ch === "\\" && i + 1 < css.length) {
+        out += css[++i];
+      } else if (ch === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      out += ch;
+      continue;
+    }
+    if (ch === "/" && css[i + 1] === "*") {
+      const end = css.indexOf("*/", i + 2);
+      if (end === -1) break;
+      i = end + 1;
+      continue;
+    }
+    out += ch;
+  }
+  return out;
 }
 
 // セレクタ (`.red`, `#abc` 等) や at-rule プレリュードは宣言値ではないため、

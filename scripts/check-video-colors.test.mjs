@@ -151,6 +151,22 @@ test("表示文字列中の色名は誤検出しない (#248)", () => {
   );
 });
 
+test("エスケープ済み引用符を含む表示文字列中の色名は誤検出しない (#343)", () => {
+  assert.deepEqual(
+    checkCss(`.x { content: "say \\"red\\""; color: #${ALLOWED_HEX_SAMPLE}; }`),
+    []
+  );
+  assert.deepEqual(
+    checkCss(`.x { content: 'it\\'s red'; color: #${ALLOWED_HEX_SAMPLE}; }`),
+    []
+  );
+  // 文字列の後ろにある実際の禁止色は引き続き検出する
+  assert.equal(
+    checkCss(`.x { content: "say \\"red\\""; color: red; }`).length,
+    1
+  );
+});
+
 test("画像 URL 中の色名は誤検出しない (#248)", () => {
   assert.deepEqual(
     checkCss('.probe { background-image: url("/images/black.svg"); }'),

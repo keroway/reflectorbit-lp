@@ -108,9 +108,18 @@ import { controls } from '../consts';
       showError();
     };
 
+    // 再生試行の世代。新しい試行を始めた後に古い play() が拒否されても、現在の UI は変えない。
+    let playAttempt = 0;
+    const startPlayback = () => {
+      const attempt = ++playAttempt;
+      void howToPlayVideo!.play().catch((err: unknown) => {
+        if (attempt === playAttempt) handlePlayRejection(err);
+      });
+    };
+
     const retryPlayback = () => {
       errorPanel.hidden = true;
-      void howToPlayVideo!.play().catch(handlePlayRejection);
+      startPlayback();
     };
 
     // メディア読み込み自体の失敗（ソース欠落・デコード不可等）を利用者に伝える。
@@ -126,7 +135,7 @@ import { controls } from '../consts';
       } else {
         howToPlayVideo!.setAttribute('autoplay', '');
         howToPlayVideo!.setAttribute('loop', '');
-        void howToPlayVideo!.play().catch(handlePlayRejection);
+        startPlayback();
       }
     }
 

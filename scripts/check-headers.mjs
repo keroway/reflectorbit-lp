@@ -238,8 +238,27 @@ function checkValue(rawKey, value) {
   return problems;
 }
 
+// 同一ブロック内で同名ヘッダを複数行に分けると、配信側は値をカンマ結合して送る。
+// 結合後は "nosniff, nosniff" のように単一値の検査を満たさなくなるため、
+// 大小文字を無視して重複を検出する（#344）。
+function findDuplicateHeaders(block) {
+  const seen = new Set();
+  const duplicates = new Set();
+  for (const { key } of block.directives) {
+    const lower = key.toLowerCase();
+    if (seen.has(lower)) duplicates.add(CANONICAL_NAMES.get(lower) ?? key);
+    seen.add(lower);
+  }
+  return [...duplicates].map(
+    (name) => `${block.path}: ${name} が同一ブロックで重複しています`
+  );
+}
+
 export function checkBlocks(blocks) {
   const violations = [];
+  for (const block of blocks) {
+    violations.push(...findDuplicateHeaders(block));
+  }
 
   const wildcards = blocks.filter((b) => b.path === "/*");
   const wildcard = wildcards[0];

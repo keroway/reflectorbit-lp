@@ -299,3 +299,25 @@ test("`/*` ブロックの小文字ヘッダ名も必須扱いで値を検査す
   const violations = checkBlocks(parseHeaders(toText(weak)));
   assert.ok(violations.some((v) => v.includes("X-Frame-Options")));
 });
+
+test("同一ブロックの同名ヘッダ重複（同一表記・大小文字違い）を検出する (#344)", () => {
+  const cases = [
+    ["X-Content-Type-Options", "X-Content-Type-Options", "nosniff"],
+    ["x-content-type-options", "X-Content-Type-Options", "nosniff"],
+    ["x-frame-options", "X-Frame-Options", "DENY"],
+  ];
+  for (const [dup, canonical, value] of cases) {
+    const violations = checkBlocks(
+      parseHeaders(`${build()}  ${dup}: ${value}\n`)
+    );
+    assert.ok(
+      violations.some((v) => v.includes(`${canonical} が同一ブロックで重複`)),
+      `${dup}: ${violations.join(" / ")}`
+    );
+  }
+});
+
+test("別ブロックの同名ヘッダは重複扱いにしない (#344)", () => {
+  const text = `${build()}\n/app/*\n  X-Content-Type-Options: nosniff\n`;
+  assert.deepEqual(checkBlocks(parseHeaders(text)), []);
+});

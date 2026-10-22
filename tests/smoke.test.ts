@@ -505,6 +505,46 @@ test("How to Play 再試行が成功した後に古い play() が拒否されて
   await expect(errorPanel).toBeHidden();
 });
 
+test("How to Play 再試行はメディア読み込みを load() で再実行してから再生する (#340)", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const w = window as unknown as { calls: string[] };
+    w.calls = [];
+    const origLoad = HTMLMediaElement.prototype.load;
+    HTMLMediaElement.prototype.load = function () {
+      w.calls.push("load");
+      return origLoad.call(this);
+    };
+    HTMLMediaElement.prototype.play = () => {
+      w.calls.push("play");
+      return Promise.resolve();
+    };
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#how-to-play");
+  const video = section.locator("video.how-to-play-video");
+  await expect(video).toBeVisible();
+
+  await video.evaluate((el: HTMLVideoElement) =>
+    el.dispatchEvent(new Event("error"))
+  );
+  const errorPanel = section.locator("#how-to-play-error");
+  await expect(errorPanel).toBeVisible();
+
+  await page.evaluate(
+    () => ((window as unknown as { calls: string[] }).calls.length = 0)
+  );
+  await section.locator("#how-to-play-retry").click();
+  await expect(errorPanel).toBeHidden();
+
+  const calls = await page.evaluate(
+    () => (window as unknown as { calls: string[] }).calls
+  );
+  expect(calls).toEqual(["load", "play"]);
+});
+
 test("prefers-reduced-motion: reduce では図解動画の自動再生・ループが止まる", async ({
   page,
 }) => {

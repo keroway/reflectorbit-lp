@@ -226,6 +226,31 @@ test("CSP の script-src-elem / script-src-attr の禁止ソースを検出す�
   }
 });
 
+test("CSP の script 系にスキーム付きワイルドカードや data: があると検出する (#339)", () => {
+  for (const name of ["script-src", "script-src-elem", "script-src-attr"]) {
+    for (const token of ["https://*", "http://*", "//*", "data:"]) {
+      const csp = VALID["Content-Security-Policy"].replace(
+        "script-src 'self'",
+        `${name} ${token}; script-src 'self'`
+      );
+      const violations = violationsFor({ "Content-Security-Policy": csp });
+      assert.ok(
+        violations.some((v) => v.includes(name) && v.includes(token)),
+        `${name} ${token}`
+      );
+    }
+  }
+});
+
+test("CSP の script-src に限定ワイルドカードのホストは許可する (#339)", () => {
+  const csp = VALID["Content-Security-Policy"].replace(
+    "script-src 'self'",
+    "script-src 'self' https://*.example.com"
+  );
+  const violations = violationsFor({ "Content-Security-Policy": csp });
+  assert.ok(!violations.some((v) => v.includes("example.com")));
+});
+
 test("CSP の base-uri / form-action に 'self' 以外の許可先が追加されると検出する (#304)", () => {
   for (const name of ["base-uri", "form-action"]) {
     for (const token of ["*", "https:", "https://example.com"]) {

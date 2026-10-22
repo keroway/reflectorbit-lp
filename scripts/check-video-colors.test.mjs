@@ -299,6 +299,37 @@ test("CSS 変数名・var() 参照・アニメーション名の色名は誤検�
   assert.deepEqual(checkCss(".x { animation-name: red; color: #adbdff; }"), []);
 });
 
+test("Grid のライン名・配置指定の色名は誤検出しない (#346)", () => {
+  assert.deepEqual(
+    checkCss(
+      ".x { grid-template-columns: [red] 1fr [blue]; grid-column: red / blue; color: #adbdff; }"
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(
+      ".x { grid-template-rows: [red] 1fr [blue]; grid-row: red / blue; color: #adbdff; }"
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(
+      ".x { grid-column-start: red; grid-row-end: blue; color: #adbdff; }"
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { grid-template: [red] 1fr / [blue] 1fr; color: #adbdff; }"),
+    []
+  );
+});
+
+test("Grid プロパティを除外しても実際の color: red は検出する (#346)", () => {
+  assert.deepEqual(checkCss(".x { grid-column: red / blue; color: red; }"), [
+    "red",
+  ]);
+});
+
 test("CSS エスケープされた色名・色関数名も検出する (#325)", () => {
   assert.deepEqual(checkCss(".x { color: \\72 ed; }"), ["red"]);
   assert.deepEqual(checkCss(".x { color: r\\65 d; }"), ["red"]);

@@ -300,3 +300,22 @@ test("末尾セミコロンを省略した隣接ルールでも色名を検出�
   assert.deepEqual(checkCss(".a{color:#adbdff}.b{color:blue}"), ["blue"]);
   assert.deepEqual(checkCss(".red{color:#adbdff}.blue{color:#ff33cc}"), []);
 });
+
+test("文字列内のコメント記号で後続宣言を見逃さない (#338)", () => {
+  assert.deepEqual(
+    checkCss('.x { content: "/*"; color: #ff0000; --label: "*/"; }'),
+    ["#ff0000"]
+  );
+  assert.deepEqual(
+    checkCss('.x { content: "/*"; color: rgb(255 0 0); --label: "*/"; }'),
+    ["rgb(255 0 0)"]
+  );
+  assert.deepEqual(checkCss(".x { content: '/*'; color: red; --l: '*/'; }"), [
+    "red",
+  ]);
+});
+
+test("実コメントは従来どおり除去し、コメント内の色は無視する (#338)", () => {
+  assert.deepEqual(checkCss(".x { /* color: red; */ color: #adbdff; }"), []);
+  assert.deepEqual(checkCss(".x { color: #adbdff; /* #ff0000 */ }"), []);
+});

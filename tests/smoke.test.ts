@@ -211,6 +211,51 @@ test("Trailer は旧 video の遅延 play() reject で再試行後の video を�
   await expect(errorPanel).toBeHidden();
 });
 
+test("Trailer は再生 Promise の保留中に reduce へ変わっても AbortError で video を消さない", async ({
+  page,
+}) => {
+  // pause() が保留中の play() を AbortError で reject する実ブラウザの挙動を再現する（#360）。
+  await page.addInitScript(() => {
+    let rejectPlay: ((reason: unknown) => void) | undefined;
+    HTMLMediaElement.prototype.play = () =>
+      new Promise<void>((_, reject) => {
+        rejectPlay = reject;
+      });
+    HTMLMediaElement.prototype.pause = () => {
+      rejectPlay?.(new DOMException("interrupted by pause", "AbortError"));
+    };
+    const original = HTMLVideoElement.prototype.addEventListener;
+    HTMLVideoElement.prototype.addEventListener = function (
+      this: HTMLVideoElement,
+      type: string,
+      ...rest: unknown[]
+    ) {
+      if (type === "error") return;
+      return (original as (...args: unknown[]) => void).call(
+        this,
+        type,
+        ...rest
+      );
+    } as typeof original;
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#trailer");
+  await section.locator("#trailer-play").click();
+  const video = section.locator("video");
+  await expect(video).toHaveCount(1);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.loop))
+    .toBe(false);
+  // microtask を流してから状態を確認する。
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 50)));
+
+  await expect(video).toHaveCount(1);
+  await expect(section.locator("#trailer-error")).toBeHidden();
+});
+
 test("Playable Demo セクションはクリックまで iframe をロードしない（ファサード方式）", async ({
   page,
 }) => {

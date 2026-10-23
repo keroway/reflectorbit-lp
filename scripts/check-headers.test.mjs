@@ -284,8 +284,8 @@ test("追加パスブロックの弱いヘッダ値を検出する (#312)", () =
   );
 });
 
-test("追加パスブロックの正しい値と無関係なヘッダは違反にしない (#312)", () => {
-  const text = `${build()}\n/videos/*\n  X-Frame-Options: DENY\n  Cache-Control: public, max-age=60\n`;
+test("追加パスブロックの無関係なヘッダは違反にしない (#312, #362)", () => {
+  const text = `${build()}\n/videos/*\n  Cache-Control: public, max-age=60\n`;
   assert.deepEqual(checkBlocks(parseHeaders(text)), []);
 });
 
@@ -342,7 +342,25 @@ test("同一ブロックの同名ヘッダ重複（同一表記・大小文字�
   }
 });
 
-test("別ブロックの同名ヘッダは重複扱いにしない (#344)", () => {
-  const text = `${build()}\n/app/*\n  X-Content-Type-Options: nosniff\n`;
+test("`/*` と個別パスの単一値ヘッダ重複を検出する (#362)", () => {
+  const cases = [
+    ["/app/*", "X-Content-Type-Options", "nosniff"],
+    ["/", "x-content-type-options", "nosniff"],
+    ["/app/*", "x-frame-options", "DENY"],
+  ];
+  for (const [path, key, value] of cases) {
+    const text = `${build()}\n${path}\n  ${key}: ${value}\n`;
+    const violations = checkBlocks(parseHeaders(text));
+    assert.ok(
+      violations.some(
+        (v) => v.includes(path) && v.includes("`/*` ブロックと重複")
+      ),
+      `${path} ${key}: ${violations.join(" / ")}`
+    );
+  }
+});
+
+test("`/*` と重ならないヘッダを別ブロックで定義しても違反にしない (#362)", () => {
+  const text = `${build()}\n/app/*\n  Cache-Control: no-store\n`;
   assert.deepEqual(checkBlocks(parseHeaders(text)), []);
 });

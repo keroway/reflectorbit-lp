@@ -125,8 +125,12 @@
 
       frame.appendChild(video);
       // ユーザー操作起点 + muted なので再生ポリシーでブロックされない想定。
-      // reject 時（省電力モード等）も失敗状態として表示する。
-      video.play().catch(() => showError(video));
+      // reject 時（省電力モード等）も失敗状態として表示する。ただし pause() 等による
+      // 中断 (AbortError) は失敗ではない（reduce 切替の停止など）。poster と controls が残る。
+      video.play().catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        showError(video);
+      });
     };
 
     play.addEventListener('click', startPlayback);

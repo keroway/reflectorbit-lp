@@ -274,11 +274,41 @@ function findDuplicateHeaders(block) {
   );
 }
 
+// `/*` は全パスに適用されるため、他ブロックと必ず適用範囲が重なる。重なったブロックが
+// 単一値のセキュリティヘッダを再定義すると、配信側が値をカンマ結合して
+// "nosniff, nosniff" のように検査を満たさない値になりうる（#362）。
+// 静的ゲートでは `/*` との重複だけを拒否する。`/a/*` と `/b/*` のように
+// 適用範囲が交差するかを判定できないパス同士は対象外とする。
+function findWildcardOverlaps(blocks) {
+  const wildcardKeys = new Set(
+    blocks
+      .filter((b) => b.path === "/*")
+      .flatMap((b) => b.directives.map((d) => d.key.toLowerCase()))
+  );
+  const violations = [];
+  for (const block of blocks) {
+    if (block.path === "/*") continue;
+    const reported = new Set();
+    for (const { key } of block.directives) {
+      const lower = key.toLowerCase();
+      const name = CANONICAL_NAMES.get(lower);
+      if (name && wildcardKeys.has(lower) && !reported.has(lower)) {
+        reported.add(lower);
+        violations.push(
+          `${block.path}: ${name} が \`/*\` ブロックと重複しています（適用範囲が重なります）`
+        );
+      }
+    }
+  }
+  return violations;
+}
+
 export function checkBlocks(blocks) {
   const violations = [];
   for (const block of blocks) {
     violations.push(...findDuplicateHeaders(block));
   }
+  violations.push(...findWildcardOverlaps(blocks));
 
   const wildcards = blocks.filter((b) => b.path === "/*");
   const wildcard = wildcards[0];

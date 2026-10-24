@@ -12,6 +12,9 @@
       "!.pi-subagents",
       "!**/*.astro",
       "!**/*.css",
+      "!**/*.md",
+      "!**/*.yml",
+      "!**/*.yaml",
       "!test-results",
       "!playwright-report"
     ]

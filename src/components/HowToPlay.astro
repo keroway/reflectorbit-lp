@@ -135,6 +135,8 @@ import { controls } from '../consts';
         howToPlayVideo!.removeAttribute('autoplay');
         howToPlayVideo!.removeAttribute('loop');
         howToPlayVideo!.setAttribute('controls', '');
+        // 停止前の play() が後から拒否されても失敗パネルを出さないよう世代を進める。
+        playAttempt++;
         howToPlayVideo!.pause();
       } else {
         howToPlayVideo!.setAttribute('autoplay', '');

@@ -391,10 +391,44 @@ function extractDeclarations(css) {
 
 // `url(...)` の中身と文字列リテラルは色値ではないため、検査前に空にする
 // (`content: "red"` や `url("/images/black.svg")` を誤検出させないため)。
+// 文字列の内外を区別するため、引用符とエスケープを認識して1文字ずつ走査する
+// (`content: "url("; color: red` で文字列中の `url(` が後続の宣言を巻き込まないように)。
+function skipString(css, start) {
+  const quote = css[start];
+  let i = start + 1;
+  while (i < css.length && css[i] !== quote) {
+    i += css[i] === "\\" ? 2 : 1;
+  }
+  return i + 1;
+}
+
 function stripUrlsAndStrings(declarations) {
-  return declarations
-    .replace(/url\(\s*(['"]?)([\s\S]*?)\1\s*\)/gi, "url()")
-    .replace(/"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'/g, '""');
+  let out = "";
+  let i = 0;
+  while (i < declarations.length) {
+    const ch = declarations[i];
+    if (ch === '"' || ch === "'") {
+      i = skipString(declarations, i);
+      out += '""';
+      continue;
+    }
+    if (/^url\(/i.test(declarations.slice(i, i + 4))) {
+      let j = i + 4;
+      while (j < declarations.length && /\s/.test(declarations[j])) j++;
+      if (declarations[j] === '"' || declarations[j] === "'") {
+        j = skipString(declarations, j);
+      }
+      while (j < declarations.length && declarations[j] !== ")") {
+        j += declarations[j] === "\\" ? 2 : 1;
+      }
+      out += "url()";
+      i = j + 1;
+      continue;
+    }
+    out += ch;
+    i++;
+  }
+  return out;
 }
 
 // 色を値に取らないプロパティ。ここに識別子（アニメーション名等）として色名が

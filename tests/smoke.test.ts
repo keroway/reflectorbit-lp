@@ -597,6 +597,36 @@ test("How to Play 再試行が成功した後に古い play() が拒否されて
   await expect(errorPanel).toBeHidden();
 });
 
+test("How to Play reduced-motion 切替後に旧 play() が拒否されても失敗表示を出さない (#367)", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    HTMLMediaElement.prototype.play = () =>
+      new Promise<void>((_, reject) => {
+        (window as unknown as { rejectFirstPlay: () => void }).rejectFirstPlay =
+          () => reject(new DOMException("late", "NotSupportedError"));
+      });
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#how-to-play");
+  await expect(section.locator("video.how-to-play-video")).toBeVisible();
+  const errorPanel = section.locator("#how-to-play-error");
+  await expect(errorPanel).toBeHidden();
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  // change イベントの反映 (autoplay 属性の除去) を待ってから旧 play() を拒否する
+  await expect(section.locator("video.how-to-play-video")).not.toHaveAttribute(
+    "autoplay",
+    ""
+  );
+  await page.evaluate(() =>
+    (window as unknown as { rejectFirstPlay: () => void }).rejectFirstPlay()
+  );
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 50)));
+  await expect(errorPanel).toBeHidden();
+});
+
 test("How to Play 再試行はメディア読み込みを load() で再実行してから再生する (#340)", async ({
   page,
 }) => {

@@ -181,6 +181,22 @@ test("クォート無し url() 中の色名も誤検出しない (#248)", () => 
   );
 });
 
+test("文字列中の url( は後続の色宣言を読み飛ばさない (#364)", () => {
+  assert.deepEqual(checkCss(".x { color: #123456; }"), ["#123456"]);
+  assert.deepEqual(
+    checkCss(
+      '.x { content: "url("; color: #123456; background-image: url("image.png"); }'
+    ),
+    ["#123456"]
+  );
+  assert.deepEqual(
+    checkCss(
+      '.x { content: "url("; color: red; background-image: url("image.png"); }'
+    ),
+    ["red"]
+  );
+});
+
 test("宣言値の色名は引き続き検出する (#248)", () => {
   assert.deepEqual(checkCss('.red-alert { content: "red"; color: red; }'), [
     "red",

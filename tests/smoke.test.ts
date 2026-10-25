@@ -267,6 +267,15 @@ test("Playable Demo セクションはクリックまで iframe をロードし�
   // クリック前は <iframe> 要素が存在しない = 埋め込みはロードされない
   await expect(section.locator("iframe")).toHaveCount(0);
 
+  // 外部ゲーム URL へ実通信せず、読み込み中の状態を決定論的に保つため保留する。
+  const playUrl = await section
+    .locator("#demo-frame")
+    .getAttribute("data-play-url");
+  expect(playUrl).toBeTruthy();
+  await page.route(playUrl ?? "", async (_route) => {
+    await new Promise(() => {});
+  });
+
   await launchButton.click();
 
   const iframe = section.locator("iframe");
@@ -290,6 +299,14 @@ test("PlayableDemo の iframe 読み込みに失敗すると失敗表示と再�
 
   const section = page.locator("section#demo");
   const launchButton = section.locator("#demo-launch");
+  const playUrl = await section
+    .locator("#demo-frame")
+    .getAttribute("data-play-url");
+  expect(playUrl).toBeTruthy();
+  // 外部ゲーム URL へ実通信せず、実 load が合成 error より先に状態を変えないよう保留する。
+  await page.route(playUrl ?? "", async (_route) => {
+    await new Promise(() => {});
+  });
 
   await launchButton.click();
 

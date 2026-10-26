@@ -18,6 +18,17 @@ test("文字列末尾のエスケープされたバックスラッシュの後�
   );
 });
 
+test("入力末尾で閉じられないブロックの宣言も検査する (#373)", () => {
+  assert.deepEqual(checkCss(`.x { color: #${OFF_BRAND_RED};`), [
+    `#${OFF_BRAND_RED}`,
+  ]);
+  assert.deepEqual(
+    checkCss(`@media (min-width: 1px) { .x { color: #${OFF_BRAND_RED};`),
+    [`#${OFF_BRAND_RED}`]
+  );
+  assert.deepEqual(checkCss(`.x { color: #${ALLOWED_HEX_SAMPLE};`), []);
+});
+
 test("4桁 hex (alpha付き) のブランド外色を検出する (#210)", () => {
   assert.deepEqual(checkCss(".probe { color: #f00f; }"), ["#f00f"]);
 });

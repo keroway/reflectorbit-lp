@@ -386,6 +386,8 @@ function extractDeclarations(css) {
     }
     if (depth > 0) bufStack[depth - 1] += ch;
   }
+  // 入力末尾で閉じられなかったブロックの宣言も黙って捨てず検査対象に含める (#373)
+  while (bufStack.length > 0) out += `${bufStack.pop()};`;
   return out;
 }
 

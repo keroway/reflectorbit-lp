@@ -22,8 +22,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   グローバル CSS は `src/styles/global.css` の `@import "tailwindcss";` のみ。
   v3 系の `tailwind.config.js` や `@astrojs/tailwind` 統合は使わない。
   デザイントークンは同ファイルの `@theme` ブロックで定義する。
-- パッケージマネージャ: **pnpm 11**（`packageManager` フィールドでピン。
-  Node 26 / pnpm 11 は `mise.toml` でもピン）。依存の build スクリプトは
+- パッケージマネージャ: **pnpm 12**（`packageManager` フィールドでピン。
+  Node 26 / pnpm 12 は `mise.toml` でもピン）。依存の build スクリプトは
   `pnpm-workspace.yaml` の `allowBuilds` で明示許可制（lefthook のみ許可）
 - Lint / Format: **Biome**（`biome.json`、double quote）。対象は `*.ts` / `*.js` / `*.mjs` / `*.json`。
   `.md` のみ補助 Prettier（`pnpm run lint` / `format` に統合済み）。

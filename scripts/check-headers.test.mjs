@@ -267,6 +267,47 @@ test("CSP の base-uri / form-action に 'self' 以外の許可先が追加さ�
   }
 });
 
+test("CSP の base-uri / form-action は 'none' 単独を許可する (#376)", () => {
+  for (const name of ["base-uri", "form-action"]) {
+    const csp = VALID["Content-Security-Policy"].replace(
+      `${name} 'self'`,
+      `${name} 'none'`
+    );
+    assert.deepEqual(
+      violationsFor({ "Content-Security-Policy": csp }),
+      [],
+      name
+    );
+  }
+});
+
+test("CSP の base-uri / form-action の欠落・空値・'none' 併記を検出する (#376)", () => {
+  for (const name of ["base-uri", "form-action"]) {
+    const base = VALID["Content-Security-Policy"];
+    const missing = base.replace(`; ${name} 'self'`, "");
+    assert.ok(
+      violationsFor({ "Content-Security-Policy": missing }).some((v) =>
+        v.includes(`${name} がありません`)
+      ),
+      `${name} missing`
+    );
+    const empty = base.replace(`${name} 'self'`, name);
+    assert.ok(
+      violationsFor({ "Content-Security-Policy": empty }).some(
+        (v) => v.includes(name) && v.includes("空")
+      ),
+      `${name} empty`
+    );
+    for (const mixed of ["'self' 'none'", "'none' https://example.com"]) {
+      const csp = base.replace(`${name} 'self'`, `${name} ${mixed}`);
+      assert.ok(
+        violationsFor({ "Content-Security-Policy": csp }).length > 0,
+        `${name} ${mixed}`
+      );
+    }
+  }
+});
+
 test("CSP の重複ディレクティブを拒否し、先頭の禁止ソースも検出する (#302)", () => {
   const csp = `default-src *; ${VALID["Content-Security-Policy"]}`;
   const violations = violationsFor({ "Content-Security-Policy": csp });

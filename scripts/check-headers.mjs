@@ -69,8 +69,10 @@ const DISABLED_FEATURES = ["geolocation", "microphone", "camera", "payment"];
 const CSP_REQUIRED = {
   "default-src": ["'self'"],
   "frame-ancestors": ["'none'"],
-  "base-uri": ["'self'"],
-  "form-action": ["'self'"],
+  // base-uri / form-action は存在のみ必須。値は下の CSP_ALLOWED_ONLY と
+  // 非空・'none' 単独検査で見る（'self' 必須にすると許可済みの 'none' を拒否する #376）。
+  "base-uri": [],
+  "form-action": [],
 };
 // 許可トークンを固定するディレクティブ。'self' を残したまま `*` や外部オリジンを
 // 足す緩和を拒否する（#304）。ここに無いトークンはすべて違反とする。
@@ -232,6 +234,20 @@ function checkValue(rawKey, value) {
           if (!tokens.includes(token)) {
             problems.push(`CSP の ${name} に ${token} が必要です`);
           }
+        }
+      }
+      for (const name of ["base-uri", "form-action"]) {
+        const tokens = csp.get(name);
+        if (!tokens) continue;
+        if (tokens.length === 0) {
+          problems.push(`CSP の ${name} が空です（'self' か 'none' が必要）`);
+        } else if (
+          tokens.length > 1 &&
+          tokens.some((t) => t.toLowerCase() === "'none'")
+        ) {
+          problems.push(
+            `CSP の ${name} の 'none' は単独で指定する必要があります`
+          );
         }
       }
       for (const [name, allowed] of Object.entries(CSP_ALLOWED_ONLY)) {

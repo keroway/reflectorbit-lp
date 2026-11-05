@@ -319,6 +319,11 @@ function stripComments(css) {
       }
       continue;
     }
+    // 文字列の外でも `\"` 等のエスケープは直後の1文字を消費する (#382)
+    if (ch === "\\" && i + 1 < css.length) {
+      out += ch + css[++i];
+      continue;
+    }
     if (ch === '"' || ch === "'") {
       quote = ch;
       out += ch;
@@ -358,6 +363,12 @@ function extractDeclarations(css) {
       } else if (ch === quote) {
         quote = null;
       }
+      continue;
+    }
+    // 文字列の外でも `\"` `\{` 等のエスケープは直後の1文字を消費する (#382)
+    if (ch === "\\" && i + 1 < css.length) {
+      i++;
+      if (depth > 0) bufStack[depth - 1] += ch + css[i];
       continue;
     }
     if (ch === '"' || ch === "'") {

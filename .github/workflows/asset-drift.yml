@@ -18,12 +18,15 @@ name: asset-drift
 # (#286)。paths フィルタにより無関係な PR は赤くならず、required check にも入れないため
 # docs のみの PR が Pending で詰まることもない。週次 cron は PR 経由以外の乖離
 # （直 push 等）を拾う保険として残す。
-# paths は scripts/asset-manifest.mjs の SOURCE_SETS / EXPECTED_OUTPUTS と同期させること。
+# 生成ツール（sharp / hyperframes）の解決バージョンもハッシュに含めるため、依存更新だけの
+# PR でも pnpm-lock.yaml 経由で起動する (#366)。無関係な依存更新ではハッシュは変わらない。
+# paths は scripts/asset-manifest.mjs の SOURCE_SETS / DEPENDENCY_SETS / EXPECTED_OUTPUTS と同期させること。
 on:
   pull_request:
     paths:
       - "asset-manifest.json"
       - "scripts/asset-manifest.mjs"
+      - "pnpm-lock.yaml"
       - "scripts/gen-og.mjs"
       - "scripts/gen-how-to-play-video.mjs"
       - "public/og-default.svg"

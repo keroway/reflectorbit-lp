@@ -24,6 +24,17 @@ const manifestPath = resolve(root, "asset-manifest.json");
 // キーごとのソース集合。生成スクリプト自身もソースに含める
 // （出力パラメータの変更も「生成物の更新が要る変更」のため）。
 // ディレクトリは再帰的に全ファイルを対象にする。
+// 生成に使う依存（#366）。pnpm-lock.yaml が解決したバージョンだけをハッシュに含める。
+// package.json / lockfile 全体を入れると無関係な依存更新（Renovate）のたびに再生成が要るため、
+// 生成物の出力に直接効くパッケージに限る。transitive（sharp の @img/* など）は
+// 本体のバージョンに連動して上がるので追わない。
+// 依存を増減したら .github/workflows/asset-drift.yml の pull_request.paths も確認する。
+const DEPENDENCY_SETS = {
+  og: ["sharp"],
+  "how-to-play-video": ["hyperframes"],
+};
+const lockPath = resolve(root, "pnpm-lock.yaml");
+
 // キーやパスを増減したら .github/workflows/asset-drift.yml の pull_request.paths も更新する。
 const SOURCE_SETS = {
   og: ["public/og-default.svg", "scripts/gen-og.mjs"],
@@ -78,7 +89,24 @@ async function listFiles(path) {
     .map((e) => join(e.parentPath, e.name));
 }
 
-export async function computeSourceHash(key) {
+// lockfile の `packages:` セクションのキー（`  name@version:`、スコープ名は引用符付き）から
+// 指定パッケージの解決バージョンを集める。peer 付き（`name@1.0.0(...)`）の snapshots キーは
+// 末尾が `:` / 引用符で終わらないため対象外。見つからなければ、検査を黙って素通りさせず例外にする。
+export function resolveDependencyVersions(lockText, names) {
+  const versions = [];
+  for (const name of names) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+    const re = new RegExp(`^  ['"]?${escaped}@([^'":\\s(]+)['"]?:\\s*$`, "gm");
+    const found = new Set([...lockText.matchAll(re)].map((m) => m[1]));
+    if (found.size === 0) {
+      throw new Error(`pnpm-lock.yaml に ${name} の解決バージョンがありません`);
+    }
+    for (const v of found) versions.push(`dep:${name}@${v}\n`);
+  }
+  return versions;
+}
+
+export async function computeSourceHash(key, lockfile = lockPath) {
   const sources = SOURCE_SETS[key];
   if (!sources) throw new Error(`unknown manifest key: ${key}`);
   const files = (await Promise.all(sources.map(listFiles))).flat();
@@ -89,6 +117,12 @@ export async function computeSourceHash(key) {
       return `${relative(root, abs)}\n${digest}\n`;
     })
   );
+  const deps = DEPENDENCY_SETS[key] ?? [];
+  if (deps.length > 0) {
+    entries.push(
+      ...resolveDependencyVersions(await readFile(lockfile, "utf8"), deps)
+    );
+  }
   entries.sort();
   return createHash("sha256").update(entries.join("")).digest("hex");
 }

@@ -5,7 +5,12 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { readManifest, updateManifest } from "./asset-manifest.mjs";
+import {
+  computeSourceHash,
+  readManifest,
+  resolveDependencyVersions,
+  updateManifest,
+} from "./asset-manifest.mjs";
 
 async function withTempManifest(fn) {
   const dir = await mkdtemp(join(tmpdir(), "asset-manifest-"));
@@ -64,4 +69,78 @@ test("ENOENT 以外の読み込み失敗（ディレクトリ等）は停止す�
     const dir = join(path, "..");
     await assert.rejects(readManifest(dir), /読み込めません/);
   });
+});
+
+const lock = (sharp, hyperframes, extra = "") => `lockfileVersion: '9.0'
+
+packages:
+
+  '@img/sharp-linux-x64@${sharp}':
+    cpu: [x64]
+
+  hyperframes@${hyperframes}:
+    engines: {node: '>=22'}
+
+  sharp@${sharp}:
+    engines: {node: '>=20'}
+${extra}
+snapshots:
+
+  sharp@${sharp}(@types/node@24.0.0):
+    dependencies: {}
+`;
+
+async function hashWithLock(key, text) {
+  const dir = await mkdtemp(join(tmpdir(), "asset-lock-"));
+  try {
+    const path = join(dir, "pnpm-lock.yaml");
+    await writeFile(path, text);
+    return await computeSourceHash(key, path);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+test("解決バージョンを packages セクションから取り出す（peer 付き snapshots と @img/* は除く）", () => {
+  assert.deepEqual(
+    resolveDependencyVersions(lock("0.35.5", "0.8.1"), ["sharp"]),
+    ["dep:sharp@0.35.5\n"]
+  );
+});
+
+test("依存が lockfile に無ければ例外にする", () => {
+  assert.throws(
+    () => resolveDependencyVersions("packages:\n", ["sharp"]),
+    /sharp の解決バージョンがありません/
+  );
+});
+
+test("生成ツールのバージョンが変わるとそのキーのハッシュだけ変わる (#366)", async () => {
+  const base = lock("0.35.5", "0.8.1");
+  const sharpUp = lock("0.35.6", "0.8.1");
+  const hyperUp = lock("0.35.5", "0.8.2");
+  assert.notEqual(
+    await hashWithLock("og", base),
+    await hashWithLock("og", sharpUp)
+  );
+  assert.equal(
+    await hashWithLock("og", base),
+    await hashWithLock("og", hyperUp)
+  );
+  assert.notEqual(
+    await hashWithLock("how-to-play-video", base),
+    await hashWithLock("how-to-play-video", hyperUp)
+  );
+  assert.equal(
+    await hashWithLock("how-to-play-video", base),
+    await hashWithLock("how-to-play-video", sharpUp)
+  );
+});
+
+test("無関係な依存の追加・更新ではハッシュが変わらない (#366)", async () => {
+  const extra = "\n  other@9.9.9:\n    engines: {node: '>=20'}\n";
+  assert.equal(
+    await hashWithLock("og", lock("0.35.5", "0.8.1")),
+    await hashWithLock("og", lock("0.35.5", "0.8.1", extra))
+  );
 });

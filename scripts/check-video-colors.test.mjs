@@ -18,6 +18,17 @@ test("文字列末尾のエスケープされたバックスラッシュの後�
   );
 });
 
+test("セレクタ内のエスケープ引用符以降の宣言も検査する (#382)", () => {
+  assert.deepEqual(
+    checkCss(`.foo\\"bar { color: #${OFF_BRAND_RED}; } .later { color: red; }`),
+    [`#${OFF_BRAND_RED}`, "red"]
+  );
+  assert.deepEqual(
+    checkCss(`.foo\\'bar { color: #${OFF_BRAND_RED}; } .later { color: red; }`),
+    [`#${OFF_BRAND_RED}`, "red"]
+  );
+});
+
 test("入力末尾で閉じられないブロックの宣言も検査する (#373)", () => {
   assert.deepEqual(checkCss(`.x { color: #${OFF_BRAND_RED};`), [
     `#${OFF_BRAND_RED}`,

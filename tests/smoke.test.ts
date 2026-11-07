@@ -256,6 +256,52 @@ test("Trailer は再生 Promise の保留中に reduce へ変わっても AbortE
   await expect(section.locator("#trailer-error")).toBeHidden();
 });
 
+test("Trailer は reduce 切替後の旧 play() の遅延 NotSupportedError で停止済み video を消さない", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __rejectPlay?: (r: unknown) => void };
+    HTMLMediaElement.prototype.play = () =>
+      new Promise<void>((_, reject) => {
+        w.__rejectPlay = reject;
+      });
+    HTMLMediaElement.prototype.pause = () => {};
+    const original = HTMLVideoElement.prototype.addEventListener;
+    HTMLVideoElement.prototype.addEventListener = function (
+      this: HTMLVideoElement,
+      type: string,
+      ...rest: unknown[]
+    ) {
+      if (type === "error") return;
+      return (original as (...args: unknown[]) => void).call(
+        this,
+        type,
+        ...rest
+      );
+    } as typeof original;
+  });
+  await page.goto("/");
+
+  const section = page.locator("section#trailer");
+  await section.locator("#trailer-play").click();
+  const video = section.locator("video");
+  await expect(video).toHaveCount(1);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.loop))
+    .toBe(false);
+
+  await page.evaluate(() => {
+    const w = window as unknown as { __rejectPlay?: (r: unknown) => void };
+    w.__rejectPlay?.(new DOMException("not supported", "NotSupportedError"));
+  });
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 50)));
+
+  await expect(video).toHaveCount(1);
+  await expect(section.locator("#trailer-error")).toBeHidden();
+});
+
 test("Playable Demo セクションはクリックまで iframe をロードしない（ファサード方式）", async ({
   page,
 }) => {

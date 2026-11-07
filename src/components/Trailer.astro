@@ -88,10 +88,15 @@
 
     // 再生開始後に reduce へ変わったら、現在の video のループを止めて停止する。
     // 再試行で作り直す video は startPlayback が最新の mq.matches を読むので別途の処理は不要。
+    // 再生試行の世代。reduce 切替で停止したら進め、保留中だった旧試行の遅延 reject
+    // （AbortError 以外の NotSupportedError 等）が停止済みの video を消さないようにする。
+    let attempt = 0;
+
     mq.addEventListener('change', () => {
       if (!mq.matches) return;
       const current = frame.querySelector('video');
       if (!current) return;
+      attempt += 1;
       current.loop = false;
       current.pause();
     });
@@ -127,7 +132,10 @@
       // ユーザー操作起点 + muted なので再生ポリシーでブロックされない想定。
       // reject 時（省電力モード等）も失敗状態として表示する。ただし pause() 等による
       // 中断 (AbortError) は失敗ではない（reduce 切替の停止など）。poster と controls が残る。
+      attempt += 1;
+      const myAttempt = attempt;
       video.play().catch((err: unknown) => {
+        if (myAttempt !== attempt) return;
         if (err instanceof DOMException && err.name === 'AbortError') return;
         showError(video);
       });

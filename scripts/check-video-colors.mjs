@@ -475,6 +475,9 @@ const NON_COLOR_PROPERTIES = new Set([
   "scroll-timeline-name",
   "view-timeline-name",
   "timeline-scope",
+  "anchor-name",
+  "anchor-scope",
+  "position-anchor",
 ]);
 
 // 色名検査の対象テキストを返す。プロパティ名（`--brand-blue` 等）、`var(--x)` の

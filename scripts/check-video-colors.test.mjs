@@ -394,6 +394,19 @@ test("container / timeline 名を除外しても実際の color: red は検出�
   );
 });
 
+test("anchor-name / position-anchor / anchor-scope の識別子は色名として誤検出しない (#388)", () => {
+  assert.deepEqual(checkCss(".x { anchor-name: --red; color: #adbdff; }"), []);
+  assert.deepEqual(
+    checkCss(".x { position-anchor: --blue; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(checkCss(".x { anchor-scope: --red; color: #adbdff; }"), []);
+});
+
+test("anchor 系を除外しても実際の color: red は検出する (#388)", () => {
+  assert.deepEqual(checkCss(".x { anchor-name: --red; color: red; }"), ["red"]);
+});
+
 test("CSS システム色を拒否する (#348)", () => {
   assert.deepEqual(
     checkCss(".x { color: CanvasText; background-color: Canvas; }"),

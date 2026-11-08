@@ -368,6 +368,32 @@ test("Grid プロパティを除外しても実際の color: red は検出する
   ]);
 });
 
+test("container shorthand と timeline 名の識別子は色名として誤検出しない (#386)", () => {
+  assert.deepEqual(
+    checkCss(".x { container: red / inline-size; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { scroll-timeline-name: --red; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { view-timeline-name: --red; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { timeline-scope: --red; color: #adbdff; }"),
+    []
+  );
+});
+
+test("container / timeline 名を除外しても実際の color: red は検出する (#386)", () => {
+  assert.deepEqual(
+    checkCss(".x { container: red / inline-size; color: red; }"),
+    ["red"]
+  );
+});
+
 test("CSS システム色を拒否する (#348)", () => {
   assert.deepEqual(
     checkCss(".x { color: CanvasText; background-color: Canvas; }"),

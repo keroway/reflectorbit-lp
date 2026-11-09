@@ -426,6 +426,31 @@ test("position-try / position-try-fallbacks の識別子は色名として誤検
   );
 });
 
+test("counter() と timeline shorthand の識別子は色名として誤検出しない (#398)", () => {
+  assert.deepEqual(
+    checkCss(
+      ".x { counter-reset: red; content: counter(red); color: #adbdff; }"
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { content: counters(blue, '.'); color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { scroll-timeline: --red block; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { view-timeline: --blue block; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { scroll-timeline: --red block; color: red; }"),
+    ["red"]
+  );
+});
+
 test("anchor() / anchor-size() の参照識別子は色名として誤検出しない (#393)", () => {
   assert.deepEqual(
     checkCss(".x { left: anchor(--red left); color: #adbdff; }"),

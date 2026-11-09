@@ -407,6 +407,25 @@ test("anchor 系を除外しても実際の color: red は検出する (#388)", 
   assert.deepEqual(checkCss(".x { anchor-name: --red; color: red; }"), ["red"]);
 });
 
+test("position-try / position-try-fallbacks の識別子は色名として誤検出しない (#396)", () => {
+  assert.deepEqual(
+    checkCss(".x { position-try-fallbacks: --red; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { position-try: --blue; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { position-try-fallbacks: --red, --blue; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { position-try-fallbacks: --red; color: red; }"),
+    ["red"]
+  );
+});
+
 test("anchor() / anchor-size() の参照識別子は色名として誤検出しない (#393)", () => {
   assert.deepEqual(
     checkCss(".x { left: anchor(--red left); color: #adbdff; }"),

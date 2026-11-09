@@ -478,6 +478,8 @@ const NON_COLOR_PROPERTIES = new Set([
   "anchor-name",
   "anchor-scope",
   "position-anchor",
+  "position-try",
+  "position-try-fallbacks",
 ]);
 
 // 色名検査の対象テキストを返す。プロパティ名（`--brand-blue` 等）、`var(--x)` の

@@ -407,6 +407,27 @@ test("anchor 系を除外しても実際の color: red は検出する (#388)", 
   assert.deepEqual(checkCss(".x { anchor-name: --red; color: red; }"), ["red"]);
 });
 
+test("anchor() / anchor-size() の参照識別子は色名として誤検出しない (#393)", () => {
+  assert.deepEqual(
+    checkCss(".x { left: anchor(--red left); color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { width: anchor-size(--blue width); color: #adbdff; }"),
+    []
+  );
+});
+
+test("anchor() 除外後も同じルールの color: red と var() フォールバックの色は検出する (#393)", () => {
+  assert.deepEqual(checkCss(".x { left: anchor(--red left); color: red; }"), [
+    "red",
+  ]);
+  assert.deepEqual(
+    checkCss(".x { left: anchor(--a left, var(--b, red)); color: #adbdff; }"),
+    ["red"]
+  );
+});
+
 test("CSS システム色を拒否する (#348)", () => {
   assert.deepEqual(
     checkCss(".x { color: CanvasText; background-color: Canvas; }"),

@@ -493,7 +493,12 @@ function namedColorScope(declarations) {
     }
     const property = decl.slice(0, colon).trim().toLowerCase();
     if (NON_COLOR_PROPERTIES.has(property)) continue;
-    kept.push(decl.slice(colon + 1).replace(/var\(\s*--[\w-]+/gi, "var("));
+    kept.push(
+      decl
+        .slice(colon + 1)
+        .replace(/var\(\s*--[\w-]+/gi, "var(")
+        .replace(/\b(anchor(?:-size)?)\(\s*--[\w-]+/gi, "$1(")
+    );
   }
   return kept.join(";");
 }

@@ -474,6 +474,8 @@ const NON_COLOR_PROPERTIES = new Set([
   "container",
   "scroll-timeline-name",
   "view-timeline-name",
+  "scroll-timeline",
+  "view-timeline",
   "timeline-scope",
   "anchor-name",
   "anchor-scope",
@@ -500,6 +502,7 @@ function namedColorScope(declarations) {
         .slice(colon + 1)
         .replace(/var\(\s*--[\w-]+/gi, "var(")
         .replace(/\b(anchor(?:-size)?)\(\s*--[\w-]+/gi, "$1(")
+        .replace(/\b(counters?)\(\s*[\w-]+/gi, "$1(")
     );
   }
   return kept.join(";");

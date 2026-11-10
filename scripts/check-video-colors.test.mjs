@@ -549,6 +549,22 @@ test("エスケープを含んでも許可色・文字列・URL・セレクタ�
   assert.deepEqual(checkCss(".\\72 ed { color: #adbdff; }"), []);
 });
 
+test("エスケープされた url 関数名の中身は色として誤検出しない (#404)", () => {
+  for (const fn of ["url", "u\\72l", "\\75rl", "\\000075 rl", "U\\52 L"]) {
+    assert.deepEqual(
+      checkCss(
+        `.x { background-image: ${fn}(/images/red.svg); color: #adbdff; }`
+      ),
+      [],
+      fn
+    );
+  }
+  assert.deepEqual(
+    checkCss(".x { background-image: u\\72l(/images/red.svg); color: red; }"),
+    ["red"]
+  );
+});
+
 test("CSS 変数の値や通常プロパティの色名は引き続き検出する (#323)", () => {
   assert.deepEqual(checkCss(".x { color: blue; }"), ["blue"]);
   assert.deepEqual(checkCss(".x { --brand-blue: blue; }"), ["blue"]);

@@ -467,6 +467,22 @@ test("list-style / list-style-type の独自カウンタースタイル名は色
   ]);
 });
 
+test("counter() / counters() のスタイル引数は色名として誤検出しない (#402)", () => {
+  const def = '@counter-style red { system: cyclic; symbols: "*"; } ';
+  assert.deepEqual(
+    checkCss(`${def}.x { content: counter(item, red); color: #adbdff; }`),
+    []
+  );
+  assert.deepEqual(
+    checkCss(`${def}.x { content: counters(item, ".", red); color: #adbdff; }`),
+    []
+  );
+  assert.deepEqual(
+    checkCss(`${def}.x { content: counter(item, red); color: red; }`),
+    ["red"]
+  );
+});
+
 test("anchor() / anchor-size() の参照識別子は色名として誤検出しない (#393)", () => {
   assert.deepEqual(
     checkCss(".x { left: anchor(--red left); color: #adbdff; }"),

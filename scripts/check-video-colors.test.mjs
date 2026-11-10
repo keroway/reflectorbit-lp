@@ -451,6 +451,22 @@ test("counter() と timeline shorthand の識別子は色名として誤検出�
   );
 });
 
+test("list-style / list-style-type の独自カウンタースタイル名は色名として誤検出しない (#400)", () => {
+  assert.deepEqual(
+    checkCss(
+      '@counter-style red { system: cyclic; symbols: "*"; suffix: " "; } .x { list-style-type: red; color: #adbdff; }'
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { list-style: red inside; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(checkCss(".x { list-style-type: red; color: red; }"), [
+    "red",
+  ]);
+});
+
 test("anchor() / anchor-size() の参照識別子は色名として誤検出しない (#393)", () => {
   assert.deepEqual(
     checkCss(".x { left: anchor(--red left); color: #adbdff; }"),

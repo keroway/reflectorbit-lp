@@ -457,6 +457,8 @@ const NON_COLOR_PROPERTIES = new Set([
   "counter-reset",
   "counter-increment",
   "counter-set",
+  "list-style",
+  "list-style-type",
   "grid",
   "grid-area",
   "grid-template",

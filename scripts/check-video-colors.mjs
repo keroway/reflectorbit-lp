@@ -415,6 +415,14 @@ function skipString(css, start) {
   return i + 1;
 }
 
+// 関数名 `url` の各文字は CSS エスケープ (`u\72l(` / `\75rl(` / `\000075 rl(`) でも書ける (#404)。
+const URL_ESC = (lower, upper, hex) =>
+  `(?:[${lower}${upper}]|\\\\0{0,4}${hex}(?:\\r\\n|[ \\t\\n\\r\\f])?)`;
+const URL_OPEN = new RegExp(
+  `${URL_ESC("u", "U", "(?:75|55)")}${URL_ESC("r", "R", "(?:72|52)")}${URL_ESC("l", "L", "(?:6[cC]|4[cC])")}\\(`,
+  "y"
+);
+
 function stripUrlsAndStrings(declarations) {
   let out = "";
   let i = 0;
@@ -425,8 +433,10 @@ function stripUrlsAndStrings(declarations) {
       out += '""';
       continue;
     }
-    if (/^url\(/i.test(declarations.slice(i, i + 4))) {
-      let j = i + 4;
+    URL_OPEN.lastIndex = i;
+    const urlOpen = URL_OPEN.exec(declarations);
+    if (urlOpen) {
+      let j = i + urlOpen[0].length;
       while (j < declarations.length && /\s/.test(declarations[j])) j++;
       if (declarations[j] === '"' || declarations[j] === "'") {
         j = skipString(declarations, j);

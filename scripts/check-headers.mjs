@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const headersPath = resolve(root, "public/_headers");
+const constsPath = resolve(root, "src/consts.ts");
 
 // #261 で設定したセキュリティヘッダ一式。増減したらここも同時に更新する。
 const REQUIRED_DIRECTIVES = [
@@ -139,7 +140,56 @@ const CANONICAL_NAMES = new Map(
   REQUIRED_DIRECTIVES.map((name) => [name.toLowerCase(), name])
 );
 
-function checkValue(rawKey, value) {
+// src/consts.ts の PLAY_URL (iframe の埋め込み先) からオリジンを取り出す。
+// 取り出せなければ null（検証側で違反として扱う）。
+export function extractPlayOrigin(source) {
+  const match = source.match(
+    /export\s+const\s+PLAY_URL\s*=\s*["']([^"']+)["']/
+  );
+  if (!match) return null;
+  try {
+    return new URL(match[1]).origin;
+  } catch {
+    return null;
+  }
+}
+
+// frame-src は PLAY_URL のオリジン 1 つだけを許可する単一ソースとする (#408)。
+// 不一致だと Playable Demo が本番 (Cloudflare Pages) でだけ CSP にブロックされ、
+// load は発火し error は発火しないためフォールバックも出ない。
+function checkFrameSrc(csp, playOrigin) {
+  const problems = [];
+  const tokens = csp.get("frame-src");
+  if (tokens) {
+    for (const token of tokens) {
+      const lower = token.toLowerCase();
+      if (
+        lower === "*" ||
+        lower === "http:" ||
+        lower === "https:" ||
+        lower === "data:" ||
+        CSP_ANY_HOST_WILDCARD.test(lower)
+      ) {
+        problems.push(
+          `CSP の frame-src に許可できないソース ${token} があります`
+        );
+      }
+    }
+  }
+  if (playOrigin === undefined) return problems;
+  if (playOrigin === null) {
+    problems.push("src/consts.ts から PLAY_URL を解釈できません");
+  } else if (!tokens) {
+    problems.push(`CSP に frame-src がありません（${playOrigin} が必要）`);
+  } else if (tokens.length !== 1 || tokens[0].toLowerCase() !== playOrigin) {
+    problems.push(
+      `CSP の frame-src は PLAY_URL のオリジン ${playOrigin} と完全一致する単一ソースである必要があります: "${tokens.join(" ")}"`
+    );
+  }
+  return problems;
+}
+
+function checkValue(rawKey, value, playOrigin) {
   const problems = [];
   const key = CANONICAL_NAMES.get(rawKey.toLowerCase()) ?? rawKey;
   switch (key) {
@@ -268,6 +318,7 @@ function checkValue(rawKey, value) {
           }
         }
       }
+      problems.push(...checkFrameSrc(csp, playOrigin));
       break;
     }
   }
@@ -319,7 +370,9 @@ function findWildcardOverlaps(blocks) {
   return violations;
 }
 
-export function checkBlocks(blocks) {
+// playOrigin: PLAY_URL のオリジン。undefined なら PLAY_URL との整合は検査しない
+// （ワイルドカード拒否は常に行う）。null は PLAY_URL を解釈できなかったことを示す。
+export function checkBlocks(blocks, playOrigin) {
   const violations = [];
   for (const block of blocks) {
     violations.push(...findDuplicateHeaders(block));
@@ -364,7 +417,7 @@ export function checkBlocks(blocks) {
     if (value === "") {
       violations.push(`${key} の値が空です`);
     } else {
-      violations.push(...checkValue(key, value));
+      violations.push(...checkValue(key, value, playOrigin));
     }
   }
 
@@ -381,7 +434,8 @@ function main() {
     process.exit(1);
   }
 
-  const violations = checkBlocks(blocks);
+  const playOrigin = extractPlayOrigin(readFileSync(constsPath, "utf8"));
+  const violations = checkBlocks(blocks, playOrigin);
   if (violations.length > 0) {
     console.error("public/_headers の検証に失敗しました:");
     for (const v of violations) {

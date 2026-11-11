@@ -17,6 +17,8 @@ pnpm run smoke:a11y # Playwright + axe-core
 
 pnpm run check:video-colors # video/**/*.css の色が docs/design.md のブランドカラー表から逸脱していないか検証（CI: ci.yml Lint）
 pnpm run test:video-colors  # check:video-colors 自身の回帰テスト（CI: ci.yml Lint）
+pnpm run check:headers      # public/_headers のセキュリティヘッダ検証。CSP frame-src が src/consts.ts の PLAY_URL オリジンと一致することも見る（CI: ci.yml Lint）
+pnpm run test:headers       # check:headers 自身の回帰テスト（CI: ci.yml Lint）
 pnpm run test:asset-manifest  # asset-manifest.mjs の回帰テスト（CI: ci.yml Lint）
 pnpm run asset:verify       # 生成アセット（OGP画像・How to Play動画）とソースの同期をハッシュ照合で検証（CI: asset-drift.yml。関連パスを変更した PR + 週次）
 ```

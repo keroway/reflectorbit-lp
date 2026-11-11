@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { checkBlocks, parseHeaders } from "./check-headers.mjs";
+import {
+  checkBlocks,
+  extractPlayOrigin,
+  parseHeaders,
+} from "./check-headers.mjs";
 
 const VALID = {
   "Content-Security-Policy":
@@ -399,6 +403,54 @@ test("`/*` と個別パスの単一値ヘッダ重複を検出する (#362)", ()
       `${path} ${key}: ${violations.join(" / ")}`
     );
   }
+});
+
+const PLAY = "https://reflectorbit.pages.dev";
+const withFrameSrc = (value) =>
+  VALID["Content-Security-Policy"].replace(
+    "frame-ancestors",
+    `${value === null ? "" : `frame-src ${value}; `}frame-ancestors`
+  );
+const frameViolations = (value, origin = PLAY) =>
+  checkBlocks(
+    parseHeaders(build({ "Content-Security-Policy": withFrameSrc(value) })),
+    origin
+  ).filter((v) => v.includes("frame-src"));
+
+test("frame-src が PLAY_URL のオリジンと一致していれば違反なし (#408)", () => {
+  assert.deepEqual(frameViolations(PLAY), []);
+});
+
+test("frame-src が PLAY_URL と不一致・欠落・複数だと検出する (#408)", () => {
+  for (const value of [
+    "https://example.com",
+    `${PLAY} https://example.com`,
+    null,
+  ]) {
+    assert.ok(frameViolations(value).length > 0, String(value));
+  }
+});
+
+test("frame-src の任意ホスト許可を検出する (#408)", () => {
+  for (const token of ["*", "https:", "https://*"]) {
+    assert.ok(
+      frameViolations(token, undefined).some((v) => v.includes(token)),
+      token
+    );
+  }
+});
+
+test("PLAY_URL を解釈できないと検出し、extractPlayOrigin はオリジンを返す (#408)", () => {
+  const unparsable = checkBlocks(
+    parseHeaders(build({ "Content-Security-Policy": withFrameSrc(PLAY) })),
+    null
+  );
+  assert.ok(unparsable.some((v) => v.includes("PLAY_URL")));
+  assert.equal(
+    extractPlayOrigin('export const PLAY_URL = "https://a.example/path";'),
+    "https://a.example"
+  );
+  assert.equal(extractPlayOrigin("const x = 1;"), null);
 });
 
 test("`/*` と重ならないヘッダを別ブロックで定義しても違反にしない (#362)", () => {

@@ -29,15 +29,15 @@ export const REPO_FALLBACK_URL = "https://github.com/keroway";
 // 操作方法 (docs/copy.md の How to Play より)
 export const controls = [
   {
-    key: "← / →",
-    desc: "Shield を反時計 / 時計回りに回転（手動回転・離すと停止）",
+    key: "← / →（押しっぱなし）",
+    desc: "Shield を反時計 / 時計回りに回転（手動操作・離すと停止）",
   },
-  { key: "Space", desc: "軌道半径を縮小（内周へ）" },
-  { key: "Shift", desc: "軌道半径を拡大（外周へ）" },
+  { key: "Space（押しっぱなし）", desc: "軌道半径を縮小（内周へ）" },
+  { key: "Shift（押しっぱなし）", desc: "軌道半径を拡大（外周へ）" },
   { key: "P", desc: "ポーズ / 再開" },
   {
     key: "↑ / ↓",
-    desc: "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では ↑/↓ で Easy/Normal/Hard の難易度を切替）",
+    desc: "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では Easy/Normal/Hard の難易度を切替）",
   },
 ];
 

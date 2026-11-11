@@ -51,6 +51,60 @@ test("Concept セクションの箇条書きは docs/copy.md と同期した 10 
   }
 });
 
+test("How to Play 操作表とタップ/ホールド補足は docs/copy.md の文言と同期している (#410)", async ({
+  page,
+}) => {
+  // 期待値は consts.ts を import せず docs/copy.md の表から直書きする。
+  // 実装側だけが変わると落ちる(#202 と同種の乖離を CI で検知する)。
+  await page.goto("/");
+
+  const rows = page.locator("section#how-to-play table tr");
+  await expect(rows).toHaveCount(5);
+
+  const expected = [
+    [
+      "← / →（押しっぱなし）",
+      "Shield を反時計 / 時計回りに回転（手動操作・離すと停止）",
+    ],
+    ["Space（押しっぱなし）", "軌道半径を縮小（内周へ）"],
+    ["Shift（押しっぱなし）", "軌道半径を拡大（外周へ）"],
+    ["P", "ポーズ / 再開"],
+    [
+      "↑ / ↓",
+      "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では Easy/Normal/Hard の難易度を切替）",
+    ],
+  ];
+  for (const [i, [key, desc]] of expected.entries()) {
+    await expect(rows.nth(i).locator("th")).toHaveText(key);
+    await expect(rows.nth(i).locator("td")).toHaveText(desc);
+  }
+
+  const supplement = await page
+    .locator("section#how-to-play li")
+    .first()
+    .textContent();
+  expect(supplement).toContain("±48px ダッシュ");
+});
+
+test("Download セクションは docs/copy.md の 3 OS 分のファイル名を表示する (#410)", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const items = page.locator("section#download li");
+  await expect(items).toHaveCount(3);
+
+  const expected = [
+    ["Linux (x86_64)", "reflectorbit-linux-x86_64"],
+    ["macOS (Apple Silicon)", "reflectorbit-macos-aarch64"],
+    ["Windows (x86_64)", "reflectorbit-windows-x86_64.exe"],
+  ];
+  for (const [i, [os, file]] of expected.entries()) {
+    await expect(items.nth(i)).toContainText(os);
+    await expect(items.nth(i)).toContainText(file);
+  }
+});
+
 test("Trailer セクションはクリックまで video をロードしない（ファサード方式）", async ({
   page,
 }) => {

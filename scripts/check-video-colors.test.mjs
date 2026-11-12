@@ -203,6 +203,40 @@ test("クォート無し url() 中の色名も誤検出しない (#248)", () => 
   );
 });
 
+test("クォート無し url() 内の波括弧はブロック境界にならない (#414)", () => {
+  assert.deepEqual(
+    checkCss(".x { background-image: url(/images/icon.svg); color: red; }"),
+    ["red"]
+  );
+  assert.deepEqual(
+    checkCss(".x { background-image: url(/images/}.svg); color: red; }"),
+    ["red"]
+  );
+  assert.deepEqual(
+    checkCss(".x { background-image: url(/images/}.svg); color: #123456; }"),
+    ["#123456"]
+  );
+  assert.deepEqual(
+    checkCss('.x { background-image: url("/images/}.svg"); color: red; }'),
+    ["red"]
+  );
+});
+
+test("クォート無し url() 内の波括弧で囲まれた色名は誤検出しない (#414)", () => {
+  assert.deepEqual(
+    checkCss(
+      ".x { background-image: url(/images/{red}.svg); color: #adbdff; }"
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(
+      '.x { background-image: url("/images/{red}.svg"); color: #adbdff; }'
+    ),
+    []
+  );
+});
+
 test("文字列中の url( は後続の色宣言を読み飛ばさない (#364)", () => {
   assert.deepEqual(checkCss(".x { color: #123456; }"), ["#123456"]);
   assert.deepEqual(

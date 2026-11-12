@@ -222,6 +222,35 @@ test("クォート無し url() 内の波括弧はブロック境界にならな�
   );
 });
 
+test("クォート無し url() 内の /* はコメント開始にならない (#416)", () => {
+  assert.deepEqual(
+    checkCss(".x { background-image: url(/images/*/icon.svg); color: red; }"),
+    ["red"]
+  );
+  assert.deepEqual(
+    checkCss(
+      ".x { background-image: url(/images/*/icon.svg); color: #123456; }"
+    ),
+    ["#123456"]
+  );
+  assert.deepEqual(
+    checkCss(
+      ".x { background-image: url(/images/*/icon.svg); color: rgb(255 0 0); }"
+    ),
+    ["rgb(255 0 0)"]
+  );
+  assert.deepEqual(
+    checkCss('.x { background-image: url("/images/*/icon.svg"); color: red; }'),
+    ["red"]
+  );
+  assert.deepEqual(
+    checkCss(
+      ".x { /* color: red; */ background: url(/a/b.svg); color: #adbdff; }"
+    ),
+    []
+  );
+});
+
 test("クォート無し url() 内の波括弧で囲まれた色名は誤検出しない (#414)", () => {
   assert.deepEqual(
     checkCss(

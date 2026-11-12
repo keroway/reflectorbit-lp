@@ -319,6 +319,24 @@ function stripComments(css) {
       }
       continue;
     }
+    // 引用符なし url(...) の中身は `/*` を含めて1トークンで、コメント開始ではない (#416)。
+    // 引用符付きは下の文字列処理に任せる。
+    URL_OPEN.lastIndex = i;
+    const urlOpen = URL_OPEN.exec(css);
+    if (urlOpen) {
+      let j = i + urlOpen[0].length;
+      let k = j;
+      while (k < css.length && /\s/.test(css[k])) k++;
+      if (css[k] !== '"' && css[k] !== "'") {
+        while (j < css.length && css[j] !== ")") {
+          j += css[j] === "\\" ? 2 : 1;
+        }
+        const end = Math.min(j + 1, css.length);
+        out += css.slice(i, end);
+        i = end - 1;
+        continue;
+      }
+    }
     // 文字列の外でも `\"` 等のエスケープは直後の1文字を消費する (#382)
     if (ch === "\\" && i + 1 < css.length) {
       out += ch + css[++i];

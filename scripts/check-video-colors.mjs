@@ -516,6 +516,8 @@ function namedColorScope(declarations) {
         .replace(/\b(anchor(?:-size)?)\(\s*--[\w-]+/gi, "$1(")
         // 先頭のカウンター名と、後続のスタイル引数（独自 @counter-style 名）を除く
         .replace(/\b(counters?)\(\s*[\w-]+(?:\s*,[^()]*)?/gi, "$1(")
+        // attr() の属性名（`ns|name` 形式を含む）を除く。型・フォールバックは残す
+        .replace(/\battr\(\s*(?:[\w-]*\|)?[\w-]+/gi, "attr(")
     );
   }
   return kept.join(";");

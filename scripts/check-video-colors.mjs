@@ -376,6 +376,24 @@ function extractDeclarations(css) {
       if (depth > 0) bufStack[depth - 1] += ch;
       continue;
     }
+    // 引用符なし url(...) の中身は波括弧もセミコロンも含めて1トークン (#414)。
+    // 引用符付きは上の文字列処理に任せる。
+    URL_OPEN.lastIndex = i;
+    const urlOpen = URL_OPEN.exec(css);
+    if (urlOpen) {
+      let j = i + urlOpen[0].length;
+      let k = j;
+      while (k < css.length && /\s/.test(css[k])) k++;
+      if (css[k] !== '"' && css[k] !== "'") {
+        while (j < css.length && css[j] !== ")") {
+          j += css[j] === "\\" ? 2 : 1;
+        }
+        const end = Math.min(j + 1, css.length);
+        if (depth > 0) bufStack[depth - 1] += css.slice(i, end);
+        i = end - 1;
+        continue;
+      }
+    }
     if (ch === "{") {
       if (depth > 0) {
         const buffer = bufStack[depth - 1];

@@ -483,6 +483,24 @@ test("counter() / counters() のスタイル引数は色名として誤検出し
   );
 });
 
+test("attr() の属性名は色名として誤検出しない (#412)", () => {
+  assert.deepEqual(
+    checkCss(".x { content: attr(data-red); color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { content: attr(data-blue); color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(checkCss(".x { content: attr(data-red); color: red; }"), [
+    "red",
+  ]);
+  assert.deepEqual(
+    checkCss(".x { color: attr(data-red type(<color>), red); }"),
+    ["red"]
+  );
+});
+
 test("anchor() / anchor-size() の参照識別子は色名として誤検出しない (#393)", () => {
   assert.deepEqual(
     checkCss(".x { left: anchor(--red left); color: #adbdff; }"),

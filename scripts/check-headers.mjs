@@ -144,8 +144,16 @@ const CANONICAL_NAMES = new Map(
 // 取り出せなければ null（検証側で違反として扱う）。
 // コメントや文字列/テンプレートリテラル内の宣言風テキストは採用しない (#418)。
 // ソースを先頭から走査し、コード位置でだけ宣言を照合する。
-const PLAY_URL_DECLARATION =
-  /export\s+const\s+PLAY_URL\s*=\s*(["'])([^"'\n]+)\1/y;
+// 初期化式は単独の文字列リテラルだけを許可する。リテラルの後ろに `+` 連結や
+// `.replace()` などが続く式は先頭リテラルだけを採用せず、解釈不能(null)にする (#420)。
+const PLAY_URL_DECLARATION = new RegExp(
+  String.raw`export\s+const\s+PLAY_URL\s*=\s*(["'])([^"'\n]+)\1` +
+    String.raw`(?=(?:[ \t]*as\s+const)?[ \t]*(?:;|\r?\n\s*(?:export|const|let|var|function|import|type|interface|class)\b|\s*$))`,
+  "y"
+);
+
+// 宣言の開始位置だけ合って初期化式が単独リテラルでないか（連結など）。
+const PLAY_URL_DECLARATION_HEAD = /export\s+const\s+PLAY_URL\b/y;
 
 export function extractPlayOrigin(source) {
   let i = 0;
@@ -174,6 +182,8 @@ export function extractPlayOrigin(source) {
           return null;
         }
       }
+      PLAY_URL_DECLARATION_HEAD.lastIndex = i;
+      if (PLAY_URL_DECLARATION_HEAD.test(source)) return null;
       i++;
     }
   }

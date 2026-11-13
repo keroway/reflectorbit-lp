@@ -142,16 +142,42 @@ const CANONICAL_NAMES = new Map(
 
 // src/consts.ts の PLAY_URL (iframe の埋め込み先) からオリジンを取り出す。
 // 取り出せなければ null（検証側で違反として扱う）。
+// コメントや文字列/テンプレートリテラル内の宣言風テキストは採用しない (#418)。
+// ソースを先頭から走査し、コード位置でだけ宣言を照合する。
+const PLAY_URL_DECLARATION =
+  /export\s+const\s+PLAY_URL\s*=\s*(["'])([^"'\n]+)\1/y;
+
 export function extractPlayOrigin(source) {
-  const match = source.match(
-    /export\s+const\s+PLAY_URL\s*=\s*["']([^"']+)["']/
-  );
-  if (!match) return null;
-  try {
-    return new URL(match[1]).origin;
-  } catch {
-    return null;
+  let i = 0;
+  while (i < source.length) {
+    const ch = source[i];
+    const next = source[i + 1];
+    if (ch === "/" && next === "/") {
+      const end = source.indexOf("\n", i);
+      i = end === -1 ? source.length : end + 1;
+    } else if (ch === "/" && next === "*") {
+      const end = source.indexOf("*/", i + 2);
+      i = end === -1 ? source.length : end + 2;
+    } else if (ch === '"' || ch === "'" || ch === "`") {
+      i++;
+      while (i < source.length && source[i] !== ch) {
+        i += source[i] === "\\" ? 2 : 1;
+      }
+      i++;
+    } else {
+      PLAY_URL_DECLARATION.lastIndex = i;
+      const match = PLAY_URL_DECLARATION.exec(source);
+      if (match) {
+        try {
+          return new URL(match[2]).origin;
+        } catch {
+          return null;
+        }
+      }
+      i++;
+    }
   }
+  return null;
 }
 
 // frame-src は PLAY_URL のオリジン 1 つだけを許可する単一ソースとする (#408)。

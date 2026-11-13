@@ -453,6 +453,19 @@ test("PLAY_URL を解釈できないと検出し、extractPlayOrigin はオリ�
   assert.equal(extractPlayOrigin("const x = 1;"), null);
 });
 
+test("extractPlayOrigin はコメントや文字列内の旧 PLAY_URL 宣言を採用しない (#418)", () => {
+  const real = 'export const PLAY_URL = "https://new.example/game";';
+  const old = 'export const PLAY_URL = "https://old.example/game";';
+  const expected = "https://new.example";
+  assert.equal(extractPlayOrigin(`// ${old}\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`/* ${old} */\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`/*\n * ${old}\n */\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`const s = '${old}';\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`const t = \`${old}\`;\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`// ${old}`), null);
+  assert.equal(extractPlayOrigin(`/* ${old} */`), null);
+});
+
 test("`/*` と重ならないヘッダを別ブロックで定義しても違反にしない (#362)", () => {
   const text = `${build()}\n/app/*\n  Cache-Control: no-store\n`;
   assert.deepEqual(checkBlocks(parseHeaders(text)), []);

@@ -176,6 +176,8 @@ export function extractPlayOrigin(source) {
       PLAY_URL_DECLARATION.lastIndex = i;
       const match = PLAY_URL_DECLARATION.exec(source);
       if (match) {
+        // エスケープ表記（. / \x2e 等）は復号しないため解釈不能(null)にする (#424)。
+        if (match[2].includes("\\")) return null;
         try {
           return new URL(match[2]).origin;
         } catch {

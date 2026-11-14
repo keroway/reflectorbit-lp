@@ -494,6 +494,19 @@ test("extractPlayOrigin は PLAY_URL の初期化式が単独リテラルでな�
   );
 });
 
+test("extractPlayOrigin は PLAY_URL のリテラルにエスケープがあると null を返す (#424)", () => {
+  const head = "export const PLAY_URL =";
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example\\u002eexample.com";`),
+    null
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example\\x2eexample.com";`),
+    null
+  );
+  assert.equal(extractPlayOrigin(`${head} 'https://a.example\\/x';`), null);
+});
+
 test("`/*` と重ならないヘッダを別ブロックで定義しても違反にしない (#362)", () => {
   const text = `${build()}\n/app/*\n  Cache-Control: no-store\n`;
   assert.deepEqual(checkBlocks(parseHeaders(text)), []);

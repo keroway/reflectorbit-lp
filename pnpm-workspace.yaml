@@ -52,3 +52,6 @@ overrides:
   nanoid: ^6.0.0
   postcss: ^8.5.23
   smol-toml: ^1.7.1
+minimumReleaseAgeExclude:
+  # Renovate security update: astro@7.4.7
+  - astro@7.4.7

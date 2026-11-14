@@ -1555,8 +1555,8 @@ packages:
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
 
-  hono@4.13.7:
-    resolution: {integrity: sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==}
+  hono@4.13.18:
+    resolution: {integrity: sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@3.0.3:
@@ -2874,9 +2874,9 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@hono/node-server@2.1.6(hono@4.13.7)':
+  '@hono/node-server@2.1.6(hono@4.13.18)':
     dependencies:
-      hono: 4.13.7
+      hono: 4.13.18
 
   '@img/colour@1.1.0': {}
 
@@ -3693,7 +3693,7 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.5
 
-  hono@4.13.7: {}
+  hono@4.13.18: {}
 
   html-escaper@3.0.3: {}
 
@@ -3703,7 +3703,7 @@ snapshots:
 
   hyperframes@0.8.223(@types/node@24.13.0):
     dependencies:
-      '@hono/node-server': 2.1.6(hono@4.13.7)
+      '@hono/node-server': 2.1.6(hono@4.13.18)
       '@puppeteer/browsers': 3.2.3(yauzl@3.4.0)
       acorn: 8.19.0
       adm-zip: 0.6.1
@@ -3714,7 +3714,7 @@ snapshots:
       esbuild: 0.28.2
       fontkit: 2.0.4
       giget: 3.3.0
-      hono: 4.13.7
+      hono: 4.13.18
       ignore: 5.3.2
       open: 10.2.0
       postcss: 8.5.26

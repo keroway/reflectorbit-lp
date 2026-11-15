@@ -476,6 +476,28 @@ test("animation-timeline を除外しても実際の color: red は検出する 
   ]);
 });
 
+test("view-transition-class / font-variant-alternates の識別子は色名として誤検出しない (#429)", () => {
+  assert.deepEqual(
+    checkCss(".x { view-transition-class: red; color: #adbdff; }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { font-variant-alternates: styleset(red); color: #adbdff; }"),
+    []
+  );
+});
+
+test("view-transition-class / font-variant-alternates を除外しても実際の color: blue は検出する (#429)", () => {
+  assert.deepEqual(
+    checkCss(".x { view-transition-class: red; color: blue; }"),
+    ["blue"]
+  );
+  assert.deepEqual(
+    checkCss(".x { font-variant-alternates: styleset(red); color: blue; }"),
+    ["blue"]
+  );
+});
+
 test("anchor-name / position-anchor / anchor-scope の識別子は色名として誤検出しない (#388)", () => {
   assert.deepEqual(checkCss(".x { anchor-name: --red; color: #adbdff; }"), []);
   assert.deepEqual(

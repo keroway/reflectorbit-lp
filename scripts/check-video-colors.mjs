@@ -652,9 +652,9 @@ export function checkCss(rawCss) {
   }
 
   // パレットと比較できない色関数は黙って通さず、無条件で違反として拒否する
-  // (`color(srgb 1 0 0)` / `hwb(...)` / `oklch(...)` / `device-cmyk(...)` 等。#294, #341)。
+  // (`color(srgb 1 0 0)` / `hwb(...)` / `oklch(...)` / `device-cmyk(...)` / `contrast-color(...)` 等。#294, #341, #431)。
   for (const match of css.matchAll(
-    /(?<![\w-])(?:color-mix|color|hwb|oklch|oklab|lab|lch|device-cmyk)\(/gi
+    /(?<![\w-])(?:color-mix|color|hwb|oklch|oklab|lab|lch|device-cmyk|contrast-color)\(/gi
   )) {
     violations.push(match[0]);
   }

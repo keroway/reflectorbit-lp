@@ -382,6 +382,34 @@ test("oklch() / oklab() / lab() / lch() / color-mix() を拒否する (#294)", (
   );
 });
 
+test("contrast-color() は許可色を引数にしても関数ごと拒否する (#431)", () => {
+  assert.deepEqual(
+    checkCss(`.probe { color: contrast-color(#${ALLOWED_HEX_SAMPLE}); }`),
+    ["contrast-color("]
+  );
+  assert.deepEqual(
+    checkCss(`.probe { color: CONTRAST-COLOR(#${ALLOWED_HEX_SAMPLE}); }`),
+    ["CONTRAST-COLOR("]
+  );
+});
+
+test("エスケープされた contrast-color() も拒否する (#431)", () => {
+  assert.equal(
+    checkCss(`.probe { color: contrast\\2d color(#${ALLOWED_HEX_SAMPLE}); }`)
+      .length,
+    1
+  );
+});
+
+test("contrast-color は文字列・URL・コメント内では誤検出しない (#431)", () => {
+  assert.deepEqual(
+    checkCss(
+      '.probe { content: "contrast-color(x)"; background: url("a/contrast-color(x).png"); } /* contrast-color(x) */'
+    ),
+    []
+  );
+});
+
 test("プロパティ名 color / background-color は色関数として誤検出しない (#294)", () => {
   assert.deepEqual(
     checkCss(

@@ -525,6 +525,8 @@ const NON_COLOR_PROPERTIES = new Set([
   "scroll-timeline",
   "view-timeline",
   "timeline-scope",
+  "animation-timeline",
+  "font-palette",
   "anchor-name",
   "anchor-scope",
   "position-anchor",

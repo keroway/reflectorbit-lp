@@ -457,6 +457,25 @@ test("container / timeline 名を除外しても実際の color: red は検出�
   );
 });
 
+test("animation-timeline / font-palette の参照名は色名として誤検出しない (#427)", () => {
+  assert.deepEqual(
+    checkCss(
+      ".x { scroll-timeline-name: --red; animation-timeline: --red; color: #adbdff; }"
+    ),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { font-palette: --blue; color: #adbdff; }"),
+    []
+  );
+});
+
+test("animation-timeline を除外しても実際の color: red は検出する (#427)", () => {
+  assert.deepEqual(checkCss(".x { animation-timeline: --red; color: red; }"), [
+    "red",
+  ]);
+});
+
 test("anchor-name / position-anchor / anchor-scope の識別子は色名として誤検出しない (#388)", () => {
   assert.deepEqual(checkCss(".x { anchor-name: --red; color: #adbdff; }"), []);
   assert.deepEqual(

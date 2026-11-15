@@ -527,6 +527,8 @@ const NON_COLOR_PROPERTIES = new Set([
   "timeline-scope",
   "animation-timeline",
   "font-palette",
+  "view-transition-class",
+  "font-variant-alternates",
   "anchor-name",
   "anchor-scope",
   "position-anchor",

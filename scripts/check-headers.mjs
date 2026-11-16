@@ -157,8 +157,62 @@ const PLAY_URL_DECLARATION = new RegExp(
 // 宣言の開始位置だけ合って初期化式が単独リテラルでないか（連結など）。
 const PLAY_URL_DECLARATION_HEAD = /export\s+const\s+PLAY_URL\b/y;
 
+// 正規表現リテラルの内部も宣言として採用しない (#435)。`/` が除算か正規表現の
+// 開始かは直前の有効トークンで判定する（記号や一部キーワードの直後なら正規表現）。
+const REGEX_PRECEDING_KEYWORDS = new Set([
+  "return",
+  "typeof",
+  "case",
+  "in",
+  "of",
+  "instanceof",
+  "void",
+  "delete",
+  "throw",
+  "new",
+  "else",
+  "do",
+  "yield",
+  "await",
+]);
+
+function startsRegexLiteral(source, lastSig) {
+  if (lastSig < 0) return true;
+  const prev = source[lastSig];
+  if (/[\w$]/.test(prev)) {
+    let start = lastSig;
+    while (start > 0 && /[\w$]/.test(source[start - 1])) start--;
+    return REGEX_PRECEDING_KEYWORDS.has(source.slice(start, lastSig + 1));
+  }
+  return !")]}".includes(prev) && prev !== '"' && prev !== "'" && prev !== "`";
+}
+
+// 正規表現リテラルの終端（フラグの直後）の位置を返す。改行まで閉じなければ -1。
+function skipRegexLiteral(source, from) {
+  let i = from + 1;
+  let inClass = false;
+  while (i < source.length) {
+    const c = source[i];
+    if (c === "\n" || c === "\r") return -1;
+    if (c === "\\") {
+      i += 2;
+      continue;
+    }
+    if (c === "[") inClass = true;
+    else if (c === "]") inClass = false;
+    else if (c === "/" && !inClass) {
+      i++;
+      while (i < source.length && /[a-z]/i.test(source[i])) i++;
+      return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
 export function extractPlayOrigin(source) {
   let i = 0;
+  let lastSig = -1;
   while (i < source.length) {
     const ch = source[i];
     const next = source[i + 1];
@@ -174,7 +228,15 @@ export function extractPlayOrigin(source) {
         i += source[i] === "\\" ? 2 : 1;
       }
       i++;
+      lastSig = i - 1;
+    } else if (ch === "/" && startsRegexLiteral(source, lastSig)) {
+      const end = skipRegexLiteral(source, i);
+      // 閉じない正規表現は安全に解釈できないため、黙って続行せず null にする。
+      if (end === -1) return null;
+      i = end;
+      lastSig = i - 1;
     } else {
+      if (!/\s/.test(ch)) lastSig = i;
       PLAY_URL_DECLARATION.lastIndex = i;
       const match = PLAY_URL_DECLARATION.exec(source);
       if (match) {

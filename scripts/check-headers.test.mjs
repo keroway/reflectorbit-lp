@@ -540,6 +540,22 @@ test("extractPlayOrigin は PLAY_URL リテラル後ろのコメントを許容�
   );
 });
 
+test("extractPlayOrigin は正規表現リテラル内の旧 PLAY_URL 宣言を採用しない (#435)", () => {
+  const old = 'export const PLAY_URL = "https://old.example";';
+  const real = 'export const PLAY_URL = "https://different.example";';
+  const expected = "https://different.example";
+  assert.equal(extractPlayOrigin(`const p = /${old}/;\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`const p = /${old}/gi;\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`const p = /[/]${old}/;\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`x.match(/${old}/);\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`return /${old}/;\n${real}`), expected);
+  assert.equal(extractPlayOrigin(`const p = /${old}/;`), null);
+  // 閉じない正規表現は安全に解釈できないため null にする。
+  assert.equal(extractPlayOrigin(`const p = /abc\n${real}`), null);
+  // 除算は正規表現と誤認しない。
+  assert.equal(extractPlayOrigin(`const n = 4 / 2;\n${real}`), expected);
+});
+
 test("`/*` と重ならないヘッダを別ブロックで定義しても違反にしない (#362)", () => {
   const text = `${build()}\n/app/*\n  Cache-Control: no-store\n`;
   assert.deepEqual(checkBlocks(parseHeaders(text)), []);

@@ -146,9 +146,11 @@ const CANONICAL_NAMES = new Map(
 // ソースを先頭から走査し、コード位置でだけ宣言を照合する。
 // 初期化式は単独の文字列リテラルだけを許可する。リテラルの後ろに `+` 連結や
 // `.replace()` などが続く式は先頭リテラルだけを採用せず、解釈不能(null)にする (#420)。
+// リテラル後ろの空白・ブロックコメント・行コメントは値を変えないため読み飛ばす (#433)。
+const PLAY_URL_TRIVIA = String.raw`(?:[ \t]|/\*(?:(?!\*/)[^])*\*/|//[^\n]*(?=\r?\n|$))*`;
 const PLAY_URL_DECLARATION = new RegExp(
   String.raw`export\s+const\s+PLAY_URL\s*=\s*(["'])([^"'\n]+)\1` +
-    String.raw`(?=(?:[ \t]*as\s+const)?[ \t]*(?:;|\r?\n\s*(?:export|const|let|var|function|import|type|interface|class)\b|\s*$))`,
+    String.raw`(?=${PLAY_URL_TRIVIA}(?:as\s+const${PLAY_URL_TRIVIA})?(?:;|\r?\n\s*(?:;|export\b|const\b|let\b|var\b|function\b|import\b|type\b|interface\b|class\b)|\s*$))`,
   "y"
 );
 

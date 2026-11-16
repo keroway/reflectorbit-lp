@@ -507,6 +507,39 @@ test("extractPlayOrigin は PLAY_URL のリテラルにエスケープがある�
   assert.equal(extractPlayOrigin(`${head} 'https://a.example\\/x';`), null);
 });
 
+test("extractPlayOrigin は PLAY_URL リテラル後ろのコメントを許容し、式継続は拒否する (#433)", () => {
+  const head = "export const PLAY_URL =";
+  const expected = "https://a.example";
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example" /* game origin */;`),
+    expected
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example" // game origin\n;`),
+    expected
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example" /* c */ as const;`),
+    expected
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example"; // game origin`),
+    expected
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example" /* c */ + ".invalid";`),
+    null
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example" // c;\n  + ".invalid";`),
+    null
+  );
+  assert.equal(
+    extractPlayOrigin(`${head} "https://a.example" /* c */.replace("a", "b");`),
+    null
+  );
+});
+
 test("`/*` と重ならないヘッダを別ブロックで定義しても違反にしない (#362)", () => {
   const text = `${build()}\n/app/*\n  Cache-Control: no-store\n`;
   assert.deepEqual(checkBlocks(parseHeaders(text)), []);

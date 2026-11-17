@@ -552,12 +552,13 @@ function namedColorScope(declarations) {
     kept.push(
       decl
         .slice(colon + 1)
-        .replace(/var\(\s*--[\w-]+/gi, "var(")
-        .replace(/\b(anchor(?:-size)?)\(\s*--[\w-]+/gi, "$1(")
+        // 識別子は非 ASCII 文字（U+0080 以上）も含む (#437)
+        .replace(/var\(\s*--[\w\u0080-￿-]+/gi, "var(")
+        .replace(/\b(anchor(?:-size)?)\(\s*--[\w\u0080-￿-]+/gi, "$1(")
         // 先頭のカウンター名と、後続のスタイル引数（独自 @counter-style 名）を除く
-        .replace(/\b(counters?)\(\s*[\w-]+(?:\s*,[^()]*)?/gi, "$1(")
+        .replace(/\b(counters?)\(\s*[\w\u0080-￿-]+(?:\s*,[^()]*)?/gi, "$1(")
         // attr() の属性名（`ns|name` 形式を含む）を除く。型・フォールバックは残す
-        .replace(/\battr\(\s*(?:[\w-]*\|)?[\w-]+/gi, "attr(")
+        .replace(/\battr\(\s*(?:[\w\u0080-￿-]*\|)?[\w\u0080-￿-]+/gi, "attr(")
     );
   }
   return kept.join(";");

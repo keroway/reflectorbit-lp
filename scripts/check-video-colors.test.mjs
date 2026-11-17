@@ -428,6 +428,18 @@ test("CSS 変数名・var() 参照・アニメーション名の色名は誤検�
   assert.deepEqual(checkCss(".x { animation-name: red; color: #adbdff; }"), []);
 });
 
+test("非 ASCII を含む CSS 変数参照名の色名は誤検出しない (#437)", () => {
+  assert.deepEqual(
+    checkCss(".x { --色-red: #adbdff; color: var(--色-red); }"),
+    []
+  );
+  assert.deepEqual(
+    checkCss(".x { --色-red: #adbdff; color: var(--色-red, #ff33cc); }"),
+    []
+  );
+  assert.deepEqual(checkCss(".x { color: red; }"), ["red"]);
+});
+
 test("Grid のライン名・配置指定の色名は誤検出しない (#346)", () => {
   assert.deepEqual(
     checkCss(

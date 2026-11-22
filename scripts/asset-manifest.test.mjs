@@ -71,7 +71,23 @@ test("ENOENT 以外の読み込み失敗（ディレクトリ等）は停止す�
   });
 });
 
-const lock = (sharp, hyperframes, extra = "") => `lockfileVersion: '9.0'
+const lock = (
+  sharp,
+  hyperframes,
+  extra = "",
+  rootSharp = sharp
+) => `lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    devDependencies:
+      hyperframes:
+        specifier: ${hyperframes}
+        version: ${hyperframes}(@types/node@24.0.0)
+      sharp:
+        specifier: ^0.35.4
+        version: ${rootSharp}(@types/node@24.0.0)
 
 packages:
 
@@ -101,17 +117,44 @@ async function hashWithLock(key, text) {
   }
 }
 
-test("解決バージョンを packages セクションから取り出す（peer 付き snapshots と @img/* は除く）", () => {
+test("ルート importer の解決バージョンを取り出す（peer 付きサフィックスは除く）", () => {
   assert.deepEqual(
     resolveDependencyVersions(lock("0.35.5", "0.8.1"), ["sharp"]),
-    ["dep:sharp@0.35.5\n"]
+    ["root:sharp@0.35.5\n"]
+  );
+});
+
+test("pnpm 12 の環境用ドキュメント（pnpm のみの importer）が先頭にあっても読める", () => {
+  const env = `lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    packageManagerDependencies:
+      pnpm:
+        specifier: 12.22.0
+        version: 12.22.0
+
+packages:
+
+  pnpm@12.22.0:
+    engines: {node: '>=22'}
+
+snapshots:
+
+  pnpm@12.22.0: {}
+---
+`;
+  assert.deepEqual(
+    resolveDependencyVersions(env + lock("0.35.5", "0.8.1"), ["sharp"]),
+    ["root:sharp@0.35.5\n"]
   );
 });
 
 test("依存が lockfile に無ければ例外にする", () => {
   assert.throws(
     () => resolveDependencyVersions("packages:\n", ["sharp"]),
-    /sharp の解決バージョンがありません/
+    /ルート importer に sharp の解決バージョンがありません/
   );
 });
 
@@ -142,5 +185,22 @@ test("無関係な依存の追加・更新ではハッシュが変わらない (
   assert.equal(
     await hashWithLock("og", lock("0.35.5", "0.8.1")),
     await hashWithLock("og", lock("0.35.5", "0.8.1", extra))
+  );
+});
+
+test("複数バージョン共存時もルート importer の参照先が変わればハッシュが変わる (#406)", async () => {
+  // packages には 0.35.4 / 0.35.5 の両方がある（集合は同じ）まま、ルートの参照先だけ切り替える
+  const both = "\n  sharp@0.35.4:\n    engines: {node: '>=20'}\n";
+  assert.notEqual(
+    await hashWithLock("og", lock("0.35.5", "0.8.1", both, "0.35.5")),
+    await hashWithLock("og", lock("0.35.5", "0.8.1", both, "0.35.4"))
+  );
+});
+
+test("無関係な推移依存として別バージョンが追加されてもハッシュは変わらない (#406)", async () => {
+  const extraVersion = "\n  sharp@0.35.4:\n    engines: {node: '>=20'}\n";
+  assert.equal(
+    await hashWithLock("og", lock("0.35.5", "0.8.1")),
+    await hashWithLock("og", lock("0.35.5", "0.8.1", extraVersion))
   );
 });

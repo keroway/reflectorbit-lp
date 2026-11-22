@@ -24,7 +24,7 @@ const manifestPath = resolve(root, "asset-manifest.json");
 // キーごとのソース集合。生成スクリプト自身もソースに含める
 // （出力パラメータの変更も「生成物の更新が要る変更」のため）。
 // ディレクトリは再帰的に全ファイルを対象にする。
-// 生成に使う依存（#366）。pnpm-lock.yaml が解決したバージョンだけをハッシュに含める。
+// 生成に使う依存（#366）。pnpm-lock.yaml のルート importer が参照するバージョン（#406）だけをハッシュに含める。
 // package.json / lockfile 全体を入れると無関係な依存更新（Renovate）のたびに再生成が要るため、
 // 生成物の出力に直接効くパッケージに限る。transitive（sharp の @img/* など）は
 // 本体のバージョンに連動して上がるので追わない。
@@ -94,21 +94,58 @@ async function listFiles(path) {
   );
 }
 
-// lockfile の `packages:` セクションのキー（`  name@version:`、スコープ名は引用符付き）から
-// 指定パッケージの解決バージョンを集める。peer 付き（`name@1.0.0(...)`）の snapshots キーは
-// 末尾が `:` / 引用符で終わらないため対象外。見つからなければ、検査を黙って素通りさせず例外にする。
+// lockfile のルート importer（`importers:` 配下の `  .:`）が実際に参照している解決バージョンを返す (#406)。
+// `packages:` 全体を走査すると、複数バージョン共存時に「ルートの参照先だけ変わった」変更や
+// 無関係な推移依存としての別バージョン追加を区別できない。生成スクリプトが import するのは
+// ルート importer の直接依存なので、そこだけを見る。peer 付きサフィックス（`(@types/node@…)`）は
+// 生成物に効かないため落とす。pnpm 12 の lockfile は先頭に環境用ドキュメント（importers が
+// pnpm のみ）を持つので、`.` ブロックを全て走査して最初に見つかったものを採用する。
+// 見つからなければ、検査を黙って素通りさせず例外にする。
 export function resolveDependencyVersions(lockText, names) {
+  const lines = lockText.split("\n");
+  const rootBlocks = [];
+  let inImporters = false;
+  let current = null;
+  for (const line of lines) {
+    if (/^\S/.test(line)) {
+      inImporters = /^importers:\s*$/.test(line);
+      current = null;
+    } else if (inImporters && /^ {2}\S/.test(line)) {
+      current = /^ {2}\.:\s*$/.test(line) ? [] : null;
+      if (current) rootBlocks.push(current);
+    } else if (current) {
+      current.push(line);
+    }
+  }
   const versions = [];
   for (const name of names) {
-    const escaped = name.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
-    const re = new RegExp(`^  ['"]?${escaped}@([^'":\\s(]+)['"]?:\\s*$`, "gm");
-    const found = new Set([...lockText.matchAll(re)].map((m) => m[1]));
-    if (found.size === 0) {
-      throw new Error(`pnpm-lock.yaml に ${name} の解決バージョンがありません`);
+    const found = new Set();
+    for (const block of rootBlocks) {
+      const at = block.findIndex(
+        (l) =>
+          unquote(l.trim().slice(0, -1)) === name &&
+          l.endsWith(":") &&
+          /^ {6}\S/.test(l)
+      );
+      if (at < 0) continue;
+      for (const l of block.slice(at + 1)) {
+        if (/^ {6}\S/.test(l)) break;
+        const m = l.match(/^ {8}version:\s*(.+?)\s*$/);
+        if (m) found.add(unquote(m[1]).replace(/\(.*$/, ""));
+      }
     }
-    for (const v of found) versions.push(`dep:${name}@${v}\n`);
+    if (found.size === 0) {
+      throw new Error(
+        `pnpm-lock.yaml のルート importer に ${name} の解決バージョンがありません`
+      );
+    }
+    for (const v of found) versions.push(`root:${name}@${v}\n`);
   }
   return versions;
+}
+
+function unquote(s) {
+  return s.replace(/^['"]|['"]$/g, "");
 }
 
 export async function computeSourceHash(key, lockfile = lockPath) {

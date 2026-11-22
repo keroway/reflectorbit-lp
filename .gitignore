@@ -52,3 +52,6 @@ playwright-report/
 # NOTE: .agents はディレクトリではなくシンボリックリンクのため、末尾に `/` を付けると
 # gitignore のディレクトリ限定マッチが効かず `git status` に浮上する (git の既知の挙動)。
 .agents
+
+# hyperframes 0.9 の生成作業ファイル
+video/*/.hyperframes/

@@ -14,7 +14,7 @@
 //   node scripts/asset-manifest.mjs update <key>  # 記録（gen スクリプトが呼ぶ）
 import { createHash } from "node:crypto";
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -84,9 +84,14 @@ async function listFiles(path) {
   const info = await stat(abs);
   if (info.isFile()) return [abs];
   const entries = await readdir(abs, { withFileTypes: true, recursive: true });
-  return entries
-    .filter((e) => e.isFile())
-    .map((e) => join(e.parentPath, e.name));
+  return (
+    entries
+      .filter((e) => e.isFile())
+      .map((e) => join(e.parentPath, e.name))
+      // hyperframes 0.9 系は生成時に video-state 等の作業ファイルを .hyperframes/ へ
+      // 書き出す（コミットしない）。ソースではないのでハッシュから除外する。
+      .filter((f) => !f.split(sep).includes(".hyperframes"))
+  );
 }
 
 // lockfile の `packages:` セクションのキー（`  name@version:`、スコープ名は引用符付き）から

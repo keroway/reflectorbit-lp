@@ -44,7 +44,7 @@ test("Concept セクションの箇条書きは docs/copy.md と同期した 10 
     "Stage / Endless / Daily",
     "Shield カラー（EMBER / AURORA / SOLAR）",
     "Core HP",
-    "全 10 ステージ",
+    "Stage 10 の先も続く",
     "Boss",
   ]) {
     expect(text).toContain(keyword);
@@ -59,7 +59,7 @@ test("How to Play 操作表とタップ/ホールド補足は docs/copy.md の�
   await page.goto("/");
 
   const rows = page.locator("section#how-to-play table tr");
-  await expect(rows).toHaveCount(5);
+  await expect(rows).toHaveCount(7);
 
   const expected = [
     [
@@ -69,9 +69,14 @@ test("How to Play 操作表とタップ/ホールド補足は docs/copy.md の�
     ["Space（押しっぱなし）", "軌道半径を縮小（内周へ）"],
     ["Shift（押しっぱなし）", "軌道半径を拡大（外周へ）"],
     ["P", "ポーズ / 再開"],
+    ["F2", "プレイ中に反射予告ラインの表示を切り替える"],
     [
       "↑ / ↓",
       "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では Easy/Normal/Hard の難易度を切替）",
+    ],
+    [
+      "R",
+      "GAME OVER で同じモード・難易度のまま即リトライ（Space はタイトルへ戻る）",
     ],
   ];
   for (const [i, [key, desc]] of expected.entries()) {
@@ -84,6 +89,12 @@ test("How to Play 操作表とタップ/ホールド補足は docs/copy.md の�
     .first()
     .textContent();
   expect(supplement).toContain("±48px ダッシュ");
+
+  const section = await page.locator("section#how-to-play").textContent();
+  expect(section).toContain("SETTINGS の KEY BINDINGS で変更できる");
+  expect(section).toContain(
+    "3 枚から 1 枚を選ぶ（全 9 種、1 ランで最大 5 枚）"
+  );
 });
 
 test("Download セクションは docs/copy.md の 3 OS 分のファイル名を表示する (#410)", async ({

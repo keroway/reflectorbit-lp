@@ -35,9 +35,14 @@ export const controls = [
   { key: "Space（押しっぱなし）", desc: "軌道半径を縮小（内周へ）" },
   { key: "Shift（押しっぱなし）", desc: "軌道半径を拡大（外周へ）" },
   { key: "P", desc: "ポーズ / 再開" },
+  { key: "F2", desc: "プレイ中に反射予告ラインの表示を切り替える" },
   {
     key: "↑ / ↓",
     desc: "タイトルメニューを選択（Space/Enter で決定。MODE & DIFFICULTY では Easy/Normal/Hard の難易度を切替）",
+  },
+  {
+    key: "R",
+    desc: "GAME OVER で同じモード・難易度のまま即リトライ（Space はタイトルへ戻る）",
   },
 ];
 

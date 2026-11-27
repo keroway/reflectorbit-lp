@@ -24,13 +24,14 @@ import { controls } from '../consts';
     軌道半径を能動的に変えて、Meteor の落下タイミングと Shield の位置を合わせる。
     内周に寄るほどリスクが高まる代わりにスコア倍率が上がり、外周は安定してコンボを繋ぎやすい。
     Web 版はタッチ / ポインタ操作にも対応。
+    キー割当は SETTINGS の KEY BINDINGS で変更できる（縮小 / 拡大 / 左回転 / 右回転 / ポーズの 5 操作）。
   </p>
   <ul class="mt-4 grid gap-3 text-sm text-rb-muted/80 sm:grid-cols-2">
     <li class="rounded-lg border border-white/5 p-4">
       <span class="font-semibold text-rb-shield">タップ / ホールド</span> — Space / Shift の短タップで ±48px ダッシュ、長押しで半径を徐々に変化。瞬間合わせと軌道調整を使い分ける。
     </li>
     <li class="rounded-lg border border-white/5 p-4">
-      <span class="font-semibold text-rb-combo">アップグレードカード</span> — 偶数ステージクリア時に 3 択（ラン最大 5 枚）。射程・PERFECT 猶予・コンボ持続などを強化。
+      <span class="font-semibold text-rb-combo">アップグレードカード</span> — 偶数ステージのクリア時に 3 枚から 1 枚を選ぶ（全 9 種、1 ランで最大 5 枚）。PERFECT 判定角・軌道半径の変化速度・コンボ猶予などを強化。
     </li>
   </ul>
 
